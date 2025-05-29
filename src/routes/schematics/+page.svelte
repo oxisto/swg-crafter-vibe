@@ -81,7 +81,9 @@
 							{#each filteredSchematics as schematic (schematic.id)}
 								<tr class="hover:bg-slate-700/50 transition-colors">
 									<td class="px-6 py-4 text-sm font-medium text-white">
-										{schematic.name}
+										<a href="/schematics/{schematic.id}" class="hover:text-yellow-400 transition-colors">
+											{schematic.name}
+										</a>
 									</td>
 									<td class="px-6 py-4 text-sm text-slate-300">
 										{schematic.id}
