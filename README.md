@@ -15,6 +15,12 @@ A web-based inventory management system for Star Wars Galaxies shipwright busine
 - **Markdown Rendering**: Beautiful formatted AI responses
 - **Recent Activity**: Track recently updated inventory items
 - **Sell Values**: Configure and track inventory values by mark level
+- **Sales Tracking** 💰: Comprehensive sales analytics and business intelligence
+  - Go-based mail analyzer tool for processing SWG mail files
+  - Automatic sale detection and item categorization
+  - Revenue tracking and performance analytics
+  - Import history and data visualization
+  - Business insights and market intelligence
 
 ## Tech Stack
 
@@ -73,6 +79,26 @@ The AI assistant uses OpenAI function calling to:
 ### Data Persistence
 
 All inventory changes are automatically saved to `database.sqlite3` in the project root. Your data will persist between sessions.
+
+### Sales Tracking
+
+Track your shipwright business performance with comprehensive sales analytics:
+
+1. **Process Mail Files**: Use the Go mail analyzer tool to extract sales data from SWG mail files
+   ```bash
+   cd tools/mail-analyzer
+   go run . parse -i /path/to/mail/files -o sales_export.json --sender-filter "SWG.Restoration.auctioner"
+   ```
+
+2. **Import Data**: Upload the JSON file through the Sales Tracking page in the web interface
+
+3. **View Analytics**: 
+   - Revenue tracking and sales metrics
+   - Top selling items and categories
+   - Mark level performance analysis
+   - Import history and batch tracking
+
+See [`docs/sales-tracking-guide.md`](docs/sales-tracking-guide.md) for detailed instructions.
 
 ## Available Scripts
 

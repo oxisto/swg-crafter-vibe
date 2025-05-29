@@ -51,6 +51,30 @@
 						<span class="font-medium">Schematics</span>
 					</a>
 				</li>
+				<li>
+					<a
+						href="/sales"
+						class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors {$page.url
+							.pathname === '/sales'
+							? 'bg-blue-600 text-white'
+							: 'text-slate-300 hover:bg-slate-700 hover:text-white'}"
+					>
+						<span class="text-lg">💰</span>
+						<span class="font-medium">Sales Tracking</span>
+					</a>
+				</li>
+				<li>
+					<a
+						href="/mails"
+						class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors {$page.url
+							.pathname === '/mails'
+							? 'bg-blue-600 text-white'
+							: 'text-slate-300 hover:bg-slate-700 hover:text-white'}"
+					>
+						<span class="text-lg">📧</span>
+						<span class="font-medium">Mail Management</span>
+					</a>
+				</li>
 			</ul>
 
 			<!-- Separator -->
