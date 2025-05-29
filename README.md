@@ -4,11 +4,14 @@ A web-based inventory management system for Star Wars Galaxies shipwright busine
 
 ## Features
 
-- **8 Part Categories**: Armor, Booster, Capacitor, Droid Interface, Engine, Reactor, Shield, Weapon
+- **9 Part Categories**: Armor, Booster, Capacitor, Droid Interface, Engine, Reactor, Shield, Blaster (Green), Blaster (Red)
 - **5 Mark Levels**: I, II, III, IV, V (Roman numerals)
 - **Stock Management**: Increment, decrement, and set exact quantities
 - **SQLite Persistence**: All data is saved to a local database
 - **Modern UI**: Dark theme with Star Wars styling
+- **AI Assistant** 🤖: Chat with an intelligent assistant using OpenAI function calling
+- **SWGAide Integration**: Automatic schematics data from SWGAide database
+- **Markdown Rendering**: Beautiful formatted AI responses
 
 ## Tech Stack
 
@@ -16,6 +19,7 @@ A web-based inventory management system for Star Wars Galaxies shipwright busine
 - **TypeScript** for type safety
 - **TailwindCSS v4** for styling
 - **SQLite** with better-sqlite3 for data persistence
+- **OpenAI API** for AI assistant with function calling
 - **pnpm** for package management
 
 ## Getting Started
@@ -31,6 +35,24 @@ A web-based inventory management system for Star Wars Galaxies shipwright busine
    ```
 
 3. **Open your browser** and navigate to `http://localhost:5174`
+
+## AI Assistant Setup (Optional)
+
+To use the AI assistant features:
+
+1. **Get an OpenAI API key** from [OpenAI Platform](https://platform.openai.com/api-keys)
+2. **Create a `.env` file** in the project root:
+   ```bash
+   OPENAI_API_KEY=your_api_key_here
+   ```
+3. **Restart the dev server** if it's already running
+4. **Navigate to the AI Assistant** page and start chatting!
+
+The AI assistant uses OpenAI function calling to:
+- Analyze your inventory in real-time
+- Provide stock recommendations
+- Search schematics database
+- Generate formatted reports with markdown
 
 ## How to Use
 

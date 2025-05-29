@@ -1,14 +1,7 @@
-import { getAllInventory, getRecommendedStockLevel } from '$lib/database.js';
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types.js';
 
 export const load: PageServerLoad = async () => {
-  const inventory = getAllInventory();
-  const recommendedStockLevel = getRecommendedStockLevel();
-  
-  return {
-    inventory,
-    settings: {
-      recommendedStockLevel
-    }
-  };
+  // Redirect to the inventory page
+  throw redirect(302, '/inventory');
 };

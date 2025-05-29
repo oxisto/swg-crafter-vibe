@@ -21,8 +21,8 @@
 			<ul class="space-y-2">
 				<li>
 					<a
-						href="/"
-						class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors {$page.url.pathname === '/' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'}"
+						href="/inventory"
+						class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors {$page.url.pathname === '/inventory' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'}"
 					>
 						<span class="text-lg">📦</span>
 						<span class="font-medium">Inventory</span>
@@ -35,6 +35,15 @@
 					>
 						<span class="text-lg">⚙️</span>
 						<span class="font-medium">Settings</span>
+					</a>
+				</li>
+				<li>
+					<a
+						href="/chat"
+						class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors {$page.url.pathname === '/chat' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'}"
+					>
+						<span class="text-lg">🤖</span>
+						<span class="font-medium">AI Assistant</span>
 					</a>
 				</li>
 			</ul>

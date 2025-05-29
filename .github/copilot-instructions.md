@@ -52,6 +52,14 @@ This is a SvelteKit application with Svelte 5 and TailwindCSS v4 for managing a 
 - Visual feedback for stock levels
 - Settings page for configuration
 
+✅ **AI Assistant:**
+- OpenAI function calling integration
+- Real-time inventory analysis
+- Markdown rendering for formatted responses
+- Natural language chat interface
+- Dynamic schematics search and filtering
+- Stock level recommendations and insights
+
 ## Potential Future Features
 🔄 **Enhanced Inventory Management:**
 - Bulk operations (select multiple items, batch update)
