@@ -20,8 +20,8 @@ import type { PageServerLoad } from './$types.js';
  */
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		// Fetch inventory data from our API
-		const inventoryResponse = await fetch('/api/inventory?all=true');
+		// Fetch inventory data with schematic information from our API
+		const inventoryResponse = await fetch('/api/inventory?all=true&includeSchematic=true');
 		const inventoryData = await inventoryResponse.json();
 
 		// Fetch settings from the settings API
@@ -38,10 +38,21 @@ export const load: PageServerLoad = async ({ fetch }) => {
 
 		// Convert inventory array back to the object format expected by the UI
 		const inventory: Record<string, number> = {};
+		const schematicNames: Record<string, string> = {};
+		const schematicIds: Record<string, string> = {};
+
 		if (inventoryData.inventory && Array.isArray(inventoryData.inventory)) {
 			inventoryData.inventory.forEach((item: any) => {
 				const key = `${item.category}-${item.markLevel}`;
 				inventory[key] = item.quantity;
+				// Store the display name for each inventory item
+				if (item.displayName) {
+					schematicNames[key] = item.displayName;
+				}
+				// Store the schematic ID for each inventory item
+				if (item.schematicId) {
+					schematicIds[key] = item.schematicId;
+				}
 			});
 		} else if (inventoryData.inventory && typeof inventoryData.inventory === 'object') {
 			// If it's already in object format
@@ -50,12 +61,16 @@ export const load: PageServerLoad = async ({ fetch }) => {
 
 		return {
 			inventory,
+			schematicNames,
+			schematicIds,
 			settings: settingsData
 		};
 	} catch (error) {
 		console.error('Error loading inventory data:', error);
 		return {
 			inventory: {},
+			schematicNames: {},
+			schematicIds: {},
 			settings: { recommendedStockLevel: 10 }
 		};
 	}

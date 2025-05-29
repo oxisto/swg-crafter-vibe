@@ -5,7 +5,7 @@ import { getSchematicById } from '$lib/database';
 export const GET: RequestHandler = async ({ params }) => {
 	try {
 		const schematic = getSchematicById(params.id);
-		
+
 		if (!schematic) {
 			throw error(404, 'Schematic not found');
 		}

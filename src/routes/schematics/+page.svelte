@@ -43,7 +43,7 @@
 					type="text"
 					bind:value={searchTerm}
 					placeholder="Search by schematic name..."
-					class="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+					class="focus:ring-opacity-50 w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 				/>
 			</div>
 		</div>
@@ -60,28 +60,41 @@
 					<table class="w-full">
 						<thead class="bg-slate-700">
 							<tr>
-								<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-300">
+								<th
+									class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>
 									Schematic Name
 								</th>
-								<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-300">
+								<th
+									class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>
 									ID
 								</th>
-								<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-300">
+								<th
+									class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>
 									Category
 								</th>
-								<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-300">
+								<th
+									class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>
 									Profession
 								</th>
-								<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-300">
+								<th
+									class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>
 									Complexity
 								</th>
 							</tr>
 						</thead>
 						<tbody class="divide-y divide-slate-700">
 							{#each filteredSchematics as schematic (schematic.id)}
-								<tr class="hover:bg-slate-700/50 transition-colors">
+								<tr class="transition-colors hover:bg-slate-700/50">
 									<td class="px-6 py-4 text-sm font-medium text-white">
-										<a href="/schematics/{schematic.id}" class="hover:text-yellow-400 transition-colors">
+										<a
+											href="/schematics/{schematic.id}?from=schematics"
+											class="transition-colors hover:text-yellow-400"
+										>
 											{schematic.name}
 										</a>
 									</td>
@@ -101,7 +114,9 @@
 							{:else}
 								<tr>
 									<td colspan="5" class="px-6 py-8 text-center text-slate-400">
-										{searchTerm ? 'No schematics found matching your search.' : 'No schematics available.'}
+										{searchTerm
+											? 'No schematics found matching your search.'
+											: 'No schematics available.'}
 									</td>
 								</tr>
 							{/each}

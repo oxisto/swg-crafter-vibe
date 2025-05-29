@@ -5,7 +5,7 @@ import type { Schematic } from '$lib/types';
 export const load: PageServerLoad = async ({ params, fetch }) => {
 	try {
 		const response = await fetch(`/api/schematics/${params.id}`);
-		
+
 		if (!response.ok) {
 			if (response.status === 404) {
 				throw error(404, 'Schematic not found');
@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 		}
 
 		const schematic: Schematic = await response.json();
-		
+
 		return {
 			schematic
 		};

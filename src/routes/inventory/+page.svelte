@@ -13,6 +13,8 @@
 	// Subscribe to the stores
 	let currentInventory = $state($inventory || {});
 	let currentSettings = $state($settings || { recommendedStockLevel: 10 });
+	let schematicNames = $state(data.schematicNames || {});
+	let schematicIds = $state(data.schematicIds || {});
 
 	// Update local state when stores change
 	$effect(() => {
@@ -55,10 +57,14 @@
 						{#each MARK_LEVELS as markLevel}
 							{@const key = getInventoryKey(category, markLevel)}
 							{@const quantity = currentInventory?.[key] ?? 0}
+							{@const schematicName = schematicNames[key]}
+							{@const schematicId = schematicIds[key]}
 							<InventoryItem
 								{category}
 								{markLevel}
 								{quantity}
+								{schematicName}
+								{schematicId}
 								recommendedStockLevel={currentSettings.recommendedStockLevel}
 							/>
 						{/each}

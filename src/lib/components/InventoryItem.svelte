@@ -30,9 +30,14 @@
 		quantity: number;
 		/** Recommended stock level for color coding */
 		recommendedStockLevel: number;
+		/** Optional schematic name to display instead of generic category-mark format */
+		schematicName?: string;
+		/** Optional schematic ID for creating links to detail pages */
+		schematicId?: string;
 	}
 
-	let { category, markLevel, quantity, recommendedStockLevel }: Props = $props();
+	let { category, markLevel, quantity, recommendedStockLevel, schematicName, schematicId }: Props =
+		$props();
 
 	/** State for edit mode toggle */
 	let editMode = $state(false);
@@ -128,9 +133,22 @@
 	class="group flex min-h-[75px] flex-col justify-center rounded border p-3 transition-colors hover:border-slate-600 {backgroundClasses}"
 >
 	<div class="mb-1 text-center text-xs leading-tight text-slate-400">
-		<span class="inline-block">{category}</span>
-		<span class="inline-block"> - </span>
-		<span class="inline-block">Mark {markLevel}</span>
+		{#if schematicName}
+			{#if schematicId}
+				<a
+					href="/schematics/{schematicId}?from=inventory"
+					class="inline-block cursor-pointer underline decoration-dotted transition-colors hover:text-yellow-400"
+				>
+					{schematicName}
+				</a>
+			{:else}
+				<span class="inline-block">{schematicName}</span>
+			{/if}
+		{:else}
+			<span class="inline-block">{category}</span>
+			<span class="inline-block"> - </span>
+			<span class="inline-block">Mark {markLevel}</span>
+		{/if}
 	</div>
 
 	<div class="flex items-center justify-center gap-2">
