@@ -24,7 +24,7 @@ export const inventory = writable<Inventory>({});
  * Reactive store for application settings.
  * Contains configuration like recommended stock levels and sell values.
  */
-export const settings = writable<Settings>({ 
+export const settings = writable<Settings>({
 	recommendedStockLevel: 10,
 	sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
 });
@@ -153,7 +153,7 @@ export async function loadSettings() {
 	} catch (error) {
 		console.error('Error loading settings:', error);
 	}
-	return { 
+	return {
 		recommendedStockLevel: 10,
 		sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
 	};

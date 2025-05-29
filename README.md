@@ -7,11 +7,14 @@ A web-based inventory management system for Star Wars Galaxies shipwright busine
 - **9 Part Categories**: Armor, Booster, Capacitor, Droid Interface, Engine, Reactor, Shield, Blaster (Green), Blaster (Red)
 - **5 Mark Levels**: I, II, III, IV, V (Roman numerals)
 - **Stock Management**: Increment, decrement, and set exact quantities
+- **Update Tracking**: Automatic timestamps for inventory changes and activity history
 - **SQLite Persistence**: All data is saved to a local database
 - **Modern UI**: Dark theme with Star Wars styling
 - **AI Assistant** 🤖: Chat with an intelligent assistant using OpenAI function calling
 - **SWGAide Integration**: Automatic schematics data from SWGAide database
 - **Markdown Rendering**: Beautiful formatted AI responses
+- **Recent Activity**: Track recently updated inventory items
+- **Sell Values**: Configure and track inventory values by mark level
 
 ## Tech Stack
 

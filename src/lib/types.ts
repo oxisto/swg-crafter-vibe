@@ -28,6 +28,14 @@ export interface InventoryItem {
 	quantity: number;
 }
 
+/** Represents a single inventory item with update timestamp */
+export interface InventoryItemWithTimestamp {
+	category: PartCategory;
+	markLevel: MarkLevel;
+	quantity: number;
+	updatedAt: string;
+}
+
 /**
  * Inventory object mapping component keys to quantities.
  * Key format: `${category}-${markLevel}` (e.g., "Armor-I", "Engine-V")
@@ -200,13 +208,13 @@ export function calculateInventoryValue(
 	sellValues: Record<MarkLevel, number>
 ): number {
 	let totalValue = 0;
-	
+
 	for (const [key, quantity] of Object.entries(inventory)) {
 		const [category, markLevel] = key.split('-') as [PartCategory, MarkLevel];
 		const sellValue = sellValues[markLevel] || 0;
 		totalValue += quantity * sellValue;
 	}
-	
+
 	return totalValue;
 }
 
@@ -223,12 +231,12 @@ export function calculateMarkLevelValue(
 	sellValue: number
 ): number {
 	let totalQuantity = 0;
-	
+
 	for (const [key, quantity] of Object.entries(inventory)) {
 		if (key.endsWith(`-${markLevel}`)) {
 			totalQuantity += quantity;
 		}
 	}
-	
+
 	return totalQuantity * sellValue;
 }

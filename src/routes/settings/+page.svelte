@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { inventory, settings, updateRecommendedStockLevel, updateSellValues } from '$lib/stores.js';
+	import {
+		inventory,
+		settings,
+		updateRecommendedStockLevel,
+		updateSellValues
+	} from '$lib/stores.js';
 	import { PART_CATEGORIES, MARK_LEVELS } from '$lib/types.js';
 	import type { PageData } from './$types.js';
 
@@ -11,10 +16,12 @@
 	}
 
 	// Settings state
-	let currentSettings = $state($settings || { 
-		recommendedStockLevel: 10,
-		sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
-	});
+	let currentSettings = $state(
+		$settings || {
+			recommendedStockLevel: 10,
+			sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
+		}
+	);
 	let editingRecommendedLevel = $state(false);
 	let tempRecommendedLevel = $state(10);
 	let editingSellValues = $state(false);
@@ -22,7 +29,7 @@
 
 	// Update local state when settings store changes
 	$effect(() => {
-		currentSettings = $settings || { 
+		currentSettings = $settings || {
 			recommendedStockLevel: 10,
 			sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
 		};
@@ -218,9 +225,7 @@
 						<div class="flex items-center justify-between">
 							<div>
 								<h3 class="text-lg font-medium text-white">Sell Values</h3>
-								<p class="text-sm text-slate-400">
-									Set the sell values for each mark level
-								</p>
+								<p class="text-sm text-slate-400">Set the sell values for each mark level</p>
 							</div>
 							<div class="flex items-center gap-3">
 								{#if !editingSellValues}
@@ -233,13 +238,16 @@
 								{/if}
 							</div>
 						</div>
-						
+
 						{#if editingSellValues}
 							<div class="mt-4 space-y-3">
 								<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
 									{#each MARK_LEVELS as markLevel}
 										<div class="flex flex-col gap-1">
-											<label for="sell-value-{markLevel}" class="text-sm font-medium text-slate-300">
+											<label
+												for="sell-value-{markLevel}"
+												class="text-sm font-medium text-slate-300"
+											>
 												Mark {markLevel}
 											</label>
 											<input

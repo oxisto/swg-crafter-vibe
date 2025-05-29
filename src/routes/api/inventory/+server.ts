@@ -15,7 +15,10 @@ import { json } from '@sveltejs/kit';
 import {
 	updateInventoryItem,
 	getInventoryItem,
+	getInventoryItemWithTimestamp,
 	getAllInventory,
+	getAllInventoryWithTimestamps,
+	getRecentlyUpdatedInventory,
 	getSchematicById
 } from '$lib/database.js';
 import {
@@ -36,7 +39,9 @@ import type { RequestHandler } from './$types.js';
  * - category: Part category filter (PartCategory)
  * - markLevel: Mark level filter (MarkLevel)
  * - includeSchematic: Include schematic data in response (boolean)
+ * - includeTimestamp: Include update timestamps in response (boolean)
  * - all: Return full inventory instead of single item (boolean)
+ * - recent: Return recently updated items (boolean, optional limit parameter)
  *
  * @param {object} params - Request parameters
  * @param {URL} params.url - Request URL containing query parameters
@@ -46,11 +51,92 @@ export const GET: RequestHandler = async ({ url }) => {
 	const category = url.searchParams.get('category') as PartCategory;
 	const markLevel = url.searchParams.get('markLevel') as MarkLevel;
 	const includeSchematic = url.searchParams.get('includeSchematic') === 'true';
+	const includeTimestamp = url.searchParams.get('includeTimestamp') === 'true';
 	const includeAll = url.searchParams.get('all') === 'true';
+	const recent = url.searchParams.get('recent') === 'true';
+	const limit = parseInt(url.searchParams.get('limit') || '10', 10);
 
 	try {
+		// If requesting recently updated items
+		if (recent) {
+			const recentItems = getRecentlyUpdatedInventory(limit);
+
+			if (includeSchematic) {
+				const enrichedItems = recentItems.map((item) => {
+					const key = `${item.category}-${item.markLevel}`;
+					const schematicId = SCHEMATIC_ID_MAP[key];
+
+					let schematic = null;
+					let displayName = `Mark ${item.markLevel} ${item.category}`;
+
+					if (schematicId) {
+						schematic = getSchematicById(schematicId);
+						if (schematic) {
+							displayName = schematic.name;
+							// For blasters, use custom naming
+							if (item.category.startsWith('Blaster')) {
+								const color = item.category.includes('Green') ? 'Green' : 'Red';
+								displayName = getBlasterName(item.markLevel as MarkLevel, color as 'Green' | 'Red');
+							}
+						}
+					}
+
+					return {
+						...item,
+						displayName,
+						schematic,
+						schematicId
+					};
+				});
+
+				return json({ recentUpdates: enrichedItems });
+			}
+
+			return json({ recentUpdates: recentItems });
+		}
+
 		// If requesting all inventory data
 		if (includeAll) {
+			if (includeTimestamp) {
+				const inventoryWithTimestamps = getAllInventoryWithTimestamps();
+
+				if (includeSchematic) {
+					const enrichedInventory = inventoryWithTimestamps.map((item) => {
+						const key = `${item.category}-${item.markLevel}`;
+						const schematicId = SCHEMATIC_ID_MAP[key];
+
+						let schematic = null;
+						let displayName = `Mark ${item.markLevel} ${item.category}`;
+
+						if (schematicId) {
+							schematic = getSchematicById(schematicId);
+							if (schematic) {
+								displayName = schematic.name;
+								// For blasters, use custom naming
+								if (item.category.startsWith('Blaster')) {
+									const color = item.category.includes('Green') ? 'Green' : 'Red';
+									displayName = getBlasterName(
+										item.markLevel as MarkLevel,
+										color as 'Green' | 'Red'
+									);
+								}
+							}
+						}
+
+						return {
+							...item,
+							displayName,
+							schematic,
+							schematicId
+						};
+					});
+
+					return json({ inventory: enrichedInventory });
+				}
+
+				return json({ inventory: inventoryWithTimestamps });
+			}
+
 			const inventory = getAllInventory();
 
 			if (includeSchematic) {
@@ -97,6 +183,55 @@ export const GET: RequestHandler = async ({ url }) => {
 				{ error: 'Missing category or markLevel parameters. Use ?all=true for full inventory.' },
 				{ status: 400 }
 			);
+		}
+
+		// Get item data with or without timestamp
+		if (includeTimestamp) {
+			const itemData = getInventoryItemWithTimestamp(category, markLevel);
+
+			if (!itemData) {
+				return json({ error: 'Item not found' }, { status: 404 });
+			}
+
+			let response: any = {
+				category,
+				markLevel,
+				quantity: itemData.quantity,
+				updatedAt: itemData.updatedAt
+			};
+
+			// Add schematic data if requested
+			if (includeSchematic) {
+				const inventoryKey = `${category}-${markLevel}`;
+				const schematicId = SCHEMATIC_ID_MAP[inventoryKey];
+
+				if (schematicId) {
+					const schematic = getSchematicById(schematicId);
+
+					if (schematic) {
+						let displayName = schematic.name;
+
+						// For blasters, use custom naming
+						if (category.startsWith('Blaster')) {
+							const color = category.includes('Green') ? 'Green' : 'Red';
+							displayName = getBlasterName(markLevel, color as 'Green' | 'Red');
+						}
+
+						response.displayName = displayName;
+						response.schematic = {
+							id: schematic.id,
+							name: schematic.name,
+							category: schematic.category,
+							profession: schematic.profession,
+							complexity: schematic.complexity,
+							datapad: schematic.datapad
+						};
+						response.schematicId = schematicId;
+					}
+				}
+			}
+
+			return json(response);
 		}
 
 		const quantity = getInventoryItem(category, markLevel);
@@ -189,11 +324,15 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		updateInventoryItem(category, markLevel, newQuantity);
 
+		// Get the updated item with timestamp
+		const updatedItem = getInventoryItemWithTimestamp(category, markLevel);
+
 		return json({
 			success: true,
 			category,
 			markLevel,
-			quantity: newQuantity
+			quantity: newQuantity,
+			updatedAt: updatedItem?.updatedAt || new Date().toISOString()
 		});
 	} catch (error) {
 		console.error('Error updating inventory:', error);

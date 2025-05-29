@@ -65,7 +65,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Handle sell values update
 		if ('sellValues' in body) {
 			const { sellValues } = body;
-			
+
 			// Validate sell values
 			if (typeof sellValues !== 'object' || sellValues === null) {
 				return json({ error: 'Invalid sell values format' }, { status: 400 });

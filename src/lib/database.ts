@@ -102,7 +102,7 @@ export function initDatabase() {
 	if (settingsCount.count === 0) {
 		const insertSetting = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)');
 		insertSetting.run('recommendedStockLevel', '10');
-		
+
 		// Initialize default sell values for each mark level
 		for (const markLevel of MARK_LEVELS) {
 			insertSetting.run(`sellValue_${markLevel}`, '0');
@@ -179,6 +179,100 @@ export function getInventoryItem(category: string, markLevel: string): number {
 	return result?.quantity ?? 0;
 }
 
+/**
+ * Retrieves a specific inventory item with its update timestamp.
+ * @param category - The part category
+ * @param markLevel - The mark level
+ * @returns The inventory item with quantity and update timestamp, or null if not found
+ */
+export function getInventoryItemWithTimestamp(
+	category: string,
+	markLevel: string
+): {
+	quantity: number;
+	updatedAt: string;
+} | null {
+	const db = getDatabase();
+	const stmt = db.prepare(
+		'SELECT quantity, updated_at FROM inventory WHERE category = ? AND mark_level = ?'
+	);
+	const result = stmt.get(category, markLevel) as
+		| { quantity: number; updated_at: string }
+		| undefined;
+
+	if (!result) return null;
+
+	return {
+		quantity: result.quantity,
+		updatedAt: result.updated_at
+	};
+}
+
+/**
+ * Retrieves all inventory items with their update timestamps.
+ * @returns An array of inventory items with quantities and update timestamps
+ */
+export function getAllInventoryWithTimestamps(): Array<{
+	category: string;
+	markLevel: string;
+	quantity: number;
+	updatedAt: string;
+}> {
+	const db = getDatabase();
+	const rows = db
+		.prepare(
+			'SELECT category, mark_level, quantity, updated_at FROM inventory ORDER BY updated_at DESC'
+		)
+		.all() as Array<{
+		category: string;
+		mark_level: string;
+		quantity: number;
+		updated_at: string;
+	}>;
+
+	return rows.map((row) => ({
+		category: row.category,
+		markLevel: row.mark_level,
+		quantity: row.quantity,
+		updatedAt: row.updated_at
+	}));
+}
+
+/**
+ * Gets the most recently updated inventory items.
+ * @param limit - Maximum number of items to return (default: 10)
+ * @returns An array of recently updated inventory items
+ */
+export function getRecentlyUpdatedInventory(limit: number = 10): Array<{
+	category: string;
+	markLevel: string;
+	quantity: number;
+	updatedAt: string;
+}> {
+	const db = getDatabase();
+	const stmt = db.prepare(`
+		SELECT category, mark_level, quantity, updated_at 
+		FROM inventory 
+		WHERE updated_at > datetime('now', '-7 days')
+		ORDER BY updated_at DESC 
+		LIMIT ?
+	`);
+
+	const rows = stmt.all(limit) as Array<{
+		category: string;
+		mark_level: string;
+		quantity: number;
+		updated_at: string;
+	}>;
+
+	return rows.map((row) => ({
+		category: row.category,
+		markLevel: row.mark_level,
+		quantity: row.quantity,
+		updatedAt: row.updated_at
+	}));
+}
+
 // Settings functions
 /**
  * Retrieves a setting value by key.
@@ -234,12 +328,12 @@ export function setRecommendedStockLevel(level: number): void {
  */
 export function getSellValues(): Record<string, number> {
 	const sellValues: Record<string, number> = {};
-	
+
 	for (const markLevel of MARK_LEVELS) {
 		const value = getSetting(`sellValue_${markLevel}`);
 		sellValues[markLevel] = value ? parseFloat(value) : 0;
 	}
-	
+
 	return sellValues;
 }
 

@@ -8,7 +8,7 @@ The `/api/inventory` endpoint now provides comprehensive inventory management fu
 
 ### GET `/api/inventory`
 
-Retrieve inventory data with optional schematic information.
+Retrieve inventory data with optional schematic information and timestamps.
 
 #### Query Parameters
 
@@ -17,7 +17,10 @@ Retrieve inventory data with optional schematic information.
 | `category`         | string  | Part category (required unless `all=true`)  | -       |
 | `markLevel`        | string  | Mark level I-V (required unless `all=true`) | -       |
 | `includeSchematic` | boolean | Include schematic data in response          | `false` |
+| `includeTimestamp` | boolean | Include update timestamps in response       | `false` |
 | `all`              | boolean | Return all inventory items                  | `false` |
+| `recent`           | boolean | Return recently updated items only          | `false` |
+| `limit`            | number  | Max items for recent query (max 50)        | `10`    |
 
 #### Examples
 
@@ -32,6 +35,21 @@ GET /api/inventory?category=Engine&markLevel=I
 	"category": "Engine",
 	"markLevel": "I",
 	"quantity": 2
+}
+```
+
+**Single Item (With Timestamp):**
+
+```bash
+GET /api/inventory?category=Engine&markLevel=I&includeTimestamp=true
+```
+
+```json
+{
+	"category": "Engine",
+	"markLevel": "I",
+	"quantity": 2,
+	"updatedAt": "2025-05-29T10:30:45.123Z"
 }
 ```
 
@@ -81,6 +99,53 @@ GET /api/inventory?all=true&includeSchematic=true
 }
 ```
 
+**All Inventory (With Timestamps):**
+
+```bash
+GET /api/inventory?all=true&includeTimestamp=true
+```
+
+```json
+{
+	"inventory": [
+		{
+			"category": "Engine",
+			"markLevel": "I", 
+			"quantity": 5,
+			"updatedAt": "2025-05-29T10:30:45.123Z"
+		},
+		{
+			"category": "Armor",
+			"markLevel": "II",
+			"quantity": 3,
+			"updatedAt": "2025-05-29T09:15:22.456Z"
+		}
+	]
+}
+```
+
+**Recently Updated Items:**
+
+```bash
+GET /api/inventory?recent=true&limit=5&includeSchematic=true
+```
+
+```json
+{
+	"recentUpdates": [
+		{
+			"category": "Engine",
+			"markLevel": "V",
+			"quantity": 2,
+			"updatedAt": "2025-05-29T10:30:45.123Z",
+			"displayName": "Mark V Starfighter Engine",
+			"schematic": { /* schematic data */ },
+			"schematicId": "2911"
+		}
+	]
+}
+```
+
 **Blaster Custom Naming:**
 
 ```bash
@@ -105,6 +170,41 @@ GET /api/inventory?category=Blaster%20(Green)&markLevel=III&includeSchematic=tru
 }
 ```
 
+### GET `/api/inventory/recent`
+
+Retrieve recently updated inventory items with activity history.
+
+#### Query Parameters
+
+| Parameter          | Type    | Description                          | Default |
+| ------------------ | ------- | ------------------------------------ | ------- |
+| `limit`            | number  | Max items to return (max 50)        | `10`    |
+| `includeSchematic` | boolean | Include schematic data in response   | `false` |
+| `days`             | number  | Days to look back (max 30)          | `7`     |
+
+#### Response
+
+```json
+{
+	"recentUpdates": [
+		{
+			"category": "Engine",
+			"markLevel": "I",
+			"quantity": 5,
+			"updatedAt": "2025-05-29T10:30:45.123Z",
+			"displayName": "Mark I Starfighter Engine", // if includeSchematic=true
+			"schematic": { /* schematic data */ },       // if includeSchematic=true
+			"schematicId": "2907"                        // if includeSchematic=true
+		}
+	],
+	"meta": {
+		"limit": 10,
+		"days": 7,
+		"totalReturned": 5
+	}
+}
+```
+
 ### POST `/api/inventory`
 
 Update inventory quantities.
@@ -120,14 +220,15 @@ Update inventory quantities.
 }
 ```
 
-#### Response
+#### Response (Enhanced with Timestamp)
 
 ```json
 {
 	"success": true,
 	"category": "Engine",
 	"markLevel": "I",
-	"quantity": 3
+	"quantity": 3,
+	"updatedAt": "2025-05-29T10:30:45.123Z"
 }
 ```
 
