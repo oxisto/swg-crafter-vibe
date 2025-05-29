@@ -264,16 +264,28 @@ async function processSchematics(parsedData: any): Promise<void> {
   `);
   
   const insertMany = db.transaction(() => {
-    for (const schematic of schematicsArray) {
-      if (schematic && schematic._id && schematic._name) {
+    for (const rawSchematic of schematicsArray) {
+      if (rawSchematic && rawSchematic._id && rawSchematic._name) {
+        // Convert raw schematic with underscore-prefixed properties to clean Schematic object
+        const cleanSchematic: Schematic = {
+          id: rawSchematic._id,
+          name: rawSchematic._name,
+          category: rawSchematic._category || '',
+          profession: rawSchematic._profession || '',
+          complexity: parseInt(rawSchematic._complexity) || 0,
+          datapad: parseInt(rawSchematic._datapad) || 0,
+          ingredients: [], // TODO: Parse ingredients from rawSchematic if needed
+          resources: []    // TODO: Parse resources from rawSchematic if needed
+        };
+        
         insertStmt.run(
-          schematic._id,
-          schematic._name,
-          schematic._category || null,
-          schematic._profession || null,
-          parseInt(schematic._complexity) || 0,
-          parseInt(schematic._datapad) || 0,
-          JSON.stringify(schematic)
+          cleanSchematic.id,
+          cleanSchematic.name,
+          cleanSchematic.category,
+          cleanSchematic.profession,
+          cleanSchematic.complexity,
+          cleanSchematic.datapad,
+          JSON.stringify(cleanSchematic)
         );
       }
     }
