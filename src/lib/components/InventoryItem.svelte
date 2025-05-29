@@ -14,8 +14,22 @@
 	let editMode = $state(false);
 	let editValue = $state(quantity);
 
-	// Check if quantity is below recommended level
-	let isLowStock = $derived(quantity < recommendedStockLevel);
+	// Get background classes based on stock level vs recommended threshold
+	let backgroundClasses = $derived.by(() => {
+		if (quantity === 0) {
+			// Red for zero stock (critical)
+			return 'bg-red-900/40 border-red-700';
+		} else if (quantity < recommendedStockLevel) {
+			// Yellow for below threshold (warning)
+			return 'bg-yellow-900/40 border-yellow-700';
+		} else if (quantity === recommendedStockLevel) {
+			// Light green for exactly at threshold
+			return 'bg-green-800/40 border-green-600';
+		} else {
+			// Dark green for above threshold
+			return 'bg-green-900/60 border-green-500';
+		}
+	});
 
 	function handleIncrement() {
 		incrementStock(category, markLevel);
@@ -52,42 +66,44 @@
 	}
 </script>
 
-<div class="rounded p-3 border group hover:border-slate-600 transition-colors min-h-[75px] flex flex-col justify-center {isLowStock ? 'bg-red-900/30 border-red-700' : 'bg-slate-800 border-slate-700'}">
-	<div class="text-xs text-slate-400 mb-1 text-center leading-tight">
+<div
+	class="group flex min-h-[75px] flex-col justify-center rounded border p-3 transition-colors hover:border-slate-600 {backgroundClasses}"
+>
+	<div class="mb-1 text-center text-xs leading-tight text-slate-400">
 		<span class="inline-block">{category}</span>
 		<span class="inline-block"> - </span>
 		<span class="inline-block">Mark {markLevel}</span>
 	</div>
-	
+
 	<div class="flex items-center justify-center gap-2">
 		{#if !editMode}
 			<button
 				onclick={handleDecrement}
-				class="w-5 h-5 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+				class="flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-red-700"
 				disabled={quantity === 0}
 			>
 				−
 			</button>
 		{/if}
-		
+
 		{#if editMode}
 			<input
 				type="number"
 				bind:value={editValue}
 				onkeydown={handleKeydown}
-				class="w-12 text-center bg-slate-700 border border-slate-600 rounded px-1 py-0.5 text-white text-sm"
+				class="w-12 rounded border border-slate-600 bg-slate-700 px-1 py-0.5 text-center text-sm text-white"
 				min="0"
 			/>
 			<div class="flex gap-0.5">
 				<button
 					onclick={handleSave}
-					class="px-1.5 py-0.5 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors"
+					class="rounded bg-green-600 px-1.5 py-0.5 text-xs text-white transition-colors hover:bg-green-700"
 				>
 					✓
 				</button>
 				<button
 					onclick={handleCancel}
-					class="px-1.5 py-0.5 bg-gray-600 hover:bg-gray-700 text-white text-xs rounded transition-colors"
+					class="rounded bg-gray-600 px-1.5 py-0.5 text-xs text-white transition-colors hover:bg-gray-700"
 				>
 					✕
 				</button>
@@ -95,16 +111,16 @@
 		{:else}
 			<button
 				onclick={handleEdit}
-				class="min-w-12 text-center font-bold text-blue-400 hover:text-blue-300 transition-colors cursor-pointer"
+				class="min-w-12 cursor-pointer text-center font-bold text-blue-400 transition-colors hover:text-blue-300"
 			>
 				{quantity}
 			</button>
 		{/if}
-		
+
 		{#if !editMode}
 			<button
 				onclick={handleIncrement}
-				class="w-5 h-5 rounded-full bg-green-600 hover:bg-green-700 text-white font-bold text-xs flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+				class="flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs font-bold text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-green-700"
 			>
 				+
 			</button>
