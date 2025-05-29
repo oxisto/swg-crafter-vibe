@@ -144,12 +144,17 @@
 </script>
 
 <svelte:head>
-	<title>Mails - SWG Shipwright</title>
+	<title>SWG Shipwright - Mail Management</title>
 </svelte:head>
 
-<div class="container mx-auto px-4 py-8">
-	<div class="mb-6 flex items-center justify-between">
-		<h1 class="text-3xl font-bold text-gray-900">Mail Management</h1>
+<div class="h-full">
+	<div class="container mx-auto max-w-7xl px-6 py-8">
+		<header class="mb-8 text-center">
+			<h1 class="mb-2 text-3xl font-bold text-yellow-400">📧 Mail Management</h1>
+			<p class="text-slate-400">Import and manage your mail data from the game</p>
+		</header>
+
+		<div class="mb-6 flex items-center justify-between">
 
 		<div class="flex gap-3">
 			<input
@@ -193,22 +198,22 @@
 	</div>
 
 	{#if data.error}
-		<div class="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+		<div class="mb-4 rounded border border-red-400 bg-red-800/20 px-4 py-3 text-red-300">
 			{data.error}
 		</div>
 	{/if}
 
 	<!-- Import History -->
 	{#if data.imports.length > 0}
-		<div class="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-			<h2 class="mb-3 text-lg font-semibold">Recent Imports</h2>
+		<div class="mb-6 rounded-lg border border-slate-700 bg-slate-800 p-6">
+			<h2 class="mb-3 text-lg font-semibold text-white">Recent Imports</h2>
 			<div class="space-y-2">
 				{#each data.imports.slice(0, 5) as importRecord}
 					<div class="flex items-center justify-between text-sm">
-						<span class="text-gray-600">
+						<span class="text-slate-400">
 							{formatDate(importRecord.imported_at || '')}
 						</span>
-						<span class="font-medium">
+						<span class="font-medium text-white">
 							{importRecord.imported_mails}/{importRecord.total_mails} mails imported
 						</span>
 					</div>
@@ -218,28 +223,28 @@
 	{/if}
 
 	<!-- Filters -->
-	<div class="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-		<h2 class="mb-3 text-lg font-semibold">Filters</h2>
+	<div class="mb-6 rounded-lg border border-slate-700 bg-slate-800 p-6">
+		<h2 class="mb-3 text-lg font-semibold text-white">Filters</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 			<div>
-				<label for="sender" class="mb-1 block text-sm font-medium text-gray-700">Sender</label>
+				<label for="sender" class="mb-1 block text-sm font-medium text-slate-300">Sender</label>
 				<input
 					id="sender"
 					type="text"
 					bind:value={senderFilter}
 					placeholder="Filter by sender..."
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+					class="w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-white focus:border-blue-500 focus:ring-blue-500"
 				/>
 			</div>
 
 			<div>
-				<label for="subject" class="mb-1 block text-sm font-medium text-gray-700">Subject</label>
+				<label for="subject" class="mb-1 block text-sm font-medium text-slate-300">Subject</label>
 				<input
 					id="subject"
 					type="text"
 					bind:value={subjectFilter}
 					placeholder="Filter by subject..."
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+					class="w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-white focus:border-blue-500 focus:ring-blue-500"
 				/>
 			</div>
 
@@ -252,7 +257,7 @@
 				</button>
 				<button
 					on:click={clearFilters}
-					class="rounded-md bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+					class="rounded-md bg-slate-600 px-4 py-2 text-white hover:bg-slate-700"
 				>
 					Clear
 				</button>
@@ -261,15 +266,15 @@
 	</div>
 
 	<!-- Mails List -->
-	<div class="rounded-lg border border-gray-200 bg-white shadow-sm">
-		<div class="border-b border-gray-200 px-4 py-3">
-			<h2 class="text-lg font-semibold">
+	<div class="rounded-lg border border-slate-700 bg-slate-800 shadow-sm">
+		<div class="border-b border-slate-700 px-4 py-3">
+			<h2 class="text-lg font-semibold text-white">
 				Mails ({data.total.toLocaleString()})
 			</h2>
 		</div>
 
 		{#if data.mails.length === 0}
-			<div class="p-8 text-center text-gray-500">
+			<div class="p-8 text-center text-slate-400">
 				<p class="text-lg">No mails found</p>
 				<p class="mt-1 text-sm">
 					{#if data.filters.sender || data.filters.subject}
@@ -280,32 +285,32 @@
 				</p>
 			</div>
 		{:else}
-			<div class="divide-y divide-gray-200">
+			<div class="divide-y divide-slate-700">
 				{#each data.mails as mail}
-					<div class="p-4 hover:bg-gray-50">
+					<div class="p-4 hover:bg-slate-700/50">
 						<div class="flex items-start justify-between">
 							<div class="min-w-0 flex-1">
 								<div class="mb-2 flex items-center gap-3">
-									<span class="text-sm font-medium text-blue-600">
+									<span class="text-sm font-medium text-blue-400">
 										{mail.sender}
 									</span>
-									<span class="text-xs text-gray-500">
+									<span class="text-xs text-slate-500">
 										{getTimeAgo(mail.timestamp)}
 									</span>
 								</div>
 
-								<h3 class="mb-1 text-sm font-medium text-gray-900">
+								<h3 class="mb-1 text-sm font-medium text-white">
 									{mail.subject}
 								</h3>
 
-								<p class="line-clamp-2 text-xs text-gray-600">
+								<p class="line-clamp-2 text-xs text-slate-400">
 									{mail.body.length > 150 ? mail.body.substring(0, 150) + '...' : mail.body}
 								</p>
 
 								{#if mail.location}
 									<div class="mt-2">
 										<span
-											class="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700"
+											class="inline-flex items-center rounded-full bg-slate-700 px-2 py-1 text-xs text-slate-300"
 										>
 											📍 {mail.location}
 										</span>
@@ -313,7 +318,7 @@
 								{/if}
 							</div>
 
-							<div class="ml-4 text-xs text-gray-400">
+							<div class="ml-4 text-xs text-slate-500">
 								{formatDate(mail.timestamp)}
 							</div>
 						</div>
@@ -323,8 +328,8 @@
 
 			<!-- Pagination -->
 			{#if data.pagination.totalPages > 1}
-				<div class="flex items-center justify-between border-t border-gray-200 px-4 py-3">
-					<div class="text-sm text-gray-700">
+				<div class="flex items-center justify-between border-t border-slate-700 px-4 py-3">
+					<div class="text-sm text-slate-400">
 						Showing {(data.pagination.page - 1) * data.pagination.limit + 1} to
 						{Math.min(data.pagination.page * data.pagination.limit, data.total)} of
 						{data.total.toLocaleString()} results
@@ -334,7 +339,7 @@
 						<button
 							on:click={() => goToPage(data.pagination.page - 1)}
 							disabled={data.pagination.page <= 1}
-							class="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+							class="rounded border border-slate-600 bg-slate-700 px-3 py-1 text-sm text-white hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							Previous
 						</button>
@@ -346,10 +351,10 @@
 							{#if pageNum <= data.pagination.totalPages}
 								<button
 									on:click={() => goToPage(pageNum)}
-									class="rounded border border-gray-300 px-3 py-1 text-sm {pageNum ===
+									class="rounded border border-slate-600 bg-slate-700 px-3 py-1 text-sm text-white {pageNum ===
 									data.pagination.page
-										? 'border-blue-300 bg-blue-50 text-blue-600'
-										: 'hover:bg-gray-50'}"
+										? 'border-blue-400 bg-blue-600'
+										: 'hover:bg-slate-600'}"
 								>
 									{pageNum}
 								</button>
@@ -359,7 +364,7 @@
 						<button
 							on:click={() => goToPage(data.pagination.page + 1)}
 							disabled={data.pagination.page >= data.pagination.totalPages}
-							class="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+							class="rounded border border-slate-600 bg-slate-700 px-3 py-1 text-sm text-white hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							Next
 						</button>
@@ -368,4 +373,5 @@
 			{/if}
 		{/if}
 	</div>
+</div>
 </div>
