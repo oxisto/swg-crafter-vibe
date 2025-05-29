@@ -35,7 +35,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		console.error('Error loading settings:', error);
 		return {
 			settings: {
-				recommendedStockLevel: 10
+				recommendedStockLevel: 10,
+				sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
 			}
 		};
 	}

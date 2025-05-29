@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { inventory, settings, updateRecommendedStockLevel } from '$lib/stores.js';
+	import { inventory, settings, updateRecommendedStockLevel, updateSellValues } from '$lib/stores.js';
 	import { PART_CATEGORIES, MARK_LEVELS } from '$lib/types.js';
 	import type { PageData } from './$types.js';
 
@@ -11,15 +11,26 @@
 	}
 
 	// Settings state
-	let currentSettings = $state($settings || { recommendedStockLevel: 10 });
+	let currentSettings = $state($settings || { 
+		recommendedStockLevel: 10,
+		sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
+	});
 	let editingRecommendedLevel = $state(false);
 	let tempRecommendedLevel = $state(10);
+	let editingSellValues = $state(false);
+	let tempSellValues = $state({ I: 0, II: 0, III: 0, IV: 0, V: 0 });
 
 	// Update local state when settings store changes
 	$effect(() => {
-		currentSettings = $settings || { recommendedStockLevel: 10 };
+		currentSettings = $settings || { 
+			recommendedStockLevel: 10,
+			sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
+		};
 		if (!editingRecommendedLevel) {
 			tempRecommendedLevel = currentSettings.recommendedStockLevel;
+		}
+		if (!editingSellValues) {
+			tempSellValues = { ...currentSettings.sellValues };
 		}
 	});
 
@@ -108,6 +119,36 @@
 			cancelEditRecommendedLevel();
 		}
 	}
+
+	function editSellValues() {
+		tempSellValues = { ...currentSettings.sellValues };
+		editingSellValues = true;
+	}
+
+	async function saveSellValues() {
+		try {
+			// Validate all values are numbers >= 0
+			const validatedValues: Record<string, number> = {};
+			for (const [markLevel, value] of Object.entries(tempSellValues)) {
+				const numValue = parseFloat(value.toString());
+				if (isNaN(numValue) || numValue < 0) {
+					alert(`Invalid sell value for Mark ${markLevel}. Please enter a number >= 0.`);
+					return;
+				}
+				validatedValues[markLevel] = numValue;
+			}
+
+			await updateSellValues(validatedValues);
+			editingSellValues = false;
+		} catch (error) {
+			console.error('Failed to save sell values:', error);
+			alert('Failed to save sell values. Please try again.');
+		}
+	}
+
+	function cancelEditSellValues() {
+		editingSellValues = false;
+	}
 </script>
 
 <svelte:head>
@@ -171,6 +212,77 @@
 								</button>
 							{/if}
 						</div>
+					</div>
+
+					<div class="rounded-lg bg-slate-700 p-4">
+						<div class="flex items-center justify-between">
+							<div>
+								<h3 class="text-lg font-medium text-white">Sell Values</h3>
+								<p class="text-sm text-slate-400">
+									Set the sell values for each mark level
+								</p>
+							</div>
+							<div class="flex items-center gap-3">
+								{#if !editingSellValues}
+									<button
+										onclick={editSellValues}
+										class="rounded bg-blue-600 px-3 py-1 text-sm text-white transition-colors hover:bg-blue-700"
+									>
+										Edit
+									</button>
+								{/if}
+							</div>
+						</div>
+						
+						{#if editingSellValues}
+							<div class="mt-4 space-y-3">
+								<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+									{#each MARK_LEVELS as markLevel}
+										<div class="flex flex-col gap-1">
+											<label for="sell-value-{markLevel}" class="text-sm font-medium text-slate-300">
+												Mark {markLevel}
+											</label>
+											<input
+												id="sell-value-{markLevel}"
+												type="number"
+												bind:value={tempSellValues[markLevel]}
+												class="w-full rounded border border-slate-500 bg-slate-600 px-3 py-2 text-center text-white focus:border-blue-400 focus:outline-none"
+												min="0"
+												step="0.01"
+												placeholder="0.00"
+											/>
+										</div>
+									{/each}
+								</div>
+								<div class="flex justify-end gap-2">
+									<button
+										onclick={cancelEditSellValues}
+										class="rounded bg-gray-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gray-700"
+									>
+										Cancel
+									</button>
+									<button
+										onclick={saveSellValues}
+										class="rounded bg-green-600 px-4 py-2 text-sm text-white transition-colors hover:bg-green-700"
+									>
+										Save
+									</button>
+								</div>
+							</div>
+						{:else}
+							<div class="mt-4">
+								<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+									{#each MARK_LEVELS as markLevel}
+										<div class="rounded bg-slate-600 p-3 text-center">
+											<div class="text-sm font-medium text-slate-300">Mark {markLevel}</div>
+											<div class="text-lg font-bold text-blue-400">
+												{currentSettings.sellValues[markLevel] || 0}
+											</div>
+										</div>
+									{/each}
+								</div>
+							</div>
+						{/if}
 					</div>
 				</div>
 			</section>

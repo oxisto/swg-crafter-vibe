@@ -15,22 +15,26 @@ import {
 	getSetting,
 	setSetting,
 	getRecommendedStockLevel,
-	setRecommendedStockLevel
+	setRecommendedStockLevel,
+	getSellValues,
+	setSellValues
 } from '$lib/database.js';
 import type { RequestHandler } from './$types.js';
 
 /**
  * GET endpoint handler for retrieving application settings.
- * Currently returns the recommended stock level configuration.
+ * Returns the recommended stock level and sell values configuration.
  *
  * @returns {Promise<Response>} JSON response with current settings
  */
 export const GET: RequestHandler = async () => {
 	try {
 		const recommendedStockLevel = getRecommendedStockLevel();
+		const sellValues = getSellValues();
 
 		return json({
-			recommendedStockLevel
+			recommendedStockLevel,
+			sellValues
 		});
 	} catch (error) {
 		console.error('Error getting settings:', error);
@@ -40,13 +44,15 @@ export const GET: RequestHandler = async () => {
 
 /**
  * POST endpoint handler for updating application settings.
- * Supports updating recommended stock levels and generic settings.
+ * Supports updating recommended stock levels, sell values, and generic settings.
  *
  * Request body:
  * - key: Setting key name (string) - required
  * - value: Setting value (string|number) - required
+ * OR
+ * - sellValues: Object mapping mark levels to sell values
  *
- * Special handling for 'recommendedStockLevel' key with validation.
+ * Special handling for 'recommendedStockLevel' key and 'sellValues' object.
  *
  * @param {object} params - Request parameters
  * @param {Request} params.request - The incoming HTTP request
@@ -54,7 +60,34 @@ export const GET: RequestHandler = async () => {
  */
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const { key, value } = await request.json();
+		const body = await request.json();
+
+		// Handle sell values update
+		if ('sellValues' in body) {
+			const { sellValues } = body;
+			
+			// Validate sell values
+			if (typeof sellValues !== 'object' || sellValues === null) {
+				return json({ error: 'Invalid sell values format' }, { status: 400 });
+			}
+
+			// Validate all values are numbers
+			for (const [markLevel, value] of Object.entries(sellValues)) {
+				const numValue = parseFloat(value as string);
+				if (isNaN(numValue) || numValue < 0) {
+					return json({ error: `Invalid sell value for mark level ${markLevel}` }, { status: 400 });
+				}
+			}
+
+			setSellValues(sellValues as Record<string, number>);
+
+			return json({
+				success: true,
+				sellValues
+			});
+		}
+
+		const { key, value } = body;
 
 		if (key === 'recommendedStockLevel') {
 			const level = parseInt(value.toString(), 10);

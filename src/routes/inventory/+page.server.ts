@@ -71,7 +71,10 @@ export const load: PageServerLoad = async ({ fetch }) => {
 			inventory: {},
 			schematicNames: {},
 			schematicIds: {},
-			settings: { recommendedStockLevel: 10 }
+			settings: { 
+				recommendedStockLevel: 10,
+				sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
+			}
 		};
 	}
 };

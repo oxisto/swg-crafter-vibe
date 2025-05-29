@@ -37,6 +37,7 @@ export type Inventory = Record<string, number>;
 /** Application settings interface */
 export interface Settings {
 	recommendedStockLevel: number;
+	sellValues: Record<MarkLevel, number>;
 }
 
 /** Schematic data structure from SWGAide XML exports */
@@ -187,3 +188,47 @@ export const SCHEMATIC_ID_MAP: Record<string, string> = {
 	'Blaster (Red)-IV': '2635',
 	'Blaster (Red)-V': '2811'
 };
+
+/**
+ * Calculates the total value of the inventory based on sell values
+ * @param inventory - The current inventory state
+ * @param sellValues - The sell values for each mark level
+ * @returns The total value of all inventory items
+ */
+export function calculateInventoryValue(
+	inventory: Inventory,
+	sellValues: Record<MarkLevel, number>
+): number {
+	let totalValue = 0;
+	
+	for (const [key, quantity] of Object.entries(inventory)) {
+		const [category, markLevel] = key.split('-') as [PartCategory, MarkLevel];
+		const sellValue = sellValues[markLevel] || 0;
+		totalValue += quantity * sellValue;
+	}
+	
+	return totalValue;
+}
+
+/**
+ * Calculates the value of inventory for a specific mark level
+ * @param inventory - The current inventory state
+ * @param markLevel - The mark level to calculate for
+ * @param sellValue - The sell value for this mark level
+ * @returns The total value for this mark level
+ */
+export function calculateMarkLevelValue(
+	inventory: Inventory,
+	markLevel: MarkLevel,
+	sellValue: number
+): number {
+	let totalQuantity = 0;
+	
+	for (const [key, quantity] of Object.entries(inventory)) {
+		if (key.endsWith(`-${markLevel}`)) {
+			totalQuantity += quantity;
+		}
+	}
+	
+	return totalQuantity * sellValue;
+}

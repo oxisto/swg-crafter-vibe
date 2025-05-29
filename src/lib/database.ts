@@ -102,6 +102,11 @@ export function initDatabase() {
 	if (settingsCount.count === 0) {
 		const insertSetting = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)');
 		insertSetting.run('recommendedStockLevel', '10');
+		
+		// Initialize default sell values for each mark level
+		for (const markLevel of MARK_LEVELS) {
+			insertSetting.run(`sellValue_${markLevel}`, '0');
+		}
 	}
 
 	// Download and cache schematics in the background
@@ -221,6 +226,40 @@ export function getRecommendedStockLevel(): number {
  */
 export function setRecommendedStockLevel(level: number): void {
 	setSetting('recommendedStockLevel', level.toString());
+}
+
+/**
+ * Gets sell values for all mark levels.
+ * @returns An object mapping mark levels to their sell values
+ */
+export function getSellValues(): Record<string, number> {
+	const sellValues: Record<string, number> = {};
+	
+	for (const markLevel of MARK_LEVELS) {
+		const value = getSetting(`sellValue_${markLevel}`);
+		sellValues[markLevel] = value ? parseFloat(value) : 0;
+	}
+	
+	return sellValues;
+}
+
+/**
+ * Sets the sell value for a specific mark level.
+ * @param markLevel - The mark level to set the sell value for
+ * @param value - The sell value
+ */
+export function setSellValue(markLevel: string, value: number): void {
+	setSetting(`sellValue_${markLevel}`, value.toString());
+}
+
+/**
+ * Sets sell values for all mark levels.
+ * @param sellValues - An object mapping mark levels to their sell values
+ */
+export function setSellValues(sellValues: Record<string, number>): void {
+	for (const [markLevel, value] of Object.entries(sellValues)) {
+		setSellValue(markLevel, value);
+	}
 }
 
 // Schematics functionality

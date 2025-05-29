@@ -22,9 +22,12 @@ export const inventory = writable<Inventory>({});
 
 /**
  * Reactive store for application settings.
- * Contains configuration like recommended stock levels.
+ * Contains configuration like recommended stock levels and sell values.
  */
-export const settings = writable<Settings>({ recommendedStockLevel: 10 });
+export const settings = writable<Settings>({ 
+	recommendedStockLevel: 10,
+	sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
+});
 
 /**
  * Increments the stock quantity for a specific inventory item by 1.
@@ -150,7 +153,10 @@ export async function loadSettings() {
 	} catch (error) {
 		console.error('Error loading settings:', error);
 	}
-	return { recommendedStockLevel: 10 };
+	return { 
+		recommendedStockLevel: 10,
+		sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
+	};
 }
 
 /**
@@ -181,5 +187,35 @@ export async function updateRecommendedStockLevel(level: number) {
 		}
 	} catch (error) {
 		console.error('Error updating recommended stock level:', error);
+	}
+}
+
+/**
+ * Updates the sell values for all mark levels.
+ * Persists the changes to the server and updates the local settings store.
+ *
+ * @param {Record<string, number>} sellValues - Object mapping mark levels to sell values
+ * @returns {Promise<void>} Promise that resolves when operation completes
+ */
+export async function updateSellValues(sellValues: Record<string, number>) {
+	try {
+		const response = await fetch('/api/settings', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				sellValues
+			})
+		});
+
+		if (response.ok) {
+			settings.update((s) => {
+				s.sellValues = sellValues as any;
+				return s;
+			});
+		}
+	} catch (error) {
+		console.error('Error updating sell values:', error);
 	}
 }
