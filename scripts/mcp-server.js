@@ -11,7 +11,7 @@ console.log('Connect your MCP client to this server for advanced AI integration.
 console.log('');
 
 // Start the MCP server
-runMCPServer().catch(error => {
-  console.error('Failed to start MCP server:', error);
-  process.exit(1);
+runMCPServer().catch((error) => {
+	console.error('Failed to start MCP server:', error);
+	process.exit(1);
 });

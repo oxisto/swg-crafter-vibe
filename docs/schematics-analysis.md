@@ -6,21 +6,22 @@ Based on exploration of the SWGAide schematics API, here are the relevant catego
 
 ### 🚀 **Ship Component Categories**
 
-| Inventory Category | Schematic Category | Mark Levels Available | Sample Schematic IDs |
-|-------------------|-------------------|---------------------|---------------------|
-| **Engine** | 1388 | I-V | 2907, 2925, 2939, 2948, 2955 |
-| **Reactor** | 1389 | I-V | 2896, 2915, 2933, 2945, 2954 |
-| **Shield** | 1390 | I-V | 2904, 2912, 2930, 2942, 2951 |
-| **Armor** | 1385 | I-V | 2895, 2914, 2932, 2944, 2953 |
-| **Capacitor** | 1387 | I-V | 2908, 2926, 2940, 2949, 2956 |
-| **Booster** | 1386 | I-V | 2891, 2909, 2927, 2941, 2950 |
-| **Droid Interface** | 1383 | I-V | 2894, 2913, 2931, 2943, 2952 |
-| **Blaster (Green)** | 1381 | I-V | 2876, 2973, 2845, 2634, 2810 |
-| **Blaster (Red)** | 1381 | I-V | 2877, 2974, 2846, 2635, 2811 |
+| Inventory Category  | Schematic Category | Mark Levels Available | Sample Schematic IDs         |
+| ------------------- | ------------------ | --------------------- | ---------------------------- |
+| **Engine**          | 1388               | I-V                   | 2907, 2925, 2939, 2948, 2955 |
+| **Reactor**         | 1389               | I-V                   | 2896, 2915, 2933, 2945, 2954 |
+| **Shield**          | 1390               | I-V                   | 2904, 2912, 2930, 2942, 2951 |
+| **Armor**           | 1385               | I-V                   | 2895, 2914, 2932, 2944, 2953 |
+| **Capacitor**       | 1387               | I-V                   | 2908, 2926, 2940, 2949, 2956 |
+| **Booster**         | 1386               | I-V                   | 2891, 2909, 2927, 2941, 2950 |
+| **Droid Interface** | 1383               | I-V                   | 2894, 2913, 2931, 2943, 2952 |
+| **Blaster (Green)** | 1381               | I-V                   | 2876, 2973, 2845, 2634, 2810 |
+| **Blaster (Red)**   | 1381               | I-V                   | 2877, 2974, 2846, 2635, 2811 |
 
 ### 📝 **Complete Mark Level Component Lists**
 
 #### Engines (Category 1388)
+
 - Mark I Starfighter Engine (ID: 2907)
 - Mark II Starfighter Engine (ID: 2925)
 - Mark III Starfighter Engine (ID: 2939)
@@ -28,6 +29,7 @@ Based on exploration of the SWGAide schematics API, here are the relevant catego
 - Mark V Starfighter Engine (ID: 2955)
 
 #### Reactors (Category 1389)
+
 - Mark I Fusion Reactor (ID: 2896)
 - Mark II Fusion Reactor (ID: 2915)
 - Mark III Fusion Reactor (ID: 2933)
@@ -35,6 +37,7 @@ Based on exploration of the SWGAide schematics API, here are the relevant catego
 - Mark V Fusion Reactor (ID: 2954)
 
 #### Shields (Category 1390)
+
 - Mark I Shield Generator (ID: 2904)
 - Mark II Deflector Shield Generator (ID: 2912)
 - Mark III Deflector Shield Generator (ID: 2930)
@@ -42,6 +45,7 @@ Based on exploration of the SWGAide schematics API, here are the relevant catego
 - Mark V Deflector Shield Generator (ID: 2951)
 
 #### Armor (Category 1385)
+
 - Mark I Durasteel Plating (ID: 2895)
 - Mark II Durasteel Plating (ID: 2914)
 - Mark III Durasteel Plating (ID: 2932)
@@ -49,6 +53,7 @@ Based on exploration of the SWGAide schematics API, here are the relevant catego
 - Mark V Durasteel Plating (ID: 2953)
 
 #### Capacitors (Category 1387)
+
 - Mark I Weapons Capacitor (ID: 2908)
 - Mark II Weapons Capacitor (ID: 2926)
 - Mark III Weapons Capacitor (ID: 2940)
@@ -56,6 +61,7 @@ Based on exploration of the SWGAide schematics API, here are the relevant catego
 - Mark V Weapons Capacitor (ID: 2956)
 
 #### Boosters (Category 1386)
+
 - Mark I Booster (ID: 2891)
 - Mark II Booster (ID: 2909)
 - Mark III Booster (ID: 2927)
@@ -63,6 +69,7 @@ Based on exploration of the SWGAide schematics API, here are the relevant catego
 - Mark V Booster (ID: 2950)
 
 #### Droid Interfaces (Category 1383)
+
 - Mark I Droid Interface (ID: 2894)
 - Mark II Droid Interface (ID: 2913)
 - Mark III Droid Interface (ID: 2931)
@@ -70,6 +77,7 @@ Based on exploration of the SWGAide schematics API, here are the relevant catego
 - Mark V Droid Interface (ID: 2952)
 
 #### Blasters - Green (Category 1381)
+
 - Mark I: Light Blaster (Green) (ID: 2876)
 - Mark II: Mid-Grade Blaster (Green) (ID: 2973)
 - Mark III: Heavy Blaster (Green) (ID: 2845)
@@ -77,6 +85,7 @@ Based on exploration of the SWGAide schematics API, here are the relevant catego
 - Mark V: Experimental Blaster (Green) (ID: 2810)
 
 #### Blasters - Red (Category 1381)
+
 - Mark I: Light Blaster (Red) (ID: 2877)
 - Mark II: Mid-Grade Blaster (Red) (ID: 2974)
 - Mark III: Heavy Blaster (Red) (ID: 2846)
@@ -106,17 +115,19 @@ Now that you have the schematic IDs that correspond to your inventory items, you
 For your inventory key format `${category}-${markLevel}`, you can now map to:
 
 **Engine Example:**
-- Inventory Key: "Engine-III" 
+
+- Inventory Key: "Engine-III"
 - Category: 1388 (Engine)
 - Schematic ID: 2939 (Mark III Starfighter Engine)
 
 **Blaster Examples:**
+
 - Inventory Key: "Blaster (Green)-IV"
 - Category: 1381 (Blasters)
 - Schematic ID: 2634 (Advanced Blaster (Green))
 
 - Inventory Key: "Blaster (Red)-I"
-- Category: 1381 (Blasters) 
+- Category: 1381 (Blasters)
 - Schematic ID: 2877 (Light Blaster (Red))
 
 This allows you to provide rich contextual information about what each inventory item is used for in ship construction.
@@ -124,6 +135,7 @@ This allows you to provide rich contextual information about what each inventory
 ### 📊 **Next Steps**
 
 Consider implementing:
+
 1. A mapping table in your database linking inventory keys to schematic IDs
 2. API endpoints that combine inventory data with schematic information
 3. UI components that show both current stock and what each component is used for
@@ -132,17 +144,20 @@ Consider implementing:
 ### 🔄 **Recent Changes Made**
 
 **✅ Updated Inventory Structure:**
+
 - Split "Weapon" category into "Blaster (Green)" and "Blaster (Red)"
 - Updated TypeScript types in `src/lib/types.ts`
 - Migrated existing database records from "Weapon" to new blaster categories
 - Inventory grid now shows 9×5 layout (was 8×5) with separate green/red blaster rows
 
 **✅ Added Helper Functions:**
+
 - `getBlasterName()` - Maps mark levels to proper blaster names (Light, Mid-Grade, Heavy, Advanced, Experimental)
 - `SCHEMATIC_CATEGORY_MAP` - Maps inventory categories to schematic categories
 - `SCHEMATIC_ID_MAP` - Direct mapping from inventory keys to specific schematic IDs
 
 **✅ Database Migration:**
+
 - Automatically converted existing "Weapon" entries to both "Blaster (Green)" and "Blaster (Red)"
 - Preserved existing quantities and timestamps
 - No data loss during migration

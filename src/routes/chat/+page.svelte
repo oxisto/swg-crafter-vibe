@@ -14,7 +14,7 @@
 	// Configure marked for better rendering
 	marked.setOptions({
 		breaks: true, // Enable line breaks
-		gfm: true,    // GitHub Flavored Markdown
+		gfm: true // GitHub Flavored Markdown
 	});
 
 	let messages = $state<Message[]>([]);
@@ -163,7 +163,9 @@
 	$effect(() => {
 		if (messagesContainer && messages.length > 0) {
 			setTimeout(() => {
-				messagesContainer.scrollTop = messagesContainer.scrollHeight;
+				if (messagesContainer) {
+					messagesContainer.scrollTop = messagesContainer.scrollHeight;
+				}
 			}, 100);
 		}
 	});
@@ -171,7 +173,7 @@
 	onMount(() => {
 		// Load existing messages first
 		loadMessages();
-		
+
 		// Add welcome message only if no messages exist
 		if (data.hasApiKey && messages.length === 0) {
 			messages.push({
@@ -201,10 +203,10 @@ Ask me anything about your inventory or Star Wars Galaxies shipwright business!`
 	<div class="w-full px-4 py-6">
 		<header class="mb-6 text-center">
 			<h1 class="mb-2 text-3xl font-bold text-yellow-400">AI Assistant</h1>
-			<p class="text-slate-400">
-				Enhanced with OpenAI Function Calling - dynamic data querying
-			</p>
-			<div class="mt-2 inline-flex items-center rounded-full bg-blue-900/40 px-3 py-1 text-xs text-blue-400">
+			<p class="text-slate-400">Enhanced with OpenAI Function Calling - dynamic data querying</p>
+			<div
+				class="mt-2 inline-flex items-center rounded-full bg-blue-900/40 px-3 py-1 text-xs text-blue-400"
+			>
 				⚡ Function Calling Enabled
 			</div>
 		</header>
@@ -231,7 +233,10 @@ Ask me anything about your inventory or Star Wars Galaxies shipwright business!`
 				>
 					{#if messages.length === 0}
 						<div class="mt-8 text-center text-slate-400">
-							<p class="mb-6">Start a conversation by typing a message or try one of these function calling prompts:</p>
+							<p class="mb-6">
+								Start a conversation by typing a message or try one of these function calling
+								prompts:
+							</p>
 							<div class="mx-auto grid max-w-2xl gap-2">
 								{#each conversationStarters as starter}
 									<button
@@ -328,39 +333,52 @@ Ask me anything about your inventory or Star Wars Galaxies shipwright business!`
 	}
 
 	/* Custom markdown styles for dark theme */
-	:global(.prose-markdown h1, .prose-markdown h2, .prose-markdown h3, .prose-markdown h4, .prose-markdown h5, .prose-markdown h6) {
+	:global(
+		.prose-markdown h1,
+		.prose-markdown h2,
+		.prose-markdown h3,
+		.prose-markdown h4,
+		.prose-markdown h5,
+		.prose-markdown h6
+	) {
 		color: #facc15;
 		font-weight: bold;
 		margin-top: 1rem;
 		margin-bottom: 0.5rem;
 	}
-	
-	:global(.prose-markdown h1) { font-size: 1.25rem; }
-	:global(.prose-markdown h2) { font-size: 1.125rem; }
-	:global(.prose-markdown h3) { font-size: 1rem; }
-	
+
+	:global(.prose-markdown h1) {
+		font-size: 1.25rem;
+	}
+	:global(.prose-markdown h2) {
+		font-size: 1.125rem;
+	}
+	:global(.prose-markdown h3) {
+		font-size: 1rem;
+	}
+
 	:global(.prose-markdown p) {
 		margin-bottom: 0.75rem;
 		line-height: 1.625;
 	}
-	
+
 	:global(.prose-markdown ul, .prose-markdown ol) {
 		margin-bottom: 0.75rem;
 		margin-left: 1rem;
 	}
-	
+
 	:global(.prose-markdown li) {
 		margin-bottom: 0.25rem;
 	}
-	
+
 	:global(.prose-markdown ul li) {
 		list-style-type: disc;
 	}
-	
+
 	:global(.prose-markdown ol li) {
 		list-style-type: decimal;
 	}
-	
+
 	:global(.prose-markdown code) {
 		background-color: #1e293b;
 		color: #fde047;
@@ -368,7 +386,7 @@ Ask me anything about your inventory or Star Wars Galaxies shipwright business!`
 		border-radius: 0.25rem;
 		font-size: 0.875rem;
 	}
-	
+
 	:global(.prose-markdown pre) {
 		background-color: #1e293b;
 		padding: 0.75rem;
@@ -376,12 +394,12 @@ Ask me anything about your inventory or Star Wars Galaxies shipwright business!`
 		overflow-x: auto;
 		margin-bottom: 0.75rem;
 	}
-	
+
 	:global(.prose-markdown pre code) {
 		background-color: transparent;
 		padding: 0;
 	}
-	
+
 	:global(.prose-markdown blockquote) {
 		border-left: 4px solid #facc15;
 		padding-left: 1rem;
@@ -389,29 +407,29 @@ Ask me anything about your inventory or Star Wars Galaxies shipwright business!`
 		color: #cbd5e1;
 		margin-bottom: 0.75rem;
 	}
-	
+
 	:global(.prose-markdown strong, .prose-markdown b) {
 		font-weight: bold;
 		color: #facc15;
 	}
-	
+
 	:global(.prose-markdown em, .prose-markdown i) {
 		font-style: italic;
 		color: #93c5fd;
 	}
-	
+
 	:global(.prose-markdown table) {
 		width: 100%;
 		border-collapse: collapse;
 		border: 1px solid #475569;
 		margin-bottom: 0.75rem;
 	}
-	
+
 	:global(.prose-markdown th, .prose-markdown td) {
 		border: 1px solid #475569;
 		padding: 0.75rem;
 	}
-	
+
 	:global(.prose-markdown th) {
 		background-color: #334155;
 		font-weight: bold;

@@ -1,7 +1,32 @@
+/**
+ * @fileoverview Schematics API server for the SWG Shipwright application.
+ * Provides REST endpoints for retrieving schematic data from the SWGAide database.
+ *
+ * Supports querying schematics by ID, category, or retrieving all available schematics.
+ * Data is sourced from the cached SWGAide schematics database.
+ *
+ * @author SWG Crafter Team
+ * @since 1.0.0
+ */
+
+// filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/api/schematics/+server.ts
 import { json } from '@sveltejs/kit';
 import { getAllSchematics, getSchematicsByCategory, getSchematicById } from '$lib/database.js';
 import type { RequestHandler } from './$types.js';
 
+/**
+ * GET endpoint handler for retrieving schematic data.
+ * Supports three query modes: by ID, by category, or all schematics.
+ *
+ * Query parameters:
+ * - id: Specific schematic ID to retrieve (string)
+ * - category: Filter schematics by category (string)
+ * - (no params): Return all available schematics
+ *
+ * @param {object} params - Request parameters
+ * @param {URL} params.url - Request URL containing query parameters
+ * @returns {Promise<Response>} JSON response with schematic data or error message
+ */
 export const GET: RequestHandler = async ({ url }) => {
 	const category = url.searchParams.get('category');
 	const id = url.searchParams.get('id');

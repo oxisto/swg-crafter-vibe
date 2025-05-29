@@ -25,11 +25,13 @@ A web-based inventory management system for Star Wars Galaxies shipwright busine
 ## Getting Started
 
 1. **Install dependencies**:
+
    ```bash
    pnpm install
    ```
 
 2. **Start development server**:
+
    ```bash
    pnpm run dev
    ```
@@ -49,6 +51,7 @@ To use the AI assistant features:
 4. **Navigate to the AI Assistant** page and start chatting!
 
 The AI assistant uses OpenAI function calling to:
+
 - Analyze your inventory in real-time
 - Provide stock recommendations
 - Search schematics database

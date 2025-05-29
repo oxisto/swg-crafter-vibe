@@ -5,5 +5,5 @@ import type { Handle } from '@sveltejs/kit';
 initDatabase();
 
 export const handle: Handle = async ({ event, resolve }) => {
-  return resolve(event);
+	return resolve(event);
 };
