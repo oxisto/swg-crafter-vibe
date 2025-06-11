@@ -301,3 +301,78 @@ export interface SalesAnalytics {
 	salesByMarkLevel: Record<MarkLevel, number>;
 	creditsOverTime: Array<{ date: string; credits: number }>;
 }
+
+/** Resource data structure for current resources from SWGAide exports */
+export interface Resource {
+	id: string;
+	name: string;
+	type: string;
+	className: string;
+	classPath?: string[];
+	attributes: ResourceAttributes;
+	planetDistribution: Record<string, number>;
+	enterDate: string;
+	despawnDate?: string;
+	isCurrentlySpawned: boolean;
+	soapLastUpdated?: string;
+	stats?: ResourceStats;
+}
+
+/** Resource attribute values */
+export interface ResourceAttributes {
+	cr?: number;
+	cd?: number;
+	dr?: number;
+	fl?: number;
+	hr?: number;
+	ma?: number;
+	pe?: number;
+	oq?: number;
+	sr?: number;
+	ut?: number;
+	er?: number;
+}
+
+/** Statistics about resource quality and distribution */
+export interface ResourceStats {
+	overallQuality: number;
+	bestUses: string[];
+	averageConcentration: number;
+}
+
+/** Planets in SWG Restoration III */
+export type Planet =
+	| 'corellia'
+	| 'dantooine'
+	| 'dathomir'
+	| 'endor'
+	| 'lok'
+	| 'naboo'
+	| 'rori'
+	| 'talus'
+	| 'tatooine'
+	| 'yavin4'
+	| 'kashyyyk_main'
+	| 'kashyyyk_hunting'
+	| 'kashyyyk_dead'
+	| 'mustafar'
+	| 'space';
+
+/** Array of all available planets */
+export const PLANETS: Planet[] = [
+	'corellia',
+	'dantooine',
+	'dathomir',
+	'endor',
+	'lok',
+	'naboo',
+	'rori',
+	'talus',
+	'tatooine',
+	'yavin4',
+	'kashyyyk_main',
+	'kashyyyk_hunting',
+	'kashyyyk_dead',
+	'mustafar',
+	'space'
+];

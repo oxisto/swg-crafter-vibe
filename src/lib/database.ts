@@ -19,7 +19,8 @@ import {
 	type MailImport,
 	type SalesAnalytics,
 	type MarkLevel,
-	type PartCategory
+	type PartCategory,
+	type Resource
 } from '$lib/types.js';
 import { XMLParser } from 'fast-xml-parser';
 import { createWriteStream, existsSync, unlinkSync, readFileSync } from 'fs';
@@ -75,6 +76,52 @@ export function initDatabase() {
 	// Create schematics_cache table to track last update
 	db.exec(`
     CREATE TABLE IF NOT EXISTS schematics_cache (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+	// Create resources table if it doesn't exist
+	db.exec(`
+    CREATE TABLE IF NOT EXISTS resources (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL,
+      class_name TEXT NOT NULL,
+      class_path TEXT,
+      attributes TEXT NOT NULL,
+      planet_distribution TEXT NOT NULL,
+      enter_date TEXT NOT NULL,
+      despawn_date TEXT,
+      is_currently_spawned BOOLEAN NOT NULL DEFAULT 1,
+      stats TEXT,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+	// Add new columns to existing resources table if they don't exist
+	try {
+		db.exec(`ALTER TABLE resources ADD COLUMN despawn_date TEXT`);
+	} catch (e) {
+		// Column already exists or other error - ignore
+	}
+
+	try {
+		db.exec(`ALTER TABLE resources ADD COLUMN is_currently_spawned BOOLEAN NOT NULL DEFAULT 1`);
+	} catch (e) {
+		// Column already exists or other error - ignore
+	}
+
+	try {
+		db.exec(`ALTER TABLE resources ADD COLUMN soap_last_updated DATETIME`);
+	} catch (e) {
+		// Column already exists or other error - ignore
+	}
+
+	// Create resources_cache table to track last update
+	db.exec(`
+    CREATE TABLE IF NOT EXISTS resources_cache (
       key TEXT PRIMARY KEY,
       value TEXT NOT NULL,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -160,8 +207,11 @@ export function initDatabase() {
 		}
 	}
 
-	// Download and cache schematics in the background
-	downloadAndCacheSchematics().catch(console.error);
+	// Download and cache schematics and resources in the background
+	Promise.all([
+		downloadAndCacheSchematics().catch(console.error),
+		downloadAndCacheResources().catch(console.error)
+	]);
 
 	return db;
 }
@@ -619,6 +669,898 @@ export function getSchematicById(id: string): Schematic | null {
 export function closeDatabase() {
 	if (db) {
 		db.close();
+	}
+}
+
+// Resource functionality
+const RESOURCES_URL = 'https://swgaide.com/pub/exports/currentresources_162.xml.gz';
+const RESOURCES_CACHE_KEY = 'resources_last_update';
+const RESOURCES_CACHE_DURATION_HOURS = 6; // Cache for 6 hours (resources change more frequently)
+
+/**
+ * Downloads and caches current resource data from SWGAide.
+ * Checks if the cache is still fresh (within 6 hours) before downloading.
+ * Downloads compressed XML data, extracts it, parses it, and stores in the database.
+ * @returns Promise that resolves when the operation is complete
+ */
+export async function downloadAndCacheResources(): Promise<void> {
+	const db = getDatabase();
+
+	// Check if we need to update the cache
+	const lastUpdate = db
+		.prepare('SELECT value FROM resources_cache WHERE key = ?')
+		.get(RESOURCES_CACHE_KEY) as { value: string } | undefined;
+
+	if (lastUpdate) {
+		const lastUpdateTime = new Date(lastUpdate.value);
+		const now = new Date();
+		const hoursSinceUpdate = (now.getTime() - lastUpdateTime.getTime()) / (1000 * 60 * 60);
+
+		if (hoursSinceUpdate < RESOURCES_CACHE_DURATION_HOURS) {
+			console.log('Resources cache is still fresh, skipping download');
+			return;
+		}
+	}
+
+	console.log('Downloading current resources from SWGAide...');
+
+	try {
+		// Download the compressed XML file
+		const tempFile = 'temp_resources.xml.gz';
+		const response = await fetch(RESOURCES_URL);
+
+		if (!response.ok) {
+			throw new Error(`Failed to download resources: ${response.statusText}`);
+		}
+
+		// Save the gzipped file temporarily
+		const buffer = await response.arrayBuffer();
+		const fileStream = createWriteStream(tempFile);
+		fileStream.write(Buffer.from(buffer));
+		fileStream.end();
+
+		// Wait for the file to be written
+		await new Promise<void>((resolve, reject) => {
+			fileStream.on('finish', () => resolve());
+			fileStream.on('error', reject);
+		});
+
+		// Extract and parse the XML
+		const compressedData = readFileSync(tempFile);
+		const xmlContent = gunzipSync(compressedData).toString('utf-8');
+
+		// Parse the XML
+		const parser = new XMLParser({
+			ignoreAttributes: false,
+			attributeNamePrefix: '_',
+			textNodeName: 'text'
+		});
+
+		const parsedData = parser.parse(xmlContent);
+
+		// Process and store resources
+		await processResources(parsedData);
+
+		// Update cache timestamp
+		const stmt = db.prepare(`
+      INSERT INTO resources_cache (key, value, updated_at) 
+      VALUES (?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(key) DO UPDATE SET 
+        value = excluded.value,
+        updated_at = CURRENT_TIMESTAMP
+    `);
+		stmt.run(RESOURCES_CACHE_KEY, new Date().toISOString());
+
+		// Clean up temporary files
+		if (existsSync(tempFile)) {
+			unlinkSync(tempFile);
+		}
+
+		console.log('Resources cache updated successfully');
+	} catch (error) {
+		console.error('Failed to download and cache resources:', error);
+		// Don't throw - let the app continue without resource data
+	}
+}
+
+/**
+ * Processes and stores parsed resource data in the database.
+ * Implements spawn lifecycle management - marks existing resources as despawned if not in current XML,
+ * and adds new resources or updates existing ones that are still spawning.
+ * @param parsedData - The parsed XML data containing resource information
+ * @returns Promise that resolves when processing is complete
+ */
+async function processResources(parsedData: any): Promise<void> {
+	const db = getDatabase();
+	const currentTime = new Date().toISOString();
+
+	// Extract resources from parsed XML - the structure is resource_data.resources.resource
+	const resources = parsedData?.resource_data?.resources?.resource || [];
+	const resourcesArray = Array.isArray(resources) ? resources : [resources];
+
+	// Get list of currently spawned resource IDs from XML
+	const currentSpawnIds = new Set(
+		resourcesArray.filter((r) => r && r._swgaide_id).map((r) => r._swgaide_id)
+	);
+
+	// Start transaction for all operations
+	const processTransaction = db.transaction(() => {
+		// 1. Mark all currently spawned resources as despawned if they're not in the new data
+		const markDespawnedStmt = db.prepare(`
+			UPDATE resources 
+			SET is_currently_spawned = 0, 
+				despawn_date = ?,
+				updated_at = CURRENT_TIMESTAMP
+			WHERE is_currently_spawned = 1 
+			AND id NOT IN (${
+				Array.from(currentSpawnIds)
+					.map(() => '?')
+					.join(',') || 'NULL'
+			})
+		`);
+
+		if (currentSpawnIds.size > 0) {
+			markDespawnedStmt.run(currentTime, ...Array.from(currentSpawnIds));
+		} else {
+			// If no current spawns, mark all as despawned
+			db.prepare(
+				`
+				UPDATE resources 
+				SET is_currently_spawned = 0, 
+					despawn_date = ?,
+					updated_at = CURRENT_TIMESTAMP
+				WHERE is_currently_spawned = 1
+			`
+			).run(currentTime);
+		}
+
+		// 2. Prepare statements for insert/update operations
+		const insertStmt = db.prepare(`
+			INSERT INTO resources (
+				id, name, type, class_name, class_path, 
+				attributes, planet_distribution, enter_date, 
+				despawn_date, is_currently_spawned, stats
+			)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		`);
+
+		const updateStmt = db.prepare(`
+			UPDATE resources 
+			SET name = ?, type = ?, class_name = ?, class_path = ?,
+				attributes = ?, planet_distribution = ?, 
+				is_currently_spawned = 1, despawn_date = NULL,
+				stats = ?, updated_at = CURRENT_TIMESTAMP
+			WHERE id = ?
+		`);
+
+		const checkExistsStmt = db.prepare('SELECT id FROM resources WHERE id = ?');
+
+		// 3. Process each resource from the XML
+		for (const rawResource of resourcesArray) {
+			if (rawResource && rawResource._swgaide_id && rawResource.name) {
+				const resourceId = rawResource._swgaide_id;
+
+				// Extract attributes from stats object
+				const attributes: Record<string, number> = {};
+				if (rawResource.stats) {
+					const attributeNames = ['cr', 'cd', 'dr', 'fl', 'hr', 'ma', 'pe', 'oq', 'sr', 'ut', 'er'];
+					for (const attr of attributeNames) {
+						if (rawResource.stats[attr] !== undefined) {
+							attributes[attr] = parseInt(rawResource.stats[attr], 10);
+						}
+					}
+				}
+
+				// Extract planet distribution from planets object
+				const planetDistribution: Record<string, number> = {};
+				if (rawResource.planets && rawResource.planets.planet) {
+					const planets = Array.isArray(rawResource.planets.planet)
+						? rawResource.planets.planet
+						: [rawResource.planets.planet];
+
+					for (const planet of planets) {
+						if (planet.name) {
+							// For now, assume equal distribution. Real concentrations would need waypoint data
+							planetDistribution[planet.name] = 100;
+						}
+					}
+				}
+
+				// Build class path from type (simplified approach)
+				const classPath = rawResource.type ? rawResource.type.split(' ') : [];
+
+				// Calculate simple stats
+				const stats = {
+					overallQuality: calculateOverallQuality(attributes),
+					bestUses: calculateBestUses(attributes, rawResource.type || ''),
+					averageConcentration: calculateAverageConcentration(planetDistribution)
+				};
+
+				// Check if resource already exists
+				const exists = checkExistsStmt.get(resourceId);
+
+				if (exists) {
+					// Update existing resource (mark as currently spawned again)
+					updateStmt.run(
+						rawResource.name,
+						rawResource.type || '',
+						rawResource.type || '', // Using type as class_name for now
+						JSON.stringify(classPath),
+						JSON.stringify(attributes),
+						JSON.stringify(planetDistribution),
+						JSON.stringify(stats),
+						resourceId
+					);
+				} else {
+					// Insert new resource
+					insertStmt.run(
+						resourceId,
+						rawResource.name,
+						rawResource.type || '',
+						rawResource.type || '', // Using type as class_name for now
+						JSON.stringify(classPath),
+						JSON.stringify(attributes),
+						JSON.stringify(planetDistribution),
+						currentTime, // enter_date
+						null, // despawn_date (currently spawned)
+						1, // is_currently_spawned
+						JSON.stringify(stats)
+					);
+				}
+			}
+		}
+	});
+
+	// Execute the transaction
+	processTransaction();
+
+	const totalResources = db.prepare('SELECT COUNT(*) as count FROM resources').get() as {
+		count: number;
+	};
+	const currentlySpawned = db
+		.prepare('SELECT COUNT(*) as count FROM resources WHERE is_currently_spawned = 1')
+		.get() as { count: number };
+
+	console.log(
+		`Processed ${resourcesArray.length} current spawns. Total resources in DB: ${totalResources.count}, Currently spawned: ${currentlySpawned.count}`
+	);
+}
+
+/**
+ * Calculate the overall quality score for a resource based on its attributes
+ * @param attributes - Resource attributes
+ * @returns Quality score between 0-1000
+ */
+function calculateOverallQuality(attributes: Record<string, number>): number {
+	if (!attributes || Object.keys(attributes).length === 0) return 0;
+
+	const sum = Object.values(attributes).reduce((acc, val) => acc + val, 0);
+	const avg = sum / Object.values(attributes).length;
+	return Math.round(avg);
+}
+
+/**
+ * Determine best uses for a resource based on its attributes and class
+ * @param attributes - Resource attributes
+ * @param className - Resource class name
+ * @returns Array of best uses
+ */
+function calculateBestUses(attributes: Record<string, number>, className: string): string[] {
+	const bestUses: string[] = [];
+
+	// Very basic implementation - can be expanded with more sophisticated logic
+	if (attributes.oq > 900) bestUses.push('High Quality Crafting');
+
+	if (attributes.sr > 800) bestUses.push('Weapon Crafting');
+
+	if (className.includes('Metal') && attributes.ma > 800) {
+		bestUses.push('Armor Crafting');
+	}
+
+	if (className.includes('Chemical') && attributes.pe > 800) {
+		bestUses.push('Ship Components');
+	}
+
+	// If no specific uses found
+	if (bestUses.length === 0) bestUses.push('General Use');
+
+	return bestUses;
+}
+
+/**
+ * Calculate average concentration across all planets where resource is present
+ * @param planetDistribution - Resource planet distribution
+ * @returns Average concentration percentage
+ */
+function calculateAverageConcentration(planetDistribution: Record<string, number>): number {
+	if (!planetDistribution || Object.keys(planetDistribution).length === 0) return 0;
+
+	const values = Object.values(planetDistribution).filter((v) => v > 0);
+	if (values.length === 0) return 0;
+
+	const sum = values.reduce((acc, val) => acc + val, 0);
+	return Math.round((sum / values.length) * 100) / 100;
+}
+
+/**
+ * Retrieves all resources from the database.
+ * @returns Array of all resource objects
+ */
+export function getAllResources(): Resource[] {
+	const db = getDatabase();
+	const rows = db.prepare('SELECT * FROM resources ORDER BY enter_date DESC').all() as Array<{
+		id: string;
+		name: string;
+		type: string;
+		class_name: string;
+		class_path: string;
+		attributes: string;
+		planet_distribution: string;
+		enter_date: string;
+		despawn_date: string | null;
+		is_currently_spawned: number;
+		soap_last_updated: string | null;
+		stats: string;
+	}>;
+
+	return rows
+		.map((row) => {
+			try {
+				const attributes = JSON.parse(row.attributes);
+				const planetDistribution = JSON.parse(row.planet_distribution);
+				const stats = row.stats ? JSON.parse(row.stats) : undefined;
+				const classPath = row.class_path ? JSON.parse(row.class_path) : undefined;
+
+				return {
+					id: row.id,
+					name: row.name,
+					type: row.type,
+					className: row.class_name,
+					classPath,
+					attributes,
+					planetDistribution,
+					enterDate: row.enter_date,
+					despawnDate: row.despawn_date || undefined,
+					isCurrentlySpawned: Boolean(row.is_currently_spawned),
+					soapLastUpdated: row.soap_last_updated || undefined,
+					stats
+				};
+			} catch (error) {
+				console.error(`Failed to parse resource data for ${row.id}:`, error);
+				return null;
+			}
+		})
+		.filter(Boolean) as Resource[];
+}
+
+/**
+ * Retrieves resources filtered by class.
+ * @param className - The class name to filter by
+ * @returns Array of resources matching the class
+ */
+export function getResourcesByClass(className: string): Resource[] {
+	const db = getDatabase();
+	const rows = db
+		.prepare(
+			'SELECT * FROM resources WHERE class_name = ? OR class_path LIKE ? ORDER BY enter_date DESC'
+		)
+		.all(className, `%${className}%`) as Array<{
+		id: string;
+		name: string;
+		type: string;
+		class_name: string;
+		class_path: string;
+		attributes: string;
+		planet_distribution: string;
+		enter_date: string;
+		despawn_date: string | null;
+		is_currently_spawned: number;
+		soap_last_updated: string | null;
+		stats: string;
+	}>;
+
+	return rows
+		.map((row) => {
+			try {
+				const attributes = JSON.parse(row.attributes);
+				const planetDistribution = JSON.parse(row.planet_distribution);
+				const stats = row.stats ? JSON.parse(row.stats) : undefined;
+				const classPath = row.class_path ? JSON.parse(row.class_path) : undefined;
+
+				return {
+					id: row.id,
+					name: row.name,
+					type: row.type,
+					className: row.class_name,
+					classPath,
+					attributes,
+					planetDistribution,
+					enterDate: row.enter_date,
+					despawnDate: row.despawn_date || undefined,
+					isCurrentlySpawned: Boolean(row.is_currently_spawned),
+					soapLastUpdated: row.soap_last_updated || undefined,
+					stats
+				};
+			} catch (error) {
+				console.error(`Failed to parse resource data for ${row.id}:`, error);
+				return null;
+			}
+		})
+		.filter(Boolean) as Resource[];
+}
+
+/**
+ * Retrieves resources filtered by name search.
+ * @param searchTerm - The term to search resource names for
+ * @returns Array of resources matching the search term
+ */
+export function searchResources(searchTerm: string): Resource[] {
+	const db = getDatabase();
+	const rows = db
+		.prepare('SELECT * FROM resources WHERE name LIKE ? ORDER BY enter_date DESC')
+		.all(`%${searchTerm}%`) as Array<{
+		id: string;
+		name: string;
+		type: string;
+		class_name: string;
+		class_path: string;
+		attributes: string;
+		planet_distribution: string;
+		enter_date: string;
+		despawn_date: string | null;
+		is_currently_spawned: number;
+		soap_last_updated: string | null;
+		stats: string;
+	}>;
+
+	return rows
+		.map((row) => {
+			try {
+				const attributes = JSON.parse(row.attributes);
+				const planetDistribution = JSON.parse(row.planet_distribution);
+				const stats = row.stats ? JSON.parse(row.stats) : undefined;
+				const classPath = row.class_path ? JSON.parse(row.class_path) : undefined;
+
+				return {
+					id: row.id,
+					name: row.name,
+					type: row.type,
+					className: row.class_name,
+					classPath,
+					attributes,
+					planetDistribution,
+					enterDate: row.enter_date,
+					despawnDate: row.despawn_date || undefined,
+					isCurrentlySpawned: Boolean(row.is_currently_spawned),
+					soapLastUpdated: row.soap_last_updated || undefined,
+					stats
+				};
+			} catch (error) {
+				console.error(`Failed to parse resource data for ${row.id}:`, error);
+				return null;
+			}
+		})
+		.filter(Boolean) as Resource[];
+}
+
+/**
+ * Retrieves a specific resource by its ID.
+ * @param id - The resource ID to retrieve
+ * @returns The resource object if found, null otherwise
+ */
+export function getResourceById(id: string): Resource | null {
+	const db = getDatabase();
+	const row = db.prepare('SELECT * FROM resources WHERE id = ?').get(id) as
+		| {
+				id: string;
+				name: string;
+				type: string;
+				class_name: string;
+				class_path: string;
+				attributes: string;
+				planet_distribution: string;
+				enter_date: string;
+				despawn_date: string | null;
+				is_currently_spawned: number;
+				soap_last_updated: string | null;
+				stats: string;
+		  }
+		| undefined;
+
+	if (!row) return null;
+
+	try {
+		const attributes = JSON.parse(row.attributes);
+		const planetDistribution = JSON.parse(row.planet_distribution);
+		const stats = row.stats ? JSON.parse(row.stats) : undefined;
+		const classPath = row.class_path ? JSON.parse(row.class_path) : undefined;
+
+		return {
+			id: row.id,
+			name: row.name,
+			type: row.type,
+			className: row.class_name,
+			classPath,
+			attributes,
+			planetDistribution,
+			enterDate: row.enter_date,
+			despawnDate: row.despawn_date || undefined,
+			isCurrentlySpawned: Boolean(row.is_currently_spawned),
+			soapLastUpdated: row.soap_last_updated || undefined,
+			stats
+		};
+	} catch (error) {
+		console.error(`Failed to parse resource data for ${row.id}:`, error);
+		return null;
+	}
+}
+
+// SOAP API Integration for SWGAide
+const SOAP_SERVER_URL = 'https://swgaide.com/soap/server.php';
+const SOAP_UPDATE_INTERVAL_HOURS = 1; // Update SOAP data every hour
+const DEFAULT_SERVER_ID = 162; // SWG Restoration III
+
+/**
+ * SOAP API ResourceInfo type based on WSDL definition
+ */
+interface SOAPResourceInfo {
+	ID: number;
+	Name: string;
+	Class: number;
+	ServerID: number;
+	AddedStamp: number;
+	AddedBy: number;
+	// Resource stats
+	ER: number; // Energy Resistance
+	CR: number; // Cold Resistance
+	CD: number; // Conductivity
+	DR: number; // Decay Resistance
+	FL: number; // Flavor
+	HR: number; // Heat Resistance
+	MA: number; // Malleability
+	PE: number; // Potential Energy
+	OQ: number; // Overall Quality
+	SR: number; // Shock Resistance
+	UT: number; // Unit Toughness
+}
+
+/**
+ * Check if a resource needs SOAP update based on last update time
+ * @param lastUpdated - The last SOAP update timestamp
+ * @returns True if resource needs update (>1 hour since last update or never updated)
+ */
+function needsSOAPUpdate(lastUpdated: string | null): boolean {
+	if (!lastUpdated) return true;
+
+	const lastUpdateTime = new Date(lastUpdated);
+	const now = new Date();
+	const hoursSinceUpdate = (now.getTime() - lastUpdateTime.getTime()) / (1000 * 60 * 60);
+
+	return hoursSinceUpdate >= SOAP_UPDATE_INTERVAL_HOURS;
+}
+
+/**
+ * Update resource with SOAP data in the database
+ * @param resourceId - The resource ID
+ * @param soapData - The SOAP resource information
+ */
+function updateResourceWithSOAPData(resourceId: string, soapData: SOAPResourceInfo): void {
+	const db = getDatabase();
+
+	// Validate SOAP data - check if we have basic resource information
+	const hasBasicInfo = soapData.ID > 0 && soapData.Name && soapData.Name.trim().length > 0;
+
+	if (!hasBasicInfo) {
+		console.log(
+			`SOAP data for resource ${resourceId} is invalid (missing ID or Name), skipping update`
+		);
+		return;
+	}
+
+	// SOAP data is valid - resource attributes can legitimately be zero for certain resource types
+	// (e.g., energy resources often have zero values for most crafting attributes)
+	console.log(
+		`Updating resource ${resourceId} with SOAP data - ID: ${soapData.ID}, Name: ${soapData.Name}`
+	);
+	console.log(
+		`Resource attributes: ER=${soapData.ER}, CR=${soapData.CR}, CD=${soapData.CD}, DR=${soapData.DR}, FL=${soapData.FL}, HR=${soapData.HR}, MA=${soapData.MA}, PE=${soapData.PE}, OQ=${soapData.OQ}, SR=${soapData.SR}, UT=${soapData.UT}`
+	);
+
+	// Update the resource attributes with SOAP data only if we have valid data
+	const attributes = {
+		er: soapData.ER || 0,
+		cr: soapData.CR || 0,
+		cd: soapData.CD || 0,
+		dr: soapData.DR || 0,
+		fl: soapData.FL || 0,
+		hr: soapData.HR || 0,
+		ma: soapData.MA || 0,
+		pe: soapData.PE || 0,
+		oq: soapData.OQ || 0,
+		sr: soapData.SR || 0,
+		ut: soapData.UT || 0
+	};
+
+	// Use ISO timestamp for consistency with JavaScript Date parsing
+	const nowISO = new Date().toISOString();
+
+	const updateStmt = db.prepare(`
+		UPDATE resources 
+		SET attributes = ?, soap_last_updated = ?, updated_at = ?
+		WHERE id = ?
+	`);
+
+	updateStmt.run(JSON.stringify(attributes), nowISO, nowISO, resourceId);
+	console.log(`Updated resource ${resourceId} with valid SOAP attributes`);
+}
+
+/**
+ * Parse SOAP XML response to extract ResourceInfo using proper XML parsing
+ */
+function parseSOAPResourceInfo(xmlText: string): SOAPResourceInfo | null {
+	try {
+		// Use the XMLParser that's already imported for schematics parsing
+		const parser = new XMLParser({
+			ignoreAttributes: false,
+			attributeNamePrefix: '_',
+			textNodeName: 'text',
+			parseAttributeValue: true,
+			parseTagValue: true
+		});
+
+		const parsedXml = parser.parse(xmlText);
+
+		// Navigate through the SOAP response structure
+		// Structure: soap:Envelope -> soap:Body -> ns1:GetResourceInfoResponse -> return
+		const soapEnvelope = parsedXml['soap:Envelope'] || parsedXml['SOAP-ENV:Envelope'];
+		if (!soapEnvelope) return null;
+
+		const soapBody = soapEnvelope['soap:Body'] || soapEnvelope['SOAP-ENV:Body'];
+		if (!soapBody) return null;
+
+		// Look for the response element (could have different namespaces)
+		let resourceInfoResponse = null;
+		for (const key of Object.keys(soapBody)) {
+			if (key.includes('GetResourceInfo') && key.includes('Response')) {
+				resourceInfoResponse = soapBody[key];
+				break;
+			}
+		}
+
+		if (!resourceInfoResponse) return null;
+
+		const returnElement = resourceInfoResponse.return;
+		if (!returnElement) return null;
+
+		// Helper function to extract values, handling both text nodes and nil values
+		const extractValue = (element: any): number => {
+			if (!element) return 0;
+			if (element._xsi?.nil || element['_xsi:nil']) return 0;
+			if (typeof element === 'number') return element;
+			if (element.text !== undefined) return parseInt(element.text) || 0;
+			return parseInt(element) || 0;
+		};
+
+		const extractStringValue = (element: any): string => {
+			if (!element) return '';
+			if (element._xsi?.nil || element['_xsi:nil']) return '';
+			if (typeof element === 'string') return element;
+			if (element.text !== undefined) return String(element.text);
+			return String(element);
+		};
+
+		// Extract ResourceInfo fields from the return element
+		const resourceInfo: SOAPResourceInfo = {
+			ID: extractValue(returnElement.ID),
+			Name: extractStringValue(returnElement.Name),
+			Class: extractValue(returnElement.Class),
+			ServerID: extractValue(returnElement.ServerID) || DEFAULT_SERVER_ID,
+			AddedStamp: extractValue(returnElement.AddedStamp),
+			AddedBy: extractValue(returnElement.AddedBy),
+			ER: extractValue(returnElement.ER),
+			CR: extractValue(returnElement.CR),
+			CD: extractValue(returnElement.CD),
+			DR: extractValue(returnElement.DR),
+			FL: extractValue(returnElement.FL),
+			HR: extractValue(returnElement.HR),
+			MA: extractValue(returnElement.MA),
+			PE: extractValue(returnElement.PE),
+			OQ: extractValue(returnElement.OQ),
+			SR: extractValue(returnElement.SR),
+			UT: extractValue(returnElement.UT)
+		};
+
+		return resourceInfo;
+	} catch (error) {
+		console.error('Failed to parse SOAP ResourceInfo with XML parser:', error);
+
+		// Fallback to regex parsing if XML parsing fails
+		try {
+			const returnMatch = xmlText.match(/<return[^>]*>(.*?)<\/return>/s);
+			if (!returnMatch) return null;
+
+			const resourceXml = returnMatch[1];
+
+			const extractField = (fieldName: string): number => {
+				const match = resourceXml.match(new RegExp(`<${fieldName}[^>]*>([^<]+)<\/${fieldName}>`));
+				return match ? parseInt(match[1], 10) : 0;
+			};
+
+			const extractStringField = (fieldName: string): string => {
+				const match = resourceXml.match(new RegExp(`<${fieldName}[^>]*>([^<]+)<\/${fieldName}>`));
+				return match ? match[1] : '';
+			};
+
+			return {
+				ID: extractField('ID'),
+				Name: extractStringField('Name'),
+				Class: extractField('Class'),
+				ServerID: extractField('ServerID'),
+				AddedStamp: extractField('AddedStamp'),
+				AddedBy: extractField('AddedBy'),
+				ER: extractField('ER'),
+				CR: extractField('CR'),
+				CD: extractField('CD'),
+				DR: extractField('DR'),
+				FL: extractField('FL'),
+				HR: extractField('HR'),
+				MA: extractField('MA'),
+				PE: extractField('PE'),
+				OQ: extractField('OQ'),
+				SR: extractField('SR'),
+				UT: extractField('UT')
+			};
+		} catch (fallbackError) {
+			console.error('Failed to parse SOAP ResourceInfo with fallback regex:', fallbackError);
+			return null;
+		}
+	}
+}
+
+/**
+ * Get detailed resource information by name using SOAP API
+ * Updates the resource in the database with SOAP data if successful
+ * @param resourceName - The exact name of the resource
+ * @param serverId - The server ID (defaults to 162 for Restoration III)
+ * @returns Promise that resolves to resource information or null
+ */
+export async function getResourceInfoByName(
+	resourceName: string,
+	serverId: number = DEFAULT_SERVER_ID
+): Promise<SOAPResourceInfo | null> {
+	try {
+		const soapBody = `<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:swgaide">
+  <soap:Body>
+    <tns:GetResourceInfo>
+      <tns:name>
+        <tns:name>${resourceName}</tns:name>
+        <tns:server>${serverId}</tns:server>
+      </tns:name>
+    </tns:GetResourceInfo>
+  </soap:Body>
+</soap:Envelope>`;
+
+		const response = await fetch(SOAP_SERVER_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'text/xml; charset=utf-8',
+				SOAPAction: 'urn:swgaide#GetResourceInfo'
+			},
+			body: soapBody
+		});
+
+		if (!response.ok) {
+			throw new Error(`SOAP request failed: ${response.statusText}`);
+		}
+
+		const xmlText = await response.text();
+		console.log(`SOAP XML Response for resource ${resourceName}:`, xmlText);
+		const resourceInfo = parseSOAPResourceInfo(xmlText);
+
+		if (resourceInfo) {
+			console.log(`Fetched SOAP data for resource: ${resourceName}`);
+		}
+
+		return resourceInfo;
+	} catch (error) {
+		console.error('Failed to get resource info by name:', error);
+		return null;
+	}
+}
+
+/**
+ * Get detailed resource information by ID using SOAP API
+ * Updates the resource in the database with SOAP data if successful
+ * @param resourceId - The SWGAide ID of the resource
+ * @returns Promise that resolves to resource information or null
+ */
+export async function getResourceInfoById(resourceId: string): Promise<SOAPResourceInfo | null> {
+	try {
+		const soapBody = `<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:swgaide">
+  <soap:Body>
+    <tns:GetResourceInfoFromID>
+      <tns:id>${resourceId}</tns:id>
+    </tns:GetResourceInfoFromID>
+  </soap:Body>
+</soap:Envelope>`;
+
+		const response = await fetch(SOAP_SERVER_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'text/xml; charset=utf-8',
+				SOAPAction: 'urn:swgaide#GetResourceInfoFromID'
+			},
+			body: soapBody
+		});
+
+		if (!response.ok) {
+			throw new Error(`SOAP request failed: ${response.statusText}`);
+		}
+
+		const xmlText = await response.text();
+		console.log(`SOAP XML Response for resource ${resourceId}:`, xmlText);
+		const resourceInfo = parseSOAPResourceInfo(xmlText);
+
+		if (resourceInfo) {
+			// Update the resource in our database with SOAP data
+			updateResourceWithSOAPData(resourceId, resourceInfo);
+			console.log(`Fetched and updated SOAP data for resource ID: ${resourceId}`);
+		}
+
+		return resourceInfo;
+	} catch (error) {
+		console.error('Failed to get resource info by ID:', error);
+		return null;
+	}
+}
+
+/**
+ * Update resource with latest SOAP data if needed
+ * Only updates currently spawned resources that haven't been updated in the last hour
+ * @param resourceId - The resource ID to update
+ * @returns Promise that resolves to success status and resource info
+ */
+export async function updateResourceSOAPData(resourceId: string): Promise<{
+	success: boolean;
+	updated: boolean;
+	resourceInfo?: SOAPResourceInfo;
+	reason?: string;
+}> {
+	try {
+		const resource = getResourceById(resourceId);
+		if (!resource) {
+			return { success: false, updated: false, reason: 'Resource not found' };
+		}
+
+		// Don't update despawned resources
+		if (!resource.isCurrentlySpawned) {
+			return { success: true, updated: false, reason: 'Resource is despawned' };
+		}
+
+		// Check if update is needed
+		if (!needsSOAPUpdate(resource.soapLastUpdated || null)) {
+			return { success: true, updated: false, reason: 'Recently updated' };
+		}
+
+		// Fetch SOAP data
+		const resourceInfo = await getResourceInfoById(resourceId);
+		if (!resourceInfo) {
+			return { success: false, updated: false, reason: 'SOAP API call failed' };
+		}
+
+		return {
+			success: true,
+			updated: true,
+			resourceInfo,
+			reason: 'Successfully updated from SOAP'
+		};
+	} catch (error) {
+		console.error('Failed to update resource SOAP data:', error);
+		return { success: false, updated: false, reason: 'Update failed' };
 	}
 }
 
