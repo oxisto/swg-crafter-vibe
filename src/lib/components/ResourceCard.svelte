@@ -17,20 +17,22 @@
 </script>
 
 <a href="/resources/{resource.id}" class="block">
-	<div class="rounded-lg bg-white p-4 shadow transition-all hover:shadow-md dark:bg-gray-800">
+	<div
+		class="rounded-lg border border-slate-700 bg-slate-800 p-4 transition-all hover:bg-slate-700"
+	>
 		<div class="flex items-start justify-between">
 			<div class="flex-1">
 				<div class="flex items-center gap-2">
-					<h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{resource.name}</h3>
+					<h3 class="text-lg font-medium text-white">{resource.name}</h3>
 					{#if !resource.isCurrentlySpawned}
 						<span
-							class="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-200"
+							class="inline-flex items-center rounded-full bg-red-900 px-2 py-1 text-xs font-medium text-red-200"
 						>
 							Despawned
 						</span>
 					{:else}
 						<span
-							class="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200"
+							class="inline-flex items-center rounded-full bg-green-900 px-2 py-1 text-xs font-medium text-green-200"
 						>
 							Active
 						</span>
@@ -41,21 +43,21 @@
 				<div
 					class="rounded px-2 py-1 text-xs font-semibold
                     {resource.stats.overallQuality > 900
-						? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+						? 'bg-green-900 text-green-200'
 						: resource.stats.overallQuality > 700
-							? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-							: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'}"
+							? 'bg-yellow-900 text-yellow-200'
+							: 'bg-blue-900 text-blue-200'}"
 				>
 					{resource.stats.overallQuality}
 				</div>
 			{/if}
 		</div>
 
-		<div class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+		<div class="mt-1 text-sm text-slate-400">
 			{resource.className}
 		</div>
 
-		<div class="mt-3 text-xs text-gray-500 dark:text-gray-400">
+		<div class="mt-3 text-xs text-slate-400">
 			<div class="flex justify-between">
 				<div>Added: {new Date(resource.enterDate).toLocaleDateString()}</div>
 				<div>{activePlanetCount} {activePlanetCount === 1 ? 'planet' : 'planets'}</div>
@@ -64,17 +66,15 @@
 
 		{#if topPlanets.length > 0}
 			<div class="mt-2 text-xs">
-				<span class="text-gray-500 dark:text-gray-400">Top spawn: </span>
-				{topPlanets.join(', ')}
+				<span class="text-slate-400">Top spawn: </span>
+				<span class="text-slate-300">{topPlanets.join(', ')}</span>
 				{activePlanetCount > 2 ? '...' : ''}
 			</div>
 		{/if}
 
 		<div class="mt-3 flex flex-wrap gap-2">
 			{#each Object.entries(resource.attributes).slice(0, 4) as [attr, value]}
-				<div
-					class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-				>
+				<div class="rounded bg-slate-600 px-2 py-0.5 text-xs text-slate-300">
 					{attr.toUpperCase()}: {value}
 				</div>
 			{/each}
