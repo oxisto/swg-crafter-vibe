@@ -54,10 +54,7 @@ export async function downloadAndCacheResources(): Promise<void> {
 		await processResources(parsedData);
 
 		// Update cache timestamp
-		updateCacheTimestamp(
-			CACHE_CONFIG.RESOURCES.CACHE_KEY,
-			CACHE_CONFIG.RESOURCES.TABLE
-		);
+		updateCacheTimestamp(CACHE_CONFIG.RESOURCES.CACHE_KEY, CACHE_CONFIG.RESOURCES.TABLE);
 
 		dbLogger.info(
 			`Resources cache update completed (${Math.round((Date.now() - totalStartTime) / 1000)}s)`

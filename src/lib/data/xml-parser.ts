@@ -36,7 +36,7 @@ export function createXMLParser(): XMLParser {
  */
 export async function downloadAndExtractXML(url: string, tempFileName: string): Promise<string> {
 	dbLogger.info(`Starting download from ${url}`);
-	
+
 	try {
 		// Download the compressed XML file
 		const response = await fetch(url);
@@ -49,7 +49,7 @@ export async function downloadAndExtractXML(url: string, tempFileName: string): 
 		const sizeText = downloadSize
 			? `${Math.round(parseInt(downloadSize) / 1024)}KB`
 			: 'unknown size';
-		
+
 		dbLogger.debug(`Downloaded ${sizeText} from ${url}`);
 
 		// Save the gzipped file temporarily

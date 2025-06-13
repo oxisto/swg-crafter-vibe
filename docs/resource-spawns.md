@@ -14,6 +14,7 @@ Resources in SWG are constantly changing, with new resources spawning and old on
 ## Data Source
 
 The application fetches resource data from the SWGAide public API:
+
 - Resource data URL: `https://swgaide.com/pub/exports/currentresources_162.xml.gz`
 - Data is cached locally and refreshed every 6 hours
 
@@ -29,6 +30,7 @@ The application fetches resource data from the SWGAide public API:
 ### Resource Details
 
 Each resource has detailed information:
+
 - Name and class
 - Quality score (calculated from attributes)
 - Full attributes list (CR, CD, DR, FL, HR, MA, PE, OQ, SR, UT, ER)
@@ -45,6 +47,7 @@ Each resource has detailed information:
 ## Integration with Crafting
 
 The resources data is particularly valuable when combined with schematic information to determine:
+
 - Which currently available resources are best for specific ship components
 - What quality of components can be crafted with current resources
 - Which planets to visit for resource harvesting

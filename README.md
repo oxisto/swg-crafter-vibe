@@ -85,6 +85,7 @@ All inventory changes are automatically saved to `database.sqlite3` in the proje
 Track your shipwright business performance with comprehensive sales analytics:
 
 1. **Process Mail Files**: Use the Go mail analyzer tool to extract sales data from SWG mail files
+
    ```bash
    cd tools/mail-analyzer
    go run . parse -i /path/to/mail/files -o sales_export.json --sender-filter "SWG.Restoration.auctioner"
@@ -92,7 +93,7 @@ Track your shipwright business performance with comprehensive sales analytics:
 
 2. **Import Data**: Upload the JSON file through the Sales Tracking page in the web interface
 
-3. **View Analytics**: 
+3. **View Analytics**:
    - Revenue tracking and sales metrics
    - Top selling items and categories
    - Mark level performance analysis

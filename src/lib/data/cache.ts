@@ -40,9 +40,9 @@ export function checkCacheStatus(
 	lastUpdate?: Date;
 } {
 	const db = getDatabase();
-	const lastUpdate = db
-		.prepare(`SELECT value FROM ${tableName} WHERE key = ?`)
-		.get(cacheKey) as { value: string } | undefined;
+	const lastUpdate = db.prepare(`SELECT value FROM ${tableName} WHERE key = ?`).get(cacheKey) as
+		| { value: string }
+		| undefined;
 
 	if (!lastUpdate) {
 		return {

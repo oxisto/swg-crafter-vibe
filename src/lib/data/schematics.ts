@@ -54,10 +54,7 @@ export async function downloadAndCacheSchematics(): Promise<void> {
 		await processSchematics(parsedData);
 
 		// Update cache timestamp
-		updateCacheTimestamp(
-			CACHE_CONFIG.SCHEMATICS.CACHE_KEY,
-			CACHE_CONFIG.SCHEMATICS.TABLE
-		);
+		updateCacheTimestamp(CACHE_CONFIG.SCHEMATICS.CACHE_KEY, CACHE_CONFIG.SCHEMATICS.TABLE);
 
 		dbLogger.info(
 			`Schematics cache update completed (${Math.round((Date.now() - totalStartTime) / 1000)}s)`

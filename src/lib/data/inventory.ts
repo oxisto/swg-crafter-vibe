@@ -5,12 +5,7 @@
  * stock level management, and recent activity tracking.
  */
 
-import {
-	PART_CATEGORIES,
-	MARK_LEVELS,
-	getInventoryKey,
-	type Inventory
-} from '../types.js';
+import { PART_CATEGORIES, MARK_LEVELS, getInventoryKey, type Inventory } from '../types.js';
 import { getDatabase } from './database.js';
 
 /**

@@ -35,6 +35,7 @@ Extract sales data from mail files:
 ```
 
 **Flags:**
+
 - `--input, -i`: Input directory containing .mail files (default: "./testdata")
 - `--output, -o`: Output file for JSON results (default: "sales_data.json")
 - `--verbose, -v`: Enable verbose output
@@ -64,6 +65,7 @@ Generate comprehensive sales statistics:
 ```
 
 **Output includes:**
+
 - Total sales count and revenue
 - Average sale price
 - Top selling items
@@ -80,6 +82,7 @@ Export data in format suitable for SWG Crafter integration:
 ```
 
 **Formats:**
+
 - `json`: JSON format for API integration
 - `csv`: CSV format for spreadsheet analysis
 
@@ -97,6 +100,7 @@ TIMESTAMP: <Unix Timestamp>
 ```
 
 **Example Sale Mail:**
+
 ```
 11324432
 SWG.Restoration.auctioner
@@ -112,14 +116,14 @@ Each parsed sale contains:
 
 ```json
 {
-  "mail_id": "11324432",
-  "timestamp": "2025-01-24T15:39:06Z",
-  "item_name": "Heavy Blaster (Green)",
-  "buyer": "Darkmole",
-  "credits": 30000,
-  "location": "Mos Eisley, Tatooine",
-  "mark_level": "I",
-  "category": "Weapon"
+	"mail_id": "11324432",
+	"timestamp": "2025-01-24T15:39:06Z",
+	"item_name": "Heavy Blaster (Green)",
+	"buyer": "Darkmole",
+	"credits": 30000,
+	"location": "Mos Eisley, Tatooine",
+	"mark_level": "I",
+	"category": "Weapon"
 }
 ```
 
@@ -139,6 +143,7 @@ The tool automatically categorizes items into:
 ## Mark Levels
 
 The tool extracts mark levels (I-V) from item names:
+
 - Detects "Mark I", "Mark II", etc.
 - Identifies "Starter Line" items as Mark I
 - Falls back to pattern matching
@@ -152,6 +157,7 @@ The export command generates data suitable for integration with the main SWG Cra
 ```
 
 This creates a JSON file that can be imported into the SWG Crafter inventory management system to track:
+
 - Historical sales data
 - Revenue analysis
 - Item performance metrics

@@ -20,7 +20,7 @@ Retrieve inventory data with optional schematic information and timestamps.
 | `includeTimestamp` | boolean | Include update timestamps in response       | `false` |
 | `all`              | boolean | Return all inventory items                  | `false` |
 | `recent`           | boolean | Return recently updated items only          | `false` |
-| `limit`            | number  | Max items for recent query (max 50)        | `10`    |
+| `limit`            | number  | Max items for recent query (max 50)         | `10`    |
 
 #### Examples
 
@@ -110,7 +110,7 @@ GET /api/inventory?all=true&includeTimestamp=true
 	"inventory": [
 		{
 			"category": "Engine",
-			"markLevel": "I", 
+			"markLevel": "I",
 			"quantity": 5,
 			"updatedAt": "2025-05-29T10:30:45.123Z"
 		},
@@ -139,7 +139,9 @@ GET /api/inventory?recent=true&limit=5&includeSchematic=true
 			"quantity": 2,
 			"updatedAt": "2025-05-29T10:30:45.123Z",
 			"displayName": "Mark V Starfighter Engine",
-			"schematic": { /* schematic data */ },
+			"schematic": {
+				/* schematic data */
+			},
 			"schematicId": "2911"
 		}
 	]
@@ -176,11 +178,11 @@ Retrieve recently updated inventory items with activity history.
 
 #### Query Parameters
 
-| Parameter          | Type    | Description                          | Default |
-| ------------------ | ------- | ------------------------------------ | ------- |
-| `limit`            | number  | Max items to return (max 50)        | `10`    |
-| `includeSchematic` | boolean | Include schematic data in response   | `false` |
-| `days`             | number  | Days to look back (max 30)          | `7`     |
+| Parameter          | Type    | Description                        | Default |
+| ------------------ | ------- | ---------------------------------- | ------- |
+| `limit`            | number  | Max items to return (max 50)       | `10`    |
+| `includeSchematic` | boolean | Include schematic data in response | `false` |
+| `days`             | number  | Days to look back (max 30)         | `7`     |
 
 #### Response
 
@@ -193,8 +195,10 @@ Retrieve recently updated inventory items with activity history.
 			"quantity": 5,
 			"updatedAt": "2025-05-29T10:30:45.123Z",
 			"displayName": "Mark I Starfighter Engine", // if includeSchematic=true
-			"schematic": { /* schematic data */ },       // if includeSchematic=true
-			"schematicId": "2907"                        // if includeSchematic=true
+			"schematic": {
+				/* schematic data */
+			}, // if includeSchematic=true
+			"schematicId": "2907" // if includeSchematic=true
 		}
 	],
 	"meta": {

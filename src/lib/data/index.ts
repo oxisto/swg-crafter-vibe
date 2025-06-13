@@ -6,11 +6,7 @@
  */
 
 // Database core
-export { 
-	initDatabase, 
-	getDatabase, 
-	closeDatabase 
-} from './database.js';
+export { initDatabase, getDatabase, closeDatabase } from './database.js';
 
 // Inventory
 export {
@@ -68,19 +64,10 @@ export {
 } from './soap.js';
 
 // Mails
-export {
-	importMailBatch,
-	getMails,
-	getMailsCount,
-	getMailImports
-} from './mails.js';
+export { importMailBatch, getMails, getMailsCount, getMailImports } from './mails.js';
 
 // Sales
-export {
-	extractSalesFromMails,
-	getSales,
-	getSalesAnalytics
-} from './sales.js';
+export { extractSalesFromMails, getSales, getSalesAnalytics } from './sales.js';
 
 // Initialization
 import { initializeInventoryDefaults } from './inventory.js';
