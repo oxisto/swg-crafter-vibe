@@ -6,7 +6,16 @@
  * schematics, and related business logic.
  */
 
-/** Mark level representing component quality/tier (I=Light, II=Mid-Grade, III=Heavy, IV=Advanced, V=Experimental) */
+/** Mark level representing component quality/tier (I=Light, II=Mid-Grade, III=Heavy, IV=A	lo	endor: { letter: 'E', color: 'text-emerald-300', bg: 'bg-emerald-900/40', name: 'Endor' },
+	lok: { letter: 'L', color: 'text-slate-100', bg: 'bg-slate-300/40', name: 'Lok' },
+	naboo: { letter: 'N', color: 'text-cyan-300', bg: 'bg-cyan-900/40', name: 'Naboo' },
+	rori: { letter: 'R', color: 'text-teal-300', bg: 'bg-teal-900/40', name: 'Rori' },
+	talus: { letter: 'T', color: 'text-green-400', bg: 'bg-green-800/40', name: 'Talus' },
+	tatooine: { letter: 'T', color: 'text-yellow-100', bg: 'bg-yellow-400/40', name: 'Tatooine' },etter: 'L', color: 'text-amber-300', bg: 'bg-amber-900/40', name: 'Lok' },
+	naboo: { letter: 'N', color: 'text-cyan-300', bg: 'bg-cyan-900/40', name: 'Naboo' },
+	rori: { letter: 'R', color: 'text-teal-300', bg: 'bg-teal-900/40', name: 'Rori' },
+	talus: { letter: 'T', color: 'text-green-400', bg: 'bg-green-800/40', name: 'Talus' },
+	tatooine: { letter: 'T', color: 'text-yellow-300', bg: 'bg-yellow-900/40', name: 'Tatooine' },ed, V=Experimental) */
 export type MarkLevel = 'I' | 'II' | 'III' | 'IV' | 'V';
 
 /** Part categories for starship components */
@@ -388,15 +397,15 @@ export interface PlanetInfo {
 /** Planet data with single letters and colors matching the galaxy map */
 export const PLANET_DATA: Record<string, PlanetInfo> = {
 	corellia: { letter: 'C', color: 'text-blue-300', bg: 'bg-blue-900/40', name: 'Corellia' },
-	dantooine: { letter: 'D', color: 'text-green-300', bg: 'bg-green-900/40', name: 'Dantooine' },
-	dathomir: { letter: 'A', color: 'text-red-300', bg: 'bg-red-900/40', name: 'Dathomir' },
+	dantooine: { letter: 'D', color: 'text-purple-300', bg: 'bg-purple-900/40', name: 'Dantooine' },
+	dathomir: { letter: 'D', color: 'text-orange-300', bg: 'bg-orange-900/40', name: 'Dathomir' },
 	endor: { letter: 'E', color: 'text-emerald-300', bg: 'bg-emerald-900/40', name: 'Endor' },
-	lok: { letter: 'L', color: 'text-orange-300', bg: 'bg-orange-900/40', name: 'Lok' },
+	lok: { letter: 'L', color: 'text-yellow-100', bg: 'bg-yellow-400/40', name: 'Lok' },
 	naboo: { letter: 'N', color: 'text-cyan-300', bg: 'bg-cyan-900/40', name: 'Naboo' },
 	rori: { letter: 'R', color: 'text-teal-300', bg: 'bg-teal-900/40', name: 'Rori' },
-	talus: { letter: 'T', color: 'text-purple-300', bg: 'bg-purple-900/40', name: 'Talus' },
-	tatooine: { letter: 'O', color: 'text-yellow-300', bg: 'bg-yellow-900/40', name: 'Tatooine' },
-	yavin4: { letter: 'Y', color: 'text-lime-300', bg: 'bg-lime-900/40', name: 'Yavin 4' },
+	talus: { letter: 'T', color: 'text-green-400', bg: 'bg-green-800/40', name: 'Talus' },
+	tatooine: { letter: 'T', color: 'text-yellow-400', bg: 'bg-yellow-900/40', name: 'Tatooine' },
+	yavin4: { letter: 'Y', color: 'text-green-300', bg: 'bg-green-700/40', name: 'Yavin 4' },
 	kashyyyk_main: {
 		letter: 'K',
 		color: 'text-amber-300',

@@ -273,7 +273,7 @@
 							{#each activePlanets as planet}
 								{@const planetInfo = getPlanetInfo(planet)}
 								<span
-									class="inline-flex h-6 w-6 items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
+									class="inline-flex h-6 w-6 cursor-default items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
 									title="{planetInfo.name}: {resource.planetDistribution[planet]}%"
 								>
 									{planetInfo.letter}

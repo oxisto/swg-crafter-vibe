@@ -273,7 +273,7 @@
 				{#if mail.location}
 					{@const planetInfo = getPlanetInfo(mail.location)}
 					<span
-						class="inline-flex h-6 w-6 items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
+						class="inline-flex h-6 w-6 cursor-default items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
 						title={planetInfo.name}
 					>
 						{planetInfo.letter}
