@@ -20,7 +20,7 @@
 		oq: 'Overall Quality',
 		sr: 'Shock Resistance',
 		ut: 'Unit Toughness',
-		er: 'Entangle Resistance'
+		er: 'Energy Resistance'
 	};
 
 	// Format the planet distribution to show only planets with spawns

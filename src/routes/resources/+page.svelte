@@ -8,7 +8,6 @@
 	import Card from '$lib/components/Card.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Input from '$lib/components/Input.svelte';
-	import FilterSection from '$lib/components/FilterSection.svelte';
 	import DataTable from '$lib/components/DataTable.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import Loading from '$lib/components/Loading.svelte';
@@ -131,21 +130,41 @@
 	const columns = [
 		{ key: 'name', label: 'Name' },
 		{ key: 'className', label: 'Class' },
-		{ key: 'status', label: 'Status' },
-		{ key: 'quality', label: 'Quality' },
-		{ key: 'bestUses', label: 'Best Uses' },
-		{ key: 'planets', label: 'Planets' },
-		{ key: 'dateAdded', label: 'Date Added' }
+		{ key: 'status', label: 'Spawn' },
+		{ key: 'oq', label: 'OQ', class: 'hidden lg:table-cell' },
+		{ key: 'cr', label: 'CR', class: 'hidden xl:table-cell' },
+		{ key: 'cd', label: 'CD', class: 'hidden xl:table-cell' },
+		{ key: 'dr', label: 'DR', class: 'hidden xl:table-cell' },
+		{ key: 'fl', label: 'FL', class: 'hidden xl:table-cell' },
+		{ key: 'hr', label: 'HR', class: 'hidden xl:table-cell' },
+		{ key: 'ma', label: 'MA', class: 'hidden xl:table-cell' },
+		{ key: 'pe', label: 'PE', class: 'hidden xl:table-cell' },
+		{ key: 'sr', label: 'SR', class: 'hidden lg:table-cell' },
+		{ key: 'ut', label: 'UT', class: 'hidden lg:table-cell' },
+		{ key: 'planets', label: 'Planets', class: 'text-right' },
+		{ key: 'dateAdded', label: 'Added', class: 'hidden md:table-cell' }
 	];
 </script>
 
-<PageLayout maxWidth="7xl">
-	<PageHeader emoji="🔍" title="Current Resource Spawns" />
+<!-- Page Header -->
+<div class="mb-6 rounded-t-lg border-b border-slate-700/50 bg-slate-800/50 px-2 py-2.5">
+	<h1 class="text-lg font-semibold text-white">Current Resource Spawns</h1>
+	<p class="mt-0.5 text-sm text-slate-400">
+		Browse and filter active resource spawns across all planets
+	</p>
+</div>
 
+<PageLayout maxWidth="full" className="px-2">
 	<!-- Search and filters -->
-	<FilterSection>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-			<div class="md:col-span-2">
+	<Card className="mb-6">
+		<!-- Filter Header -->
+		<div class="mb-4">
+			<h2 class="text-lg font-semibold text-white">🔍 Filters</h2>
+		</div>
+
+		<!-- Filter Controls -->
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+			<div>
 				<Input
 					label="Search Resources"
 					placeholder="Enter resource name..."
@@ -182,29 +201,7 @@
 				</select>
 			</div>
 		</div>
-
-		<div class="mt-4 flex items-center justify-end">
-			<div class="flex gap-2">
-				<Button variant="primary" {isLoading} onclick={searchResources} loadingText="Searching...">
-					Search
-				</Button>
-				<Button
-					variant="success"
-					{isLoading}
-					onclick={updateResourcesCache}
-					loadingText="Updating..."
-				>
-					Update Resources
-				</Button>
-			</div>
-		</div>
-
-		{#if lastUpdate}
-			<div class="mt-2 text-sm text-slate-400">
-				Last updated: {lastUpdate}
-			</div>
-		{/if}
-	</FilterSection>
+	</Card>
 
 	<!-- Content -->
 	{#if isLoading}
@@ -220,6 +217,23 @@
 			emptySubMessage="Try adjusting your filters or refreshing the resource data."
 			{columns}
 		>
+			{#snippet headerExtension()}
+				<Button
+					variant="secondary"
+					{isLoading}
+					onclick={updateResourcesCache}
+					loadingText="..."
+					className="h-8 w-8 p-1 text-base"
+					title="Update Resources"
+				>
+					🔄
+				</Button>
+				{#if lastUpdate}
+					<div class="text-sm text-slate-400">
+						Last updated: {lastUpdate}
+					</div>
+				{/if}
+			{/snippet}
 			{#snippet renderCell(resource, column, i)}
 				{#if column.key === 'name'}
 					<a
@@ -233,34 +247,33 @@
 				{:else if column.key === 'status'}
 					{#if resource.isCurrentlySpawned}
 						<span
-							class="inline-flex rounded-full bg-green-900/30 px-3 py-1 text-sm font-medium text-green-300"
+							class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-green-900/30 text-green-300"
+							title="Currently spawned"
 						>
-							Active
+							✓
 						</span>
 					{:else}
 						<span
-							class="inline-flex rounded-full bg-red-900/30 px-3 py-1 text-sm font-medium text-red-300"
+							class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-900/30 text-red-300"
+							title="Inactive/Despawned"
 						>
-							Despawned
+							✕
 						</span>
 					{/if}
-				{:else if column.key === 'quality'}
-					{#if resource.stats?.overallQuality}
+				{:else if ['oq', 'cr', 'cd', 'dr', 'fl', 'hr', 'ma', 'pe', 'sr', 'ut'].includes(column.key)}
+					{@const statValue = resource.attributes?.[column.key]}
+					{#if statValue !== undefined && statValue !== null}
 						<span
-							class="text-base font-medium {resource.stats.overallQuality > 900
+							class="text-base font-medium {statValue > 900
 								? 'text-green-400'
-								: resource.stats.overallQuality > 700
+								: statValue > 700
 									? 'text-yellow-400'
-									: 'text-slate-400'}"
+									: statValue > 500
+										? 'text-blue-400'
+										: 'text-slate-400'}"
 						>
-							{resource.stats.overallQuality}
+							{statValue}
 						</span>
-					{:else}
-						<span class="text-base text-slate-500">-</span>
-					{/if}
-				{:else if column.key === 'bestUses'}
-					{#if resource.stats?.bestUses?.length}
-						<span class="text-base text-slate-300">{resource.stats.bestUses.join(', ')}</span>
 					{:else}
 						<span class="text-base text-slate-500">-</span>
 					{/if}
@@ -269,11 +282,11 @@
 						(p) => resource.planetDistribution[p] > 0
 					)}
 					{#if activePlanets.length > 0}
-						<div class="flex flex-wrap gap-1">
+						<div class="flex flex-wrap justify-end gap-1">
 							{#each activePlanets as planet}
 								{@const planetInfo = getPlanetInfo(planet)}
 								<span
-									class="inline-flex h-6 w-6 cursor-default items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
+									class="inline-flex h-5 w-5 cursor-default items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
 									title="{planetInfo.name}: {resource.planetDistribution[planet]}%"
 								>
 									{planetInfo.letter}
@@ -285,7 +298,11 @@
 					{/if}
 				{:else if column.key === 'dateAdded'}
 					<span class="text-base text-slate-300"
-						>{new Date(resource.enterDate).toLocaleDateString()}</span
+						>{new Date(resource.enterDate).toLocaleDateString('en-US', {
+							month: 'numeric',
+							day: 'numeric',
+							year: '2-digit'
+						})}</span
 					>
 				{/if}
 			{/snippet}

@@ -26,7 +26,9 @@
 		// Table mode props
 		mode = 'card',
 		columns = [],
-		renderCell
+		renderCell,
+		// Extended header content
+		headerExtension
 	} = $props<{
 		title: string;
 		total?: number;
@@ -44,6 +46,8 @@
 		mode?: 'card' | 'table';
 		columns?: Column[];
 		renderCell?: any;
+		// Extended header content
+		headerExtension?: any;
 	}>();
 
 	function generatePageNumbers() {
@@ -61,7 +65,14 @@
 	<!-- Table Mode -->
 	<div class="overflow-hidden rounded-lg border border-slate-700 bg-slate-800">
 		<div class="border-b border-slate-700 bg-slate-900 px-6 py-4">
-			<h3 class="text-lg font-semibold text-white">{title} ({total.toLocaleString()})</h3>
+			<div class="flex items-center justify-between">
+				<h3 class="text-lg font-semibold text-white">{title} ({total.toLocaleString()})</h3>
+				{#if headerExtension}
+					<div class="flex items-center gap-3">
+						{@render headerExtension()}
+					</div>
+				{/if}
+			</div>
 		</div>
 
 		{#if items.length === 0}
@@ -76,9 +87,13 @@
 				<table class="w-full">
 					<thead class="border-b border-slate-700 bg-slate-900/50">
 						<tr>
-							{#each columns as column}
+							{#each columns as column, index}
 								<th
-									class="px-6 py-4 text-left text-base font-semibold text-slate-200 {column.class ||
+									class="{index === 0
+										? 'pr-3 pl-6'
+										: index === columns.length - 1
+											? 'pr-6 pl-3'
+											: 'px-3'} py-4 text-left text-base font-semibold text-slate-200 {column.class ||
 										''}"
 								>
 									{column.label}
@@ -93,8 +108,14 @@
 									? 'bg-slate-800/50'
 									: 'bg-slate-800'}"
 							>
-								{#each columns as column}
-									<td class="px-6 py-4 {column.class || ''}">
+								{#each columns as column, index}
+									<td
+										class="{index === 0
+											? 'pr-3 pl-6'
+											: index === columns.length - 1
+												? 'pr-6 pl-3'
+												: 'px-3'} py-4 {column.class || ''}"
+									>
 										{@render renderCell(item, column, i)}
 									</td>
 								{/each}
