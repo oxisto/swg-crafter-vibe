@@ -25,8 +25,10 @@ import {
 import { XMLParser } from 'fast-xml-parser';
 import { createWriteStream, existsSync, unlinkSync, readFileSync } from 'fs';
 import { gunzipSync } from 'zlib';
+import { createLogger } from './logger.js';
 
 const DB_PATH = 'database.sqlite3';
+let dbLogger = createLogger({ component: 'database' }); // Will be re-initialized in initDatabase
 
 let db: Database.Database;
 
@@ -36,6 +38,9 @@ let db: Database.Database;
  * Automatically populates initial inventory data and downloads schematics if needed.
  */
 export function initDatabase() {
+	// Re-initialize the logger now that server logger is available
+	dbLogger = createLogger({ component: 'database' });
+
 	db = new Database(DB_PATH);
 
 	// Create inventory table if it doesn't exist
@@ -209,8 +214,12 @@ export function initDatabase() {
 
 	// Download and cache schematics and resources in the background
 	Promise.all([
-		downloadAndCacheSchematics().catch(console.error),
-		downloadAndCacheResources().catch(console.error)
+		downloadAndCacheSchematics().catch((error) =>
+			dbLogger.error('Failed to download schematics', { error })
+		),
+		downloadAndCacheResources().catch((error) =>
+			dbLogger.error('Failed to download resources', { error })
+		)
 	]);
 
 	return db;
@@ -482,12 +491,21 @@ export async function downloadAndCacheSchematics(): Promise<void> {
 		const hoursSinceUpdate = (now.getTime() - lastUpdateTime.getTime()) / (1000 * 60 * 60);
 
 		if (hoursSinceUpdate < CACHE_DURATION_HOURS) {
-			console.log('Schematics cache is still fresh, skipping download');
+			dbLogger.debug(
+				`Schematics cache fresh (${Math.round(hoursSinceUpdate * 10) / 10}h old), skipping download`
+			);
 			return;
 		}
+
+		dbLogger.info(
+			`Schematics cache expired (${Math.round(hoursSinceUpdate * 10) / 10}h old), starting refresh`
+		);
+	} else {
+		dbLogger.info('No schematics cache found, performing initial download');
 	}
 
-	console.log('Downloading schematics from SWGAide...');
+	const totalStartTime = Date.now();
+	dbLogger.info('Starting schematics download from SWGAide');
 
 	try {
 		// Download the compressed XML file
@@ -541,9 +559,11 @@ export async function downloadAndCacheSchematics(): Promise<void> {
 			unlinkSync(tempFile);
 		}
 
-		console.log('Schematics cache updated successfully');
+		dbLogger.info(
+			`Schematics cache update completed (${Math.round((Date.now() - totalStartTime) / 1000)}s)`
+		);
 	} catch (error) {
-		console.error('Failed to download and cache schematics:', error);
+		dbLogger.error(`Failed to download and cache schematics: ${(error as Error).message}`);
 		// Don't throw - let the app continue without schematics data
 	}
 }
@@ -598,7 +618,7 @@ async function processSchematics(parsedData: any): Promise<void> {
 	});
 
 	insertMany();
-	console.log(`Processed ${schematicsArray.length} schematics`);
+	dbLogger.info(`Processed ${schematicsArray.length} schematics`);
 }
 
 /**
@@ -697,12 +717,21 @@ export async function downloadAndCacheResources(): Promise<void> {
 		const hoursSinceUpdate = (now.getTime() - lastUpdateTime.getTime()) / (1000 * 60 * 60);
 
 		if (hoursSinceUpdate < RESOURCES_CACHE_DURATION_HOURS) {
-			console.log('Resources cache is still fresh, skipping download');
+			dbLogger.debug(
+				`Resources cache fresh (${Math.round(hoursSinceUpdate * 10) / 10}h old), skipping download`
+			);
 			return;
 		}
+
+		dbLogger.info(
+			`Resources cache expired (${Math.round(hoursSinceUpdate * 10) / 10}h old), starting refresh`
+		);
+	} else {
+		dbLogger.info('No resources cache found, performing initial download');
 	}
 
-	console.log('Downloading current resources from SWGAide...');
+	const totalStartTime = Date.now();
+	dbLogger.info(`Starting resources download from SWGAide`);
 
 	try {
 		// Download the compressed XML file
@@ -712,6 +741,11 @@ export async function downloadAndCacheResources(): Promise<void> {
 		if (!response.ok) {
 			throw new Error(`Failed to download resources: ${response.statusText}`);
 		}
+
+		const downloadSize = response.headers.get('content-length');
+		const sizeText = downloadSize
+			? `${Math.round(parseInt(downloadSize) / 1024)}KB`
+			: 'unknown size';
 
 		// Save the gzipped file temporarily
 		const buffer = await response.arrayBuffer();
@@ -756,9 +790,11 @@ export async function downloadAndCacheResources(): Promise<void> {
 			unlinkSync(tempFile);
 		}
 
-		console.log('Resources cache updated successfully');
+		dbLogger.info(
+			`Resources cache update completed (${Math.round((Date.now() - totalStartTime) / 1000)}s)`
+		);
 	} catch (error) {
-		console.error('Failed to download and cache resources:', error);
+		dbLogger.error(`Failed to download and cache resources: ${(error as Error).message}`);
 		// Don't throw - let the app continue without resource data
 	}
 }
@@ -921,7 +957,7 @@ async function processResources(parsedData: any): Promise<void> {
 		.prepare('SELECT COUNT(*) as count FROM resources WHERE is_currently_spawned = 1')
 		.get() as { count: number };
 
-	console.log(
+	dbLogger.info(
 		`Processed ${resourcesArray.length} current spawns. Total resources in DB: ${totalResources.count}, Currently spawned: ${currentlySpawned.count}`
 	);
 }
@@ -1026,7 +1062,10 @@ export function getAllResources(): Resource[] {
 					stats
 				};
 			} catch (error) {
-				console.error(`Failed to parse resource data for ${row.id}:`, error);
+				dbLogger.error(`Failed to parse resource data for ${row.id}`, {
+					error: error as Error,
+					resourceId: row.id
+				});
 				return null;
 			}
 		})
@@ -1082,7 +1121,11 @@ export function getResourcesByClass(className: string): Resource[] {
 					stats
 				};
 			} catch (error) {
-				console.error(`Failed to parse resource data for ${row.id}:`, error);
+				dbLogger.error(`Failed to parse resource data for ${row.id}`, {
+					error: error as Error,
+					resourceId: row.id,
+					context: 'getResourcesByClass'
+				});
 				return null;
 			}
 		})
@@ -1136,7 +1179,11 @@ export function searchResources(searchTerm: string): Resource[] {
 					stats
 				};
 			} catch (error) {
-				console.error(`Failed to parse resource data for ${row.id}:`, error);
+				dbLogger.error(`Failed to parse resource data for ${row.id}`, {
+					error: error as Error,
+					resourceId: row.id,
+					context: 'searchResources'
+				});
 				return null;
 			}
 		})
@@ -1190,7 +1237,11 @@ export function getResourceById(id: string): Resource | null {
 			stats
 		};
 	} catch (error) {
-		console.error(`Failed to parse resource data for ${row.id}:`, error);
+		dbLogger.error(`Failed to parse resource data for ${row.id}`, {
+			error: error as Error,
+			resourceId: row.id,
+			context: 'getResourceById'
+		});
 		return null;
 	}
 }
@@ -1251,22 +1302,11 @@ function updateResourceWithSOAPData(resourceId: string, soapData: SOAPResourceIn
 	const hasBasicInfo = soapData.ID > 0 && soapData.Name && soapData.Name.trim().length > 0;
 
 	if (!hasBasicInfo) {
-		console.log(
-			`SOAP data for resource ${resourceId} is invalid (missing ID or Name), skipping update`
-		);
+		dbLogger.debug(`Invalid SOAP data for resource ${resourceId}, skipping update`);
 		return;
 	}
 
-	// SOAP data is valid - resource attributes can legitimately be zero for certain resource types
-	// (e.g., energy resources often have zero values for most crafting attributes)
-	console.log(
-		`Updating resource ${resourceId} with SOAP data - ID: ${soapData.ID}, Name: ${soapData.Name}`
-	);
-	console.log(
-		`Resource attributes: ER=${soapData.ER}, CR=${soapData.CR}, CD=${soapData.CD}, DR=${soapData.DR}, FL=${soapData.FL}, HR=${soapData.HR}, MA=${soapData.MA}, PE=${soapData.PE}, OQ=${soapData.OQ}, SR=${soapData.SR}, UT=${soapData.UT}`
-	);
-
-	// Update the resource attributes with SOAP data only if we have valid data
+	// Update the resource attributes with SOAP data
 	const attributes = {
 		er: soapData.ER || 0,
 		cr: soapData.CR || 0,
@@ -1291,7 +1331,7 @@ function updateResourceWithSOAPData(resourceId: string, soapData: SOAPResourceIn
 	`);
 
 	updateStmt.run(JSON.stringify(attributes), nowISO, nowISO, resourceId);
-	console.log(`Updated resource ${resourceId} with valid SOAP attributes`);
+	dbLogger.debug(`Updated resource ${resourceId} via SOAP (OQ: ${soapData.OQ || 0})`);
 }
 
 /**
@@ -1372,7 +1412,7 @@ function parseSOAPResourceInfo(xmlText: string): SOAPResourceInfo | null {
 
 		return resourceInfo;
 	} catch (error) {
-		console.error('Failed to parse SOAP ResourceInfo with XML parser:', error);
+		dbLogger.error('Failed to parse SOAP ResourceInfo with XML parser', { error: error as Error });
 
 		// Fallback to regex parsing if XML parsing fails
 		try {
@@ -1411,7 +1451,9 @@ function parseSOAPResourceInfo(xmlText: string): SOAPResourceInfo | null {
 				UT: extractField('UT')
 			};
 		} catch (fallbackError) {
-			console.error('Failed to parse SOAP ResourceInfo with fallback regex:', fallbackError);
+			dbLogger.error('Failed to parse SOAP ResourceInfo with fallback regex', {
+				error: fallbackError as Error
+			});
 			return null;
 		}
 	}
@@ -1456,16 +1498,18 @@ export async function getResourceInfoByName(
 		}
 
 		const xmlText = await response.text();
-		console.log(`SOAP XML Response for resource ${resourceName}:`, xmlText);
+		dbLogger.debug(`SOAP XML Response for resource ${resourceName}:`, { xmlText });
 		const resourceInfo = parseSOAPResourceInfo(xmlText);
 
 		if (resourceInfo) {
-			console.log(`Fetched SOAP data for resource: ${resourceName}`);
+			// Update the resource in our database with SOAP data
+			updateResourceWithSOAPData(resourceName, resourceInfo);
+			dbLogger.debug(`SOAP update successful for resource: ${resourceName}`);
 		}
 
 		return resourceInfo;
 	} catch (error) {
-		console.error('Failed to get resource info by name:', error);
+		dbLogger.error(`SOAP request failed for ${resourceName}: ${(error as Error).message}`);
 		return null;
 	}
 }
@@ -1502,18 +1546,18 @@ export async function getResourceInfoById(resourceId: string): Promise<SOAPResou
 		}
 
 		const xmlText = await response.text();
-		console.log(`SOAP XML Response for resource ${resourceId}:`, xmlText);
+		dbLogger.debug(`SOAP XML Response for resource ${resourceId}:`, { xmlText });
 		const resourceInfo = parseSOAPResourceInfo(xmlText);
 
 		if (resourceInfo) {
 			// Update the resource in our database with SOAP data
 			updateResourceWithSOAPData(resourceId, resourceInfo);
-			console.log(`Fetched and updated SOAP data for resource ID: ${resourceId}`);
+			dbLogger.info(`Fetched and updated SOAP data for resource ID: ${resourceId}`);
 		}
 
 		return resourceInfo;
 	} catch (error) {
-		console.error('Failed to get resource info by ID:', error);
+		dbLogger.error('Failed to get resource info by ID', { error: error as Error, resourceId });
 		return null;
 	}
 }
@@ -1559,7 +1603,7 @@ export async function updateResourceSOAPData(resourceId: string): Promise<{
 			reason: 'Successfully updated from SOAP'
 		};
 	} catch (error) {
-		console.error('Failed to update resource SOAP data:', error);
+		dbLogger.error('Failed to update resource SOAP data', { error: error as Error, resourceId });
 		return { success: false, updated: false, reason: 'Update failed' };
 	}
 }

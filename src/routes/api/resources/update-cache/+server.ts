@@ -25,8 +25,11 @@ export const GET: RequestHandler = async () => {
  * POST /api/resources/update-cache
  * Manually triggers a resource cache update
  */
-export const POST: RequestHandler = async () => {
+export const POST: RequestHandler = async ({ locals }) => {
+	const apiLogger = locals?.logger?.child({ component: 'api', endpoint: 'resources-cache' });
+
 	try {
+		apiLogger?.info('Starting manual resources cache update');
 		await db.downloadAndCacheResources();
 
 		// Get the updated timestamp
@@ -35,13 +38,14 @@ export const POST: RequestHandler = async () => {
 			.prepare('SELECT value FROM resources_cache WHERE key = ?')
 			.get('resources_last_update') as { value: string } | undefined;
 
+		apiLogger?.info('Resources cache update completed successfully');
 		return json({
 			success: true,
 			message: 'Resource cache update completed successfully',
 			lastUpdate: lastUpdate?.value || null
 		});
 	} catch (error) {
-		console.error('Failed to update resource cache:', error);
+		apiLogger?.error(`Resource cache update failed: ${(error as Error).message}`);
 		return json(
 			{
 				success: false,

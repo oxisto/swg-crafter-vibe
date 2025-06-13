@@ -27,29 +27,28 @@ import type { RequestHandler } from './$types.js';
  * @param {URL} params.url - Request URL containing query parameters
  * @returns {Promise<Response>} JSON response with schematic data or error message
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
+	const apiLogger = locals.logger.child({ component: 'api', endpoint: 'schematics' });
 	const category = url.searchParams.get('category');
 	const id = url.searchParams.get('id');
 
 	try {
 		if (id) {
-			// Get specific schematic by ID
 			const schematic = getSchematicById(id);
 			if (!schematic) {
+				apiLogger.warn(`Schematic not found: ${id}`);
 				return new Response('Schematic not found', { status: 404 });
 			}
 			return json(schematic);
 		} else if (category) {
-			// Get schematics by category
 			const schematics = getSchematicsByCategory(category);
 			return json(schematics);
 		} else {
-			// Get all schematics
 			const schematics = getAllSchematics();
 			return json(schematics);
 		}
 	} catch (error) {
-		console.error('Error fetching schematics:', error);
+		apiLogger.error(`Schematics API error: ${(error as Error).message}`);
 		return new Response('Internal server error', { status: 500 });
 	}
 };

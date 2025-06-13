@@ -7,7 +7,10 @@
  */
 
 // filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/inventory/+page.server.ts
+import { logger } from '$lib/logger.js';
 import type { PageServerLoad } from './$types.js';
+
+const pageLogger = logger.child({ component: 'page-server', page: 'inventory' });
 
 /**
  * Page load function for the inventory management page.
@@ -66,7 +69,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 			settings: settingsData
 		};
 	} catch (error) {
-		console.error('Error loading inventory data:', error);
+		pageLogger.error('Error loading inventory data', { error: error as Error });
 		return {
 			inventory: {},
 			schematicNames: {},

@@ -1,5 +1,14 @@
 /**
- * @fileoverview Inventory API server for the SWG Shipwright application.
+ * @fileoverview Inve	SCHEMATIC_ID_MAP,
+	getBlasterName,
+	type MarkLevel,
+	type PartCategory,
+	PART_CATEGORIES,
+	MARK_LEVELS
+} from '$lib/types.js';
+import type { RequestHandler } from './$types';
+
+const inventoryLogger = logger.child({ component: 'api', endpoint: 'inventory' });I server for the SWG Shipwright application.
  * Provides REST endpoints for managing ship part inventory including
  * retrieving current stock levels and updating quantities.
  *
@@ -21,6 +30,7 @@ import {
 	getRecentlyUpdatedInventory,
 	getSchematicById
 } from '$lib/database.js';
+import { logger } from '$lib/logger.js';
 import {
 	SCHEMATIC_ID_MAP,
 	getBlasterName,
@@ -30,6 +40,8 @@ import {
 	MARK_LEVELS
 } from '$lib/types.js';
 import type { RequestHandler } from './$types.js';
+
+const inventoryLogger = logger.child({ component: 'api', endpoint: 'inventory' });
 
 /**
  * GET endpoint handler for retrieving inventory data.
@@ -275,7 +287,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		return json(response);
 	} catch (error) {
-		console.error('Error fetching inventory:', error);
+		inventoryLogger.error('Error fetching inventory', { error: error as Error });
 		return json({ error: 'Internal server error' }, { status: 500 });
 	}
 };
@@ -335,7 +347,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			updatedAt: updatedItem?.updatedAt || new Date().toISOString()
 		});
 	} catch (error) {
-		console.error('Error updating inventory:', error);
+		inventoryLogger.error('Error updating inventory', { error: error as Error });
 		return json({ error: 'Internal server error' }, { status: 500 });
 	}
 };

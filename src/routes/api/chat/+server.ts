@@ -14,10 +14,13 @@
 // filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/api/chat/+server.ts
 import { json } from '@sveltejs/kit';
 import { OPENAI_API_KEY } from '$env/static/private';
+import { logger } from '$lib/logger.js';
 import OpenAI from 'openai';
 import { getAllInventory, getAllSchematics, getSchematicById } from '$lib/database.js';
 import { SCHEMATIC_ID_MAP, getBlasterName, PART_CATEGORIES, MARK_LEVELS } from '$lib/types.js';
 import type { RequestHandler } from './$types.js';
+
+const chatLogger = logger.child({ component: 'api', endpoint: 'chat' });
 
 /** OpenAI client instance configured with API key */
 const openai = new OpenAI({
@@ -406,7 +409,7 @@ Always use the tools to get current data before providing advice. Be specific an
 			usage: completion.usage
 		});
 	} catch (error) {
-		console.error('Error in chat API:', error);
+		chatLogger.error('Error in chat API', { error: error as Error });
 
 		if (error instanceof Error && error.message.includes('API key')) {
 			return json({ error: 'Invalid OpenAI API key' }, { status: 401 });

@@ -4,7 +4,10 @@
  */
 import { json, error } from '@sveltejs/kit';
 import * as db from '$lib/database';
+import { logger } from '$lib/logger.js';
 import type { RequestHandler } from './$types';
+
+const apiLogger = logger.child({ component: 'api', endpoint: 'resources' });
 
 /**
  * GET /api/resources/[id]
@@ -51,7 +54,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 			};
 		}
 	} catch (error) {
-		console.error('SOAP API request failed:', error);
+		apiLogger.error('SOAP API request failed', { error: error as Error, resourceId: id });
 		soapResult = {
 			data: null,
 			updated: false,

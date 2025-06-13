@@ -12,7 +12,10 @@
 
 // filepath: /Users/oxisto/Repositories/swg-crafter/src/lib/stores.ts
 import { writable } from 'svelte/store';
+import { createLogger } from './logger.js';
 import type { Inventory, Settings } from './types.js';
+
+const storeLogger = createLogger({ component: 'stores' });
 
 /**
  * Reactive store for inventory data.
@@ -60,7 +63,7 @@ export async function incrementStock(category: string, markLevel: string) {
 			});
 		}
 	} catch (error) {
-		console.error('Error incrementing stock:', error);
+		storeLogger.error('Error incrementing stock', { error: error as Error, category, markLevel });
 	}
 }
 
@@ -95,7 +98,7 @@ export async function decrementStock(category: string, markLevel: string) {
 			});
 		}
 	} catch (error) {
-		console.error('Error decrementing stock:', error);
+		storeLogger.error('Error decrementing stock', { error: error as Error, category, markLevel });
 	}
 }
 
@@ -132,7 +135,12 @@ export async function setStock(category: string, markLevel: string, quantity: nu
 			});
 		}
 	} catch (error) {
-		console.error('Error setting stock:', error);
+		storeLogger.error('Error setting stock', {
+			error: error as Error,
+			category,
+			markLevel,
+			quantity
+		});
 	}
 }
 
@@ -151,7 +159,7 @@ export async function loadSettings() {
 			return result.settings;
 		}
 	} catch (error) {
-		console.error('Error loading settings:', error);
+		storeLogger.error('Error loading settings', { error: error as Error });
 	}
 	return {
 		recommendedStockLevel: 10,
@@ -186,7 +194,7 @@ export async function updateRecommendedStockLevel(level: number) {
 			});
 		}
 	} catch (error) {
-		console.error('Error updating recommended stock level:', error);
+		storeLogger.error('Error updating recommended stock level', { error: error as Error, level });
 	}
 }
 
@@ -216,6 +224,6 @@ export async function updateSellValues(sellValues: Record<string, number>) {
 			});
 		}
 	} catch (error) {
-		console.error('Error updating sell values:', error);
+		storeLogger.error('Error updating sell values', { error: error as Error, sellValues });
 	}
 }
