@@ -2,6 +2,11 @@
 	import { onMount } from 'svelte';
 	import { marked } from 'marked';
 	import type { PageData } from './$types.js';
+	import PageLayout from '$lib/components/PageLayout.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
+	import Card from '$lib/components/Card.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Alert from '$lib/components/Alert.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -199,38 +204,37 @@ Ask me anything about your inventory or Star Wars Galaxies shipwright business!`
 	<title>SWG Shipwright - AI Assistant</title>
 </svelte:head>
 
-<div class="flex h-full flex-col">
-	<div class="w-full px-4 py-6">
-		<header class="mb-6 text-center">
-			<h1 class="mb-2 text-3xl font-bold text-yellow-400">AI Assistant</h1>
-			<p class="text-slate-400">Enhanced with OpenAI Function Calling - dynamic data querying</p>
+<PageLayout maxWidth="6xl">
+	<PageHeader
+		emoji="🤖"
+		title="AI Assistant"
+		subtitle="Enhanced with OpenAI Function Calling - dynamic data querying"
+		centered
+	>
+		<div slot="actions">
 			<div
-				class="mt-2 inline-flex items-center rounded-full bg-blue-900/40 px-3 py-1 text-xs text-blue-400"
+				class="inline-flex items-center rounded-full bg-blue-900/40 px-3 py-1 text-xs text-blue-400"
 			>
 				⚡ Function Calling Enabled
 			</div>
-		</header>
+		</div>
+	</PageHeader>
 
-		{#if !data.hasApiKey}
-			<div class="mx-auto max-w-2xl">
-				<div class="rounded-lg border border-red-700 bg-red-900/40 p-6 text-center">
-					<h2 class="mb-2 text-xl font-bold text-red-400">API Key Required</h2>
-					<p class="mb-4 text-slate-300">
-						To use the AI assistant, you need to configure your OpenAI API key in the environment
-						variables.
-					</p>
-					<div class="rounded bg-slate-800 p-4 text-left">
-						<code class="text-green-400">OPENAI_API_KEY=your_api_key_here</code>
-					</div>
-				</div>
+	{#if !data.hasApiKey}
+		<Alert variant="error" title="API Key Required">
+			<p class="mb-4">
+				To use the AI assistant, you need to configure your OpenAI API key in the environment
+				variables.
+			</p>
+			<div class="rounded bg-slate-800 p-4 text-left">
+				<code class="text-green-400">OPENAI_API_KEY=your_api_key_here</code>
 			</div>
-		{:else}
-			<div class="mx-auto flex h-full max-w-6xl flex-col px-6">
-				<!-- Messages Container -->
-				<div
-					bind:this={messagesContainer}
-					class="mb-4 max-h-[600px] min-h-[500px] flex-1 overflow-y-auto rounded-lg border border-slate-700 bg-slate-800/50 p-4"
-				>
+		</Alert>
+	{:else}
+		<div class="flex h-full max-h-[calc(100vh-200px)] flex-col">
+			<!-- Messages Container -->
+			<Card class="mb-4 flex min-h-[500px] flex-1 flex-col">
+				<div bind:this={messagesContainer} class="flex-1 overflow-y-auto p-4">
 					{#if messages.length === 0}
 						<div class="mt-8 text-center text-slate-400">
 							<p class="mb-6">
@@ -288,41 +292,36 @@ Ask me anything about your inventory or Star Wars Galaxies shipwright business!`
 						{/if}
 					{/if}
 				</div>
+			</Card>
 
-				<!-- Input Area -->
-				<div class="flex gap-2">
-					<textarea
-						bind:value={currentMessage}
-						onkeydown={handleKeydown}
-						placeholder="Ask about your inventory, get crafting suggestions, or request analysis..."
-						class="flex-1 resize-none rounded-lg border border-slate-600 bg-slate-700 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-						rows="3"
-						disabled={isLoading}
-					></textarea>
-					<div class="flex flex-col gap-2">
-						<button
-							onclick={sendMessage}
-							disabled={!currentMessage.trim() || isLoading}
-							class="rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-600"
-						>
-							Send
-						</button>
-						<button
-							onclick={clearChat}
-							class="rounded-lg bg-slate-600 px-6 py-3 text-white transition-colors hover:bg-slate-500"
-						>
-							Clear
-						</button>
-					</div>
-				</div>
-
-				<div class="mt-2 text-center text-xs text-slate-500">
-					Press Enter to send • Shift+Enter for new line • Functions will be called automatically
+			<!-- Input Area -->
+			<div class="flex gap-2">
+				<textarea
+					bind:value={currentMessage}
+					onkeydown={handleKeydown}
+					placeholder="Ask about your inventory, get crafting suggestions, or request analysis..."
+					class="flex-1 resize-none rounded-lg border border-slate-600 bg-slate-700 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+					rows="3"
+					disabled={isLoading}
+				></textarea>
+				<div class="flex flex-col gap-2">
+					<Button
+						variant="primary"
+						onclick={sendMessage}
+						disabled={!currentMessage.trim() || isLoading}
+					>
+						Send
+					</Button>
+					<Button variant="secondary" onclick={clearChat}>Clear</Button>
 				</div>
 			</div>
-		{/if}
-	</div>
-</div>
+
+			<div class="mt-2 text-center text-xs text-slate-500">
+				Press Enter to send • Shift+Enter for new line • Functions will be called automatically
+			</div>
+		</div>
+	{/if}
+</PageLayout>
 
 <style>
 	.animation-delay-100 {

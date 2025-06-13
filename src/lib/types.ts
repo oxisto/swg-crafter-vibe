@@ -376,3 +376,63 @@ export const PLANETS: Planet[] = [
 	'mustafar',
 	'space'
 ];
+
+/** Planet display information for location columns */
+export interface PlanetInfo {
+	letter: string;
+	color: string;
+	bg: string;
+	name: string;
+}
+
+/** Planet data with single letters and colors matching the galaxy map */
+export const PLANET_DATA: Record<string, PlanetInfo> = {
+	corellia: { letter: 'C', color: 'text-blue-300', bg: 'bg-blue-900/40', name: 'Corellia' },
+	dantooine: { letter: 'D', color: 'text-green-300', bg: 'bg-green-900/40', name: 'Dantooine' },
+	dathomir: { letter: 'A', color: 'text-red-300', bg: 'bg-red-900/40', name: 'Dathomir' },
+	endor: { letter: 'E', color: 'text-emerald-300', bg: 'bg-emerald-900/40', name: 'Endor' },
+	lok: { letter: 'L', color: 'text-orange-300', bg: 'bg-orange-900/40', name: 'Lok' },
+	naboo: { letter: 'N', color: 'text-cyan-300', bg: 'bg-cyan-900/40', name: 'Naboo' },
+	rori: { letter: 'R', color: 'text-teal-300', bg: 'bg-teal-900/40', name: 'Rori' },
+	talus: { letter: 'T', color: 'text-purple-300', bg: 'bg-purple-900/40', name: 'Talus' },
+	tatooine: { letter: 'O', color: 'text-yellow-300', bg: 'bg-yellow-900/40', name: 'Tatooine' },
+	yavin4: { letter: 'Y', color: 'text-lime-300', bg: 'bg-lime-900/40', name: 'Yavin 4' },
+	kashyyyk_main: {
+		letter: 'K',
+		color: 'text-amber-300',
+		bg: 'bg-amber-900/40',
+		name: 'Kashyyyk Main'
+	},
+	kashyyyk_hunting: {
+		letter: 'H',
+		color: 'text-amber-200',
+		bg: 'bg-amber-800/40',
+		name: 'Kashyyyk Hunting'
+	},
+	kashyyyk_dead: {
+		letter: 'W',
+		color: 'text-amber-400',
+		bg: 'bg-amber-700/40',
+		name: 'Kashyyyk Dead Forest'
+	},
+	mustafar: { letter: 'M', color: 'text-red-400', bg: 'bg-red-800/40', name: 'Mustafar' },
+	space: { letter: 'S', color: 'text-slate-300', bg: 'bg-slate-700/40', name: 'Space' }
+};
+
+/**
+ * Gets planet display information for a given planet name.
+ * @param planetName - The planet name to look up
+ * @returns Planet display information with letter, colors, and full name
+ */
+export function getPlanetInfo(planetName: string): PlanetInfo {
+	if (!planetName) return { letter: '', color: 'text-slate-300', bg: 'bg-slate-700/40', name: '' };
+	const normalized = planetName.toLowerCase().replace(/\s+/g, '_');
+	return (
+		PLANET_DATA[normalized] || {
+			letter: planetName.charAt(0).toUpperCase(),
+			color: 'text-slate-300',
+			bg: 'bg-slate-700/40',
+			name: planetName
+		}
+	);
+}

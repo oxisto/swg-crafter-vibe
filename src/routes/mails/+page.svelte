@@ -1,8 +1,19 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import PageLayout from '$lib/components/PageLayout.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
+	import ActionBar from '$lib/components/ActionBar.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Card from '$lib/components/Card.svelte';
+	import FilterSection from '$lib/components/FilterSection.svelte';
+	import DataTable from '$lib/components/DataTable.svelte';
+	import Input from '$lib/components/Input.svelte';
+	import Alert from '$lib/components/Alert.svelte';
+	import Loading from '$lib/components/Loading.svelte';
 	import type { PageData } from './$types';
 	import type { MailData, MailImport } from '$lib/types';
+	import { getPlanetInfo } from '$lib/types';
 
 	export let data: PageData;
 
@@ -147,230 +158,135 @@
 	<title>SWG Shipwright - Mail Management</title>
 </svelte:head>
 
-<div class="h-full">
-	<div class="container mx-auto max-w-7xl px-6 py-8">
-		<header class="mb-8 text-center">
-			<h1 class="mb-2 text-3xl font-bold text-yellow-400">📧 Mail Management</h1>
-			<p class="text-slate-400">Import and manage your mail data from the game</p>
-		</header>
+<PageLayout maxWidth="7xl">
+	<PageHeader
+		title="Mail Management"
+		subtitle="Import and manage your mail data from the game"
+		emoji="📧"
+		centered={true}
+	/>
 
-		<div class="mb-6 flex items-center justify-between">
-			<div class="flex gap-3">
-				<input
-					bind:this={fileInput}
-					type="file"
-					accept=".json"
-					class="hidden"
-					on:change={handleMailImport}
-				/>
+	<ActionBar>
+		<input
+			bind:this={fileInput}
+			type="file"
+			accept=".json"
+			class="hidden"
+			on:change={handleMailImport}
+		/>
 
-				<button
-					on:click={() => fileInput.click()}
-					disabled={uploading}
-					class="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-blue-400"
-				>
-					{#if uploading}
-						<div
-							class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
-						></div>
-						Importing...
-					{:else}
-						📤 Import Mails
-					{/if}
-				</button>
-
-				<button
-					on:click={extractSales}
-					disabled={extractingSales}
-					class="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:bg-green-400"
-				>
-					{#if extractingSales}
-						<div
-							class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
-						></div>
-						Extracting...
-					{:else}
-						🔍 Extract Sales
-					{/if}
-				</button>
-			</div>
-		</div>
-
-		{#if data.error}
-			<div class="mb-4 rounded border border-red-400 bg-red-800/20 px-4 py-3 text-red-300">
-				{data.error}
-			</div>
-		{/if}
-
-		<!-- Import History -->
-		{#if data.imports.length > 0}
-			<div class="mb-6 rounded-lg border border-slate-700 bg-slate-800 p-6">
-				<h2 class="mb-3 text-lg font-semibold text-white">Recent Imports</h2>
-				<div class="space-y-2">
-					{#each data.imports.slice(0, 5) as importRecord}
-						<div class="flex items-center justify-between text-sm">
-							<span class="text-slate-400">
-								{formatDate(importRecord.imported_at || '')}
-							</span>
-							<span class="font-medium text-white">
-								{importRecord.imported_mails}/{importRecord.total_mails} mails imported
-							</span>
-						</div>
-					{/each}
-				</div>
-			</div>
-		{/if}
-
-		<!-- Filters -->
-		<div class="mb-6 rounded-lg border border-slate-700 bg-slate-800 p-6">
-			<h2 class="mb-3 text-lg font-semibold text-white">Filters</h2>
-			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-				<div>
-					<label for="sender" class="mb-1 block text-sm font-medium text-slate-300">Sender</label>
-					<input
-						id="sender"
-						type="text"
-						bind:value={senderFilter}
-						placeholder="Filter by sender..."
-						class="w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-white focus:border-blue-500 focus:ring-blue-500"
-					/>
-				</div>
-
-				<div>
-					<label for="subject" class="mb-1 block text-sm font-medium text-slate-300">Subject</label>
-					<input
-						id="subject"
-						type="text"
-						bind:value={subjectFilter}
-						placeholder="Filter by subject..."
-						class="w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-white focus:border-blue-500 focus:ring-blue-500"
-					/>
-				</div>
-
-				<div class="flex items-end gap-2">
-					<button
-						on:click={applyFilters}
-						class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-					>
-						Apply
-					</button>
-					<button
-						on:click={clearFilters}
-						class="rounded-md bg-slate-600 px-4 py-2 text-white hover:bg-slate-700"
-					>
-						Clear
-					</button>
-				</div>
-			</div>
-		</div>
-
-		<!-- Mails List -->
-		<div class="rounded-lg border border-slate-700 bg-slate-800 shadow-sm">
-			<div class="border-b border-slate-700 px-4 py-3">
-				<h2 class="text-lg font-semibold text-white">
-					Mails ({data.total.toLocaleString()})
-				</h2>
-			</div>
-
-			{#if data.mails.length === 0}
-				<div class="p-8 text-center text-slate-400">
-					<p class="text-lg">No mails found</p>
-					<p class="mt-1 text-sm">
-						{#if data.filters.sender || data.filters.subject}
-							Try adjusting your filters or import some mail data.
-						{:else}
-							Import some mail data to get started.
-						{/if}
-					</p>
-				</div>
+		<Button onclick={() => fileInput.click()} disabled={uploading} variant="primary">
+			{#if uploading}
+				<Loading size="sm" />
+				Importing...
 			{:else}
-				<div class="divide-y divide-slate-700">
-					{#each data.mails as mail}
-						<div class="p-4 hover:bg-slate-700/50">
-							<div class="flex items-start justify-between">
-								<div class="min-w-0 flex-1">
-									<div class="mb-2 flex items-center gap-3">
-										<span class="text-sm font-medium text-blue-400">
-											{mail.sender}
-										</span>
-										<span class="text-xs text-slate-500">
-											{getTimeAgo(mail.timestamp)}
-										</span>
-									</div>
-
-									<h3 class="mb-1 text-sm font-medium text-white">
-										{mail.subject}
-									</h3>
-
-									<p class="line-clamp-2 text-xs text-slate-400">
-										{mail.body.length > 150 ? mail.body.substring(0, 150) + '...' : mail.body}
-									</p>
-
-									{#if mail.location}
-										<div class="mt-2">
-											<span
-												class="inline-flex items-center rounded-full bg-slate-700 px-2 py-1 text-xs text-slate-300"
-											>
-												📍 {mail.location}
-											</span>
-										</div>
-									{/if}
-								</div>
-
-								<div class="ml-4 text-xs text-slate-500">
-									{formatDate(mail.timestamp)}
-								</div>
-							</div>
-						</div>
-					{/each}
-				</div>
-
-				<!-- Pagination -->
-				{#if data.pagination.totalPages > 1}
-					<div class="flex items-center justify-between border-t border-slate-700 px-4 py-3">
-						<div class="text-sm text-slate-400">
-							Showing {(data.pagination.page - 1) * data.pagination.limit + 1} to
-							{Math.min(data.pagination.page * data.pagination.limit, data.total)} of
-							{data.total.toLocaleString()} results
-						</div>
-
-						<div class="flex gap-2">
-							<button
-								on:click={() => goToPage(data.pagination.page - 1)}
-								disabled={data.pagination.page <= 1}
-								class="rounded border border-slate-600 bg-slate-700 px-3 py-1 text-sm text-white hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
-							>
-								Previous
-							</button>
-
-							{#each Array.from({ length: Math.min(5, data.pagination.totalPages) }, (_, i) => {
-								const start = Math.max(1, data.pagination.page - 2);
-								return start + i;
-							}) as pageNum}
-								{#if pageNum <= data.pagination.totalPages}
-									<button
-										on:click={() => goToPage(pageNum)}
-										class="rounded border border-slate-600 bg-slate-700 px-3 py-1 text-sm text-white {pageNum ===
-										data.pagination.page
-											? 'border-blue-400 bg-blue-600'
-											: 'hover:bg-slate-600'}"
-									>
-										{pageNum}
-									</button>
-								{/if}
-							{/each}
-
-							<button
-								on:click={() => goToPage(data.pagination.page + 1)}
-								disabled={data.pagination.page >= data.pagination.totalPages}
-								class="rounded border border-slate-600 bg-slate-700 px-3 py-1 text-sm text-white hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
-							>
-								Next
-							</button>
-						</div>
-					</div>
-				{/if}
+				📤 Import Mails
 			{/if}
+		</Button>
+
+		<Button onclick={extractSales} disabled={extractingSales} variant="success">
+			{#if extractingSales}
+				<Loading size="sm" />
+				Extracting...
+			{:else}
+				🔍 Extract Sales
+			{/if}
+		</Button>
+	</ActionBar>
+
+	{#if data.error}
+		<Alert variant="error" className="mb-4">
+			{data.error}
+		</Alert>
+	{/if}
+
+	<!-- Import History -->
+	{#if data.imports.length > 0}
+		<Card className="mb-6">
+			<h2 class="mb-3 text-lg font-semibold text-white">Recent Imports</h2>
+			<div class="space-y-2">
+				{#each data.imports.slice(0, 5) as importRecord}
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-slate-400">
+							{formatDate(importRecord.imported_at || '')}
+						</span>
+						<span class="font-medium text-white">
+							{importRecord.imported_mails}/{importRecord.total_mails} mails imported
+						</span>
+					</div>
+				{/each}
+			</div>
+		</Card>
+	{/if}
+
+	<!-- Filters -->
+	<FilterSection onApply={applyFilters} onClear={clearFilters}>
+		<div>
+			<Input
+				id="sender"
+				label="Sender"
+				bind:value={senderFilter}
+				placeholder="Filter by sender..."
+			/>
 		</div>
-	</div>
-</div>
+
+		<div>
+			<Input
+				id="subject"
+				label="Subject"
+				bind:value={subjectFilter}
+				placeholder="Filter by subject..."
+			/>
+		</div>
+	</FilterSection>
+
+	<!-- Mails List -->
+	<DataTable
+		mode="table"
+		title="Mails"
+		total={data.total}
+		items={data.mails}
+		emptyMessage="No mails found"
+		emptySubMessage={data.filters.sender || data.filters.subject
+			? 'Try adjusting your filters or import some mail data.'
+			: 'Import some mail data to get started.'}
+		pagination={data.pagination}
+		onPageChange={goToPage}
+		columns={[
+			{ key: 'sender', label: 'Sender' },
+			{ key: 'subject', label: 'Subject' },
+			{ key: 'body', label: 'Preview' },
+			{ key: 'location', label: 'Location' },
+			{ key: 'timestamp', label: 'Date' }
+		]}
+	>
+		{#snippet renderCell(mail, column, i)}
+			{#if column.key === 'sender'}
+				<span class="text-base font-medium text-blue-400">{mail.sender}</span>
+			{:else if column.key === 'subject'}
+				<span class="text-base font-medium text-white">{mail.subject}</span>
+			{:else if column.key === 'body'}
+				<span class="text-sm text-slate-400">
+					{mail.body.length > 100 ? mail.body.substring(0, 100) + '...' : mail.body}
+				</span>
+			{:else if column.key === 'location'}
+				{#if mail.location}
+					{@const planetInfo = getPlanetInfo(mail.location)}
+					<span
+						class="inline-flex h-6 w-6 items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
+						title={planetInfo.name}
+					>
+						{planetInfo.letter}
+					</span>
+				{:else}
+					<span class="text-base text-slate-500">-</span>
+				{/if}
+			{:else if column.key === 'timestamp'}
+				<div class="text-right">
+					<div class="text-sm text-slate-300">{formatDate(mail.timestamp)}</div>
+					<div class="text-xs text-slate-500">{getTimeAgo(mail.timestamp)}</div>
+				</div>
+			{/if}
+		{/snippet}
+	</DataTable>
+</PageLayout>

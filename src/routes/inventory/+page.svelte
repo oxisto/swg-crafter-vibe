@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { inventory, settings } from '$lib/stores.js';
 	import { calculateInventoryValue, calculateMarkLevelValue, MARK_LEVELS } from '$lib/types.js';
+	import PageLayout from '$lib/components/PageLayout.svelte';
 	import InventoryHeader from '$lib/components/InventoryHeader.svelte';
 	import InventoryGrid from '$lib/components/InventoryGrid.svelte';
 	import InventoryValueSummary from '$lib/components/InventoryValueSummary.svelte';
@@ -58,32 +59,30 @@
 	<title>SWG Shipwright - Inventory Manager</title>
 </svelte:head>
 
-<div class="h-full">
-	<div class="w-full px-4 py-8">
-		<InventoryValueSummary
-			settings={currentSettings}
-			totalValue={totalInventoryValue()}
-			valuesByMarkLevel={valuesByMarkLevel()}
-		/>
+<PageLayout>
+	<InventoryValueSummary
+		settings={currentSettings}
+		totalValue={totalInventoryValue()}
+		valuesByMarkLevel={valuesByMarkLevel()}
+	/>
 
-		<!-- Recent Activity Summary
-		<div class="mb-8 flex w-full justify-center">
-			<div class="w-full max-w-4xl rounded-lg border border-slate-700 bg-slate-800 p-6">
-				<RecentActivity
-					limit={8}
-					includeSchematic={true}
-					title="📈 Recent Activity"
-					showTitle={true}
-				/>
-			</div>
+	<!-- Recent Activity Summary
+	<div class="mb-8 flex w-full justify-center">
+		<div class="w-full max-w-4xl rounded-lg border border-slate-700 bg-slate-800 p-6">
+			<RecentActivity
+				limit={8}
+				includeSchematic={true}
+				title="📈 Recent Activity"
+				showTitle={true}
+			/>
 		</div>
-		-->
-
-		<InventoryGrid
-			inventory={currentInventory}
-			{schematicNames}
-			{schematicIds}
-			recommendedStockLevel={currentSettings.recommendedStockLevel}
-		/>
 	</div>
-</div>
+	-->
+
+	<InventoryGrid
+		inventory={currentInventory}
+		{schematicNames}
+		{schematicIds}
+		recommendedStockLevel={currentSettings.recommendedStockLevel}
+	/>
+</PageLayout>
