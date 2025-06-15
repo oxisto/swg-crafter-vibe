@@ -17,11 +17,17 @@ const apiLogger = logger.child({ component: 'api', endpoint: 'resources' });
  * - force=true: Force refresh SOAP data (bypasses cache)
  */
 export const GET: RequestHandler = async ({ params, url }) => {
-	const id = params.id;
+	const rawId = params.id;
 	const forceUpdate = url.searchParams.get('force') === 'true';
 
-	if (!id) {
+	if (!rawId) {
 		throw error(400, 'Resource ID is required');
+	}
+
+	// Parse ID as integer
+	const id = parseInt(rawId, 10);
+	if (isNaN(id) || id <= 0) {
+		throw error(400, 'Invalid resource ID');
 	}
 
 	const resource = db.getResourceById(id);

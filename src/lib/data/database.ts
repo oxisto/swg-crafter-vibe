@@ -30,6 +30,7 @@ export function initDatabase() {
 	createResourcesTable();
 	createMailsTables();
 	createSalesTable();
+	createLoadoutsTable();
 
 	return db;
 }
@@ -116,7 +117,7 @@ function createSchematicsTable() {
 function createResourcesTable() {
 	db.exec(`
     CREATE TABLE IF NOT EXISTS resources (
-      id TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY,
       name TEXT NOT NULL,
       type TEXT NOT NULL,
       class_name TEXT NOT NULL,
@@ -206,6 +207,26 @@ function createSalesTable() {
       category TEXT,
       mark_level TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+}
+
+/**
+ * Create ship loadouts table
+ */
+function createLoadoutsTable() {
+	db.exec(`
+    CREATE TABLE IF NOT EXISTS ship_loadouts (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      ship_type TEXT NOT NULL,
+      variant TEXT,
+      mark_level TEXT NOT NULL,
+      price INTEGER NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 0,
+      schematic_id TEXT,
+      description TEXT,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
 }

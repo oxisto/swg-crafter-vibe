@@ -6,16 +6,7 @@
  * schematics, and related business logic.
  */
 
-/** Mark level representing component quality/tier (I=Light, II=Mid-Grade, III=Heavy, IV=A	lo	endor: { letter: 'E', color: 'text-emerald-300', bg: 'bg-emerald-900/40', name: 'Endor' },
-	lok: { letter: 'L', color: 'text-slate-100', bg: 'bg-slate-300/40', name: 'Lok' },
-	naboo: { letter: 'N', color: 'text-cyan-300', bg: 'bg-cyan-900/40', name: 'Naboo' },
-	rori: { letter: 'R', color: 'text-teal-300', bg: 'bg-teal-900/40', name: 'Rori' },
-	talus: { letter: 'T', color: 'text-green-400', bg: 'bg-green-800/40', name: 'Talus' },
-	tatooine: { letter: 'T', color: 'text-yellow-100', bg: 'bg-yellow-400/40', name: 'Tatooine' },etter: 'L', color: 'text-amber-300', bg: 'bg-amber-900/40', name: 'Lok' },
-	naboo: { letter: 'N', color: 'text-cyan-300', bg: 'bg-cyan-900/40', name: 'Naboo' },
-	rori: { letter: 'R', color: 'text-teal-300', bg: 'bg-teal-900/40', name: 'Rori' },
-	talus: { letter: 'T', color: 'text-green-400', bg: 'bg-green-800/40', name: 'Talus' },
-	tatooine: { letter: 'T', color: 'text-yellow-300', bg: 'bg-yellow-900/40', name: 'Tatooine' },ed, V=Experimental) */
+/** Mark level representing component quality/tier (I=Light, II=Mid-Grade, III=Heavy, IV=Advanced, V=Experimental) */
 export type MarkLevel = 'I' | 'II' | 'III' | 'IV' | 'V';
 
 /** Part categories for starship components */
@@ -313,7 +304,7 @@ export interface SalesAnalytics {
 
 /** Resource data structure for current resources from SWGAide exports */
 export interface Resource {
-	id: string;
+	id: number;
 	name: string;
 	type: string;
 	className: string;
@@ -444,4 +435,121 @@ export function getPlanetInfo(planetName: string): PlanetInfo {
 			name: planetName
 		}
 	);
+}
+
+/**
+ * Ship loadout representing a complete ship configuration for sale
+ */
+export interface ShipLoadout {
+	id: string;
+	name: string;
+	shipType: string;
+	variant?: string; // e.g., "High Mass Variant"
+	markLevel: MarkLevel;
+	price: number;
+	quantity: number;
+	schematicId?: string; // Optional connection to ship schematic
+	description?: string;
+	updatedAt?: string;
+}
+
+/**
+ * Calculates the total value of all ship loadouts based on their quantities and prices
+ * @param loadouts - Array of ship loadouts
+ * @returns The total value of all loadouts
+ */
+export function calculateLoadoutsValue(loadouts: ShipLoadout[]): number {
+	return loadouts.reduce((totalValue, loadout) => {
+		return totalValue + loadout.quantity * loadout.price;
+	}, 0);
+}
+
+/**
+ * Ship chassis representing a base ship frame for assembly
+ */
+export interface Chassis {
+	id: string;
+	name: string;
+	shipType: string;
+	variant?: string; // e.g., "High Mass Variant"
+	price: number;
+	quantity: number;
+	schematicId?: string; // Optional connection to chassis schematic
+	description?: string;
+	updatedAt?: string;
+}
+
+/**
+ * Default ship chassis available for purchase
+ */
+export const SHIP_CHASSIS: Chassis[] = [
+	{
+		id: 'scyk-high-mass-chassis',
+		name: 'Scyk High Mass Variant Chassis',
+		shipType: 'Scyk',
+		variant: 'High Mass Variant',
+		price: 195000,
+		quantity: 0,
+		schematicId: '3016',
+		description: 'Base chassis frame for Scyk High Mass Variant - components sold separately'
+	}
+];
+
+/**
+ * Ship types available in the game
+ */
+export type ShipType = 'Scyk';
+
+/**
+ * Default ship loadouts available for purchase
+ */
+export const SHIP_LOADOUTS: ShipLoadout[] = [
+	{
+		id: 'scyk-hmv-i',
+		name: 'Scyk High Mass Variant Mark I Loadout',
+		shipType: 'Scyk',
+		variant: 'High Mass Variant',
+		markLevel: 'I',
+		price: 75000,
+		quantity: 1,
+		description: 'Basic Mark I loadout for Scyk High Mass Variant with standard components'
+	},
+	{
+		id: 'scyk-hmv-ii',
+		name: 'Scyk High Mass Variant Mark II Loadout',
+		shipType: 'Scyk',
+		variant: 'High Mass Variant',
+		markLevel: 'II',
+		price: 150000,
+		quantity: 0,
+		description: 'Complete Mark II loadout for Scyk High Mass Variant with balanced components'
+	},
+	{
+		id: 'scyk-hmv-iii',
+		name: 'Scyk High Mass Variant Mark III Loadout',
+		shipType: 'Scyk',
+		variant: 'High Mass Variant',
+		markLevel: 'III',
+		price: 350000,
+		quantity: 1,
+		description: 'Advanced Mark III loadout for Scyk High Mass Variant with high-quality components'
+	}
+];
+
+/**
+ * Generates a loadout key from ship type, variant, and mark level.
+ * @param shipType - The ship type
+ * @param variant - The ship variant (optional)
+ * @param markLevel - The mark level
+ * @returns Formatted key string for loadout lookups
+ */
+export function getLoadoutKey(
+	shipType: ShipType,
+	variant: string | undefined,
+	markLevel: MarkLevel
+): string {
+	const baseKey = variant
+		? `${shipType.toLowerCase()}-${variant.toLowerCase().replace(/\s+/g, '-')}`
+		: shipType.toLowerCase();
+	return `${baseKey}-${markLevel.toLowerCase()}`;
 }

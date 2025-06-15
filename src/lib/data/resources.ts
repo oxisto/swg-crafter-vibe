@@ -80,9 +80,15 @@ async function processResources(parsedData: any): Promise<void> {
 	const resources = parsedData?.resource_data?.resources?.resource || [];
 	const resourcesArray = Array.isArray(resources) ? resources : [resources];
 
-	// Get list of currently spawned resource IDs from XML
+	// Get list of currently spawned resource IDs from XML (convert to integers)
 	const currentSpawnIds = new Set(
-		resourcesArray.filter((r) => r && r._swgaide_id).map((r) => r._swgaide_id)
+		resourcesArray
+			.filter((r) => r && r._swgaide_id)
+			.map((r) => {
+				const id = parseInt(r._swgaide_id, 10);
+				return id; // Use parsed integer directly
+			})
+			.filter((id) => !isNaN(id) && id > 0)
 	);
 
 	// Start transaction for all operations
@@ -140,7 +146,16 @@ async function processResources(parsedData: any): Promise<void> {
 		// 3. Process each resource from the XML
 		for (const rawResource of resourcesArray) {
 			if (rawResource && rawResource._swgaide_id && rawResource.name) {
-				const resourceId = rawResource._swgaide_id;
+				// Parse resource ID as integer
+				const resourceId = parseInt(rawResource._swgaide_id, 10);
+
+				// Skip if ID is not a valid positive integer
+				if (isNaN(resourceId) || resourceId <= 0) {
+					dbLogger.error(
+						`Invalid resource ID detected: ${rawResource._swgaide_id} (expected integer, got invalid value)`
+					);
+					continue;
+				}
 
 				// Extract attributes from stats object
 				const attributes: Record<string, number> = {};
@@ -290,7 +305,7 @@ function calculateAverageConcentration(planetDistribution: Record<string, number
 export function getAllResources(): Resource[] {
 	const db = getDatabase();
 	const rows = db.prepare('SELECT * FROM resources ORDER BY enter_date DESC').all() as Array<{
-		id: string;
+		id: number;
 		name: string;
 		type: string;
 		class_name: string;
@@ -349,7 +364,7 @@ export function getResourcesByClass(className: string): Resource[] {
 			'SELECT * FROM resources WHERE class_name = ? OR class_path LIKE ? ORDER BY enter_date DESC'
 		)
 		.all(className, `%${className}%`) as Array<{
-		id: string;
+		id: number;
 		name: string;
 		type: string;
 		class_name: string;
@@ -407,7 +422,7 @@ export function searchResources(searchTerm: string): Resource[] {
 	const rows = db
 		.prepare('SELECT * FROM resources WHERE name LIKE ? ORDER BY enter_date DESC')
 		.all(`%${searchTerm}%`) as Array<{
-		id: string;
+		id: number;
 		name: string;
 		type: string;
 		class_name: string;
@@ -460,11 +475,11 @@ export function searchResources(searchTerm: string): Resource[] {
  * @param id - The resource ID to retrieve
  * @returns The resource object if found, null otherwise
  */
-export function getResourceById(id: string): Resource | null {
+export function getResourceById(id: number): Resource | null {
 	const db = getDatabase();
 	const row = db.prepare('SELECT * FROM resources WHERE id = ?').get(id) as
 		| {
-				id: string;
+				id: number;
 				name: string;
 				type: string;
 				class_name: string;

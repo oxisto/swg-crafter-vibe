@@ -37,6 +37,10 @@
 	};
 </script>
 
-<div class="{maxWidthClasses[maxWidth]} rounded-lg {border} {background} {padding} {className}">
+<div
+	class="{maxWidthClasses[
+		maxWidth as keyof typeof maxWidthClasses
+	]} rounded-lg {border} {background} {padding} {className}"
+>
 	{@render children()}
 </div>

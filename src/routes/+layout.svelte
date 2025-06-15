@@ -29,6 +29,18 @@
 				</li>
 				<li>
 					<a
+						href="/loadouts"
+						class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors {$page.url
+							.pathname === '/loadouts'
+							? 'bg-blue-600 text-white'
+							: 'text-slate-300 hover:bg-slate-700 hover:text-white'}"
+					>
+						<span class="text-lg">🚀</span>
+						<span class="font-medium">Ship Loadouts</span>
+					</a>
+				</li>
+				<li>
+					<a
 						href="/chat"
 						class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors {$page.url
 							.pathname === '/chat'

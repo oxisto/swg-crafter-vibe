@@ -6,8 +6,9 @@ import {
 	extractSalesFromMails,
 	getMailImports
 } from '$lib/database.js';
+import type { RequestHandler } from './$types';
 
-export async function GET({ url }) {
+export const GET: RequestHandler = async ({ url }) => {
 	try {
 		const action = url.searchParams.get('action') || 'list';
 
@@ -52,9 +53,9 @@ export async function GET({ url }) {
 			{ status: 500 }
 		);
 	}
-}
+};
 
-export async function POST({ request }) {
+export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const body = await request.json();
 		const action = body.action;
@@ -88,4 +89,4 @@ export async function POST({ request }) {
 			{ status: 500 }
 		);
 	}
-}
+};

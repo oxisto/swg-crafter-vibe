@@ -28,7 +28,7 @@ import type { RequestHandler } from './$types.js';
  * @returns {Promise<Response>} JSON response with schematic data or error message
  */
 export const GET: RequestHandler = async ({ url, locals }) => {
-	const apiLogger = locals.logger.child({ component: 'api', endpoint: 'schematics' });
+	const apiLogger = locals.logger?.child({ component: 'api', endpoint: 'schematics' }) || console;
 	const category = url.searchParams.get('category');
 	const id = url.searchParams.get('id');
 

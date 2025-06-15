@@ -58,7 +58,7 @@ function needsSOAPUpdate(lastUpdated: string | null): boolean {
  * @param resourceId - The resource ID
  * @param soapData - The SOAP resource information
  */
-function updateResourceWithSOAPData(resourceId: string, soapData: SOAPResourceInfo): void {
+function updateResourceWithSOAPData(resourceId: number, soapData: SOAPResourceInfo): void {
 	const db = getDatabase();
 
 	// Validate SOAP data - check if we have basic resource information
@@ -265,9 +265,22 @@ export async function getResourceInfoByName(
 		const resourceInfo = parseSOAPResourceInfo(xmlText);
 
 		if (resourceInfo) {
-			// Update the resource in our database with SOAP data
-			updateResourceWithSOAPData(resourceName, resourceInfo);
-			dbLogger.debug(`SOAP update successful for resource: ${resourceName}`);
+			// Find the resource by name to get its ID for updating
+			const { searchResources } = await import('./resources.js');
+			const matchingResources = searchResources(resourceName);
+			const exactMatch = matchingResources.find((r) => r.name === resourceName);
+
+			if (exactMatch) {
+				// Update the resource in our database with SOAP data
+				updateResourceWithSOAPData(exactMatch.id, resourceInfo);
+				dbLogger.debug(
+					`SOAP update successful for resource: ${resourceName} (ID: ${exactMatch.id})`
+				);
+			} else {
+				dbLogger.warn(
+					`Could not find resource with name "${resourceName}" in database for SOAP update`
+				);
+			}
 		}
 
 		return resourceInfo;
@@ -283,7 +296,7 @@ export async function getResourceInfoByName(
  * @param resourceId - The SWGAide ID of the resource
  * @returns Promise that resolves to resource information or null
  */
-export async function getResourceInfoById(resourceId: string): Promise<SOAPResourceInfo | null> {
+export async function getResourceInfoById(resourceId: number): Promise<SOAPResourceInfo | null> {
 	try {
 		const soapBody = `<?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
@@ -328,10 +341,10 @@ export async function getResourceInfoById(resourceId: string): Promise<SOAPResou
 /**
  * Update resource with latest SOAP data if needed
  * Only updates currently spawned resources that haven't been updated in the last hour
- * @param resourceId - The resource ID to update
+ * @param resourceId - The resource ID to update (as integer)
  * @returns Promise that resolves to success status and resource info
  */
-export async function updateResourceSOAPData(resourceId: string): Promise<{
+export async function updateResourceSOAPData(resourceId: number): Promise<{
 	success: boolean;
 	updated: boolean;
 	resourceInfo?: SOAPResourceInfo;

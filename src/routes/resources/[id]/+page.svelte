@@ -75,143 +75,172 @@
 	<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 		<!-- Main resource information -->
 		<div class="lg:col-span-2">
-			<Card title="Resource Information">
-				<div class="mb-4 text-sm text-slate-400">
-					ID: {data.resource.id}
-				</div>
+			<Section title="Resource Information">
+				<Card>
+					<div class="mb-6 border-b border-slate-700 pb-2 text-sm text-slate-500">
+						ID: {data.resource.id}
+					</div>
 
-				<div class="grid grid-cols-2 gap-4">
-					<div>
-						<div class="text-sm font-medium text-slate-400">Class</div>
-						<div class="text-lg">{data.resource.className}</div>
-					</div>
-					<div>
-						<div class="text-sm font-medium text-slate-400">Type</div>
-						<div class="text-lg">{data.resource.type || 'Unknown'}</div>
-					</div>
-					<div>
-						<div class="text-sm font-medium text-slate-400">Added</div>
-						<div class="text-lg">{new Date(data.resource.enterDate).toLocaleDateString()}</div>
-					</div>
-					{#if data.resource.despawnDate}
-						<div>
-							<div class="text-sm font-medium text-slate-400">Despawned</div>
-							<div class="text-lg">
-								{new Date(data.resource.despawnDate).toLocaleDateString()}
+					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+						<div class="space-y-1">
+							<div class="text-sm font-medium text-slate-400">Class</div>
+							<div class="text-lg text-slate-200">{data.resource.className}</div>
+						</div>
+						<div class="space-y-1">
+							<div class="text-sm font-medium text-slate-400">Type</div>
+							<div class="text-lg text-slate-200">{data.resource.type || 'Unknown'}</div>
+						</div>
+						<div class="space-y-1">
+							<div class="text-sm font-medium text-slate-400">Added</div>
+							<div class="text-lg text-slate-200">
+								{new Date(data.resource.enterDate).toLocaleDateString()}
 							</div>
 						</div>
-					{/if}
-					{#if data.resource.stats?.bestUses}
-						<div class="col-span-2">
-							<div class="text-sm font-medium text-slate-400">Best Uses</div>
-							<div class="text-lg">{data.resource.stats.bestUses.join(', ')}</div>
-						</div>
-					{/if}
-				</div>
-			</Card>
-
-			<Section title="Attributes" class="mt-6">
-				<div class="grid grid-cols-2 gap-4 md:grid-cols-3">
-					{#each Object.entries(data.resource.attributes) as [attr, value]}
-						<div>
-							<div class="text-sm font-medium text-slate-400">
-								{attributeLabels[attr] || attr.toUpperCase()}
-							</div>
-							<div class="text-lg">
-								<div class="h-2.5 w-full rounded-full bg-slate-700">
-									<div class="h-2.5 rounded-full bg-blue-500" style="width: {value / 10}%"></div>
+						{#if data.resource.despawnDate}
+							<div class="space-y-1">
+								<div class="text-sm font-medium text-slate-400">Despawned</div>
+								<div class="text-lg text-red-400">
+									{new Date(data.resource.despawnDate).toLocaleDateString()}
 								</div>
-								<span class="mt-1 inline-block text-sm">{value}</span>
 							</div>
-						</div>
-					{/each}
-				</div>
+						{/if}
+						{#if data.resource.stats?.bestUses}
+							<div class="col-span-full space-y-1">
+								<div class="text-sm font-medium text-slate-400">Best Uses</div>
+								<div class="flex flex-wrap gap-2">
+									{#each data.resource.stats.bestUses as use}
+										<span
+											class="inline-flex items-center rounded-full bg-blue-900 px-3 py-1 text-sm text-blue-200"
+										>
+											{use}
+										</span>
+									{/each}
+								</div>
+							</div>
+						{/if}
+					</div>
+				</Card>
 			</Section>
 
-			<Section title="Planet Distribution" class="mt-6">
-				{#if activePlanets.length > 0}
-					<div class="grid grid-cols-2 gap-4 md:grid-cols-3">
-						{#each activePlanets as { planet, concentration, formattedName }}
-							<div>
-								<div class="text-sm font-medium text-slate-400">
-									{formattedName}
-								</div>
-								<div class="text-lg">
-									<div class="h-2.5 w-full rounded-full bg-slate-700">
-										<div
-											class="h-2.5 rounded-full bg-green-500"
-											style="width: {concentration}%"
-										></div>
+			<Section title="Attributes" class="mt-6">
+				<Card>
+					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+						{#each Object.entries(data.resource.attributes) as [attr, value]}
+							<div class="space-y-2">
+								<div class="flex items-center justify-between">
+									<div class="text-sm font-medium text-slate-300">
+										{attributeLabels[attr] || attr.toUpperCase()}
 									</div>
-									<span class="mt-1 inline-block text-sm">{concentration}%</span>
+									<div class="text-sm font-bold text-blue-400">{value}</div>
+								</div>
+								<div class="h-3 w-full rounded-full bg-slate-700">
+									<div
+										class="h-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-300"
+										style="width: {value / 10}%"
+									></div>
 								</div>
 							</div>
 						{/each}
 					</div>
-				{:else}
-					<p class="text-slate-400">No spawn data available</p>
-				{/if}
+				</Card>
+			</Section>
+
+			<Section title="Planet Distribution" class="mt-6">
+				<Card>
+					{#if activePlanets.length > 0}
+						<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+							{#each activePlanets as { planet, concentration, formattedName }}
+								<div class="space-y-2">
+									<div class="flex items-center justify-between">
+										<div class="text-sm font-medium text-slate-300">
+											{formattedName}
+										</div>
+										<div class="text-sm font-bold text-green-400">{concentration}%</div>
+									</div>
+									<div class="h-3 w-full rounded-full bg-slate-700">
+										<div
+											class="h-3 rounded-full bg-gradient-to-r from-green-500 to-green-400 transition-all duration-300"
+											style="width: {concentration}%"
+										></div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					{:else}
+						<div class="py-8 text-center">
+							<div class="text-sm text-slate-400">No spawn data available</div>
+						</div>
+					{/if}
+				</Card>
 			</Section>
 		</div>
 
 		<!-- Sidebar with related resources -->
 		<div>
-			<Card title="Related Resources">
-				{#if data.relatedResources && data.relatedResources.length > 0}
-					<div class="space-y-4">
-						{#each data.relatedResources as resource}
-							<a
-								href="/resources/{resource.id}"
-								class="block rounded-lg border border-slate-600 bg-slate-700 p-4 transition hover:bg-slate-600"
-							>
-								<div class="flex justify-between">
-									<div class="font-medium">{resource.name}</div>
-									{#if resource.stats?.overallQuality}
-										<div
-											class="text-sm
+			<Section title="Related Resources">
+				<Card>
+					{#if data.relatedResources && data.relatedResources.length > 0}
+						<div class="space-y-3">
+							{#each data.relatedResources as resource}
+								<a
+									href="/resources/{resource.id}"
+									class="block rounded-lg border border-slate-600 bg-slate-700/50 p-4 transition-all hover:border-slate-500 hover:bg-slate-600/50"
+								>
+									<div class="mb-2 flex items-start justify-between">
+										<div class="truncate pr-2 font-medium text-slate-200">{resource.name}</div>
+										{#if resource.stats?.overallQuality}
+											<div
+												class="rounded px-2 py-1 text-sm font-bold
 											{resource.stats.overallQuality > 900
-												? 'text-green-400'
-												: resource.stats.overallQuality > 700
-													? 'text-yellow-400'
-													: 'text-slate-400'}"
-										>
-											{resource.stats.overallQuality}
-										</div>
-									{/if}
-								</div>
-								<div class="mt-1 text-sm text-slate-400">
-									Added: {new Date(resource.enterDate).toLocaleDateString()}
-								</div>
-								<div class="mt-2 flex flex-wrap gap-2">
-									{#each Object.entries(resource.attributes).slice(0, 4) as [attr, value]}
-										<div class="rounded bg-slate-600 px-2 py-1 text-xs">
-											{attr}: {value}
-										</div>
-									{/each}
-								</div>
-							</a>
-						{/each}
-					</div>
-				{:else}
-					<p class="text-slate-400">No related resources found</p>
-				{/if}
-			</Card>
+													? 'bg-green-900/50 text-green-300'
+													: resource.stats.overallQuality > 700
+														? 'bg-yellow-900/50 text-yellow-300'
+														: 'bg-blue-900/50 text-blue-300'}"
+											>
+												{resource.stats.overallQuality}
+											</div>
+										{/if}
+									</div>
+									<div class="mb-3 text-sm text-slate-400">
+										Added: {new Date(resource.enterDate).toLocaleDateString()}
+									</div>
+									<div class="flex flex-wrap gap-1">
+										{#each Object.entries(resource.attributes).slice(0, 4) as [attr, value]}
+											<div class="rounded bg-slate-600/70 px-2 py-1 text-xs text-slate-300">
+												{attr}: {value}
+											</div>
+										{/each}
+									</div>
+								</a>
+							{/each}
+						</div>
+					{:else}
+						<div class="py-8 text-center">
+							<div class="text-sm text-slate-400">No related resources found</div>
+						</div>
+					{/if}
+				</Card>
+			</Section>
 
-			<Card title="Class Path" class="mt-6">
-				{#if data.resource.classPath && data.resource.classPath.length > 0}
-					<div class="space-y-2">
-						{#each data.resource.classPath as className}
-							<div
-								class="mr-2 mb-2 inline-block rounded-full bg-blue-900 px-3 py-1 text-sm text-blue-200"
-							>
-								{className}
-							</div>
-						{/each}
-					</div>
-				{:else}
-					<p class="text-slate-400">No class path information available</p>
-				{/if}
-			</Card>
+			<Section title="Class Path" class="mt-6">
+				<Card>
+					{#if data.resource.classPath && data.resource.classPath.length > 0}
+						<div class="flex flex-wrap gap-2">
+							{#each data.resource.classPath as className}
+								<div
+									class="inline-block rounded-full border border-blue-700 bg-blue-900/50 px-3 py-1 text-sm text-blue-200"
+								>
+									{className}
+								</div>
+							{/each}
+						</div>
+					{:else}
+						<div class="py-8 text-center">
+							<div class="text-sm text-slate-400">No class path information available</div>
+						</div>
+					{/if}
+				</Card>
+			</Section>
 		</div>
 	</div>
 </PageLayout>

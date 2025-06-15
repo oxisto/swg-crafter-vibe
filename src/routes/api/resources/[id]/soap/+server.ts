@@ -13,14 +13,26 @@ import type { RequestHandler } from './$types';
  * Only updates if resource is currently spawned and hasn't been updated in the last hour
  */
 export const GET: RequestHandler = async ({ params, url }) => {
-	const resourceId = params.id;
+	const rawId = params.id;
 	const forceUpdate = url.searchParams.get('force') === 'true';
 
-	if (!resourceId) {
+	if (!rawId) {
 		return json(
 			{
 				success: false,
 				error: 'Resource ID is required'
+			},
+			{ status: 400 }
+		);
+	}
+
+	// Parse ID as integer
+	const resourceId = parseInt(rawId, 10);
+	if (isNaN(resourceId) || resourceId <= 0) {
+		return json(
+			{
+				success: false,
+				error: 'Invalid resource ID'
 			},
 			{ status: 400 }
 		);
@@ -96,13 +108,25 @@ export const GET: RequestHandler = async ({ params, url }) => {
  * Force refresh resource data from SOAP API (bypasses time-based caching)
  */
 export const POST: RequestHandler = async ({ params }) => {
-	const resourceId = params.id;
+	const rawId = params.id;
 
-	if (!resourceId) {
+	if (!rawId) {
 		return json(
 			{
 				success: false,
 				error: 'Resource ID is required'
+			},
+			{ status: 400 }
+		);
+	}
+
+	// Parse ID as integer
+	const resourceId = parseInt(rawId, 10);
+	if (isNaN(resourceId) || resourceId <= 0) {
+		return json(
+			{
+				success: false,
+				error: 'Invalid resource ID'
 			},
 			{ status: 400 }
 		);

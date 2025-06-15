@@ -12,7 +12,13 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(404, 'Resource not found');
 	}
 
-	const resource = db.getResourceById(id);
+	// Parse ID as integer
+	const resourceId = parseInt(id, 10);
+	if (isNaN(resourceId) || resourceId <= 0) {
+		throw error(400, 'Invalid resource ID');
+	}
+
+	const resource = db.getResourceById(resourceId);
 
 	if (!resource) {
 		throw error(404, 'Resource not found');

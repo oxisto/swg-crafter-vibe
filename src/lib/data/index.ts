@@ -69,9 +69,21 @@ export { importMailBatch, getMails, getMailsCount, getMailImports } from './mail
 // Sales
 export { extractSalesFromMails, getSales, getSalesAnalytics } from './sales.js';
 
+// Loadouts
+export {
+	getAllLoadouts,
+	updateLoadoutQuantity,
+	updateLoadoutPrice,
+	getLoadoutById,
+	createLoadout,
+	deleteLoadout,
+	getLoadoutsByShipType
+} from './loadouts.js';
+
 // Initialization
 import { initializeInventoryDefaults } from './inventory.js';
 import { initializeSettingsDefaults } from './settings.js';
+import { initializeLoadoutDefaults } from './loadouts.js';
 import { downloadAndCacheSchematics } from './schematics.js';
 import { downloadAndCacheResources } from './resources.js';
 import { initDatabase } from './database.js';
@@ -88,6 +100,7 @@ export function initializeDataLayer() {
 	// Initialize default data
 	initializeInventoryDefaults();
 	initializeSettingsDefaults();
+	initializeLoadoutDefaults();
 
 	// Download and cache external data in the background
 	Promise.all([

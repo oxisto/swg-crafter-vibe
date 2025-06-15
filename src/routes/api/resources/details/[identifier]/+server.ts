@@ -28,7 +28,18 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		let resourceInfo;
 
 		if (byId) {
-			resourceInfo = await db.getResourceInfoById(identifier);
+			// Parse identifier as integer when searching by ID
+			const resourceId = parseInt(identifier, 10);
+			if (isNaN(resourceId) || resourceId <= 0) {
+				return json(
+					{
+						success: false,
+						error: 'Invalid resource ID'
+					},
+					{ status: 400 }
+				);
+			}
+			resourceInfo = await db.getResourceInfoById(resourceId);
 		} else {
 			resourceInfo = await db.getResourceInfoByName(identifier);
 		}

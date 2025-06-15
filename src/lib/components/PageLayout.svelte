@@ -14,9 +14,9 @@
 	} = $props<{
 		children: any;
 		className?: string;
-		maxWidth?: 'full' | '7xl' | '6xl' | '5xl' | '4xl' | '3xl' | '2xl' | 'xl' | 'lg' | 'md' | 'sm';
+		maxWidth?: keyof typeof maxWidthClasses;
 		centered?: boolean;
-		padding?: 'none' | 'sm' | 'default' | 'lg';
+		padding?: keyof typeof paddingClasses;
 	}>();
 
 	// Determine padding classes with medium horizontal margins
@@ -45,9 +45,9 @@
 
 <div class="h-full">
 	<div
-		class="{paddingClasses[padding]} {maxWidthClasses[maxWidth]} {centered
-			? 'container mx-auto'
-			: 'w-full'} {className}"
+		class="{paddingClasses[padding as keyof typeof paddingClasses]} {maxWidthClasses[
+			maxWidth as keyof typeof maxWidthClasses
+		]} {centered ? 'container mx-auto' : 'w-full'} {className}"
 	>
 		{@render children()}
 	</div>
