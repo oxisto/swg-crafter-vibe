@@ -43,7 +43,8 @@ export {
 	downloadAndCacheSchematics,
 	getAllSchematics,
 	getSchematicsByCategory,
-	getSchematicById
+	getSchematicById,
+	toggleSchematicFavorite
 } from './schematics.js';
 
 // Resources

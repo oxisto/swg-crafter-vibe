@@ -19,7 +19,7 @@ import type { PageServerLoad } from './$types.js';
  */
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		// Fetch all schematics from our API
+		// Fetch all schematics from our API (now includes favorites)
 		const schematicsResponse = await fetch('/api/schematics');
 		const schematics = await schematicsResponse.json();
 

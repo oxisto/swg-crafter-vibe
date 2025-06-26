@@ -124,12 +124,17 @@ async function processSchematics(parsedData: any): Promise<void> {
  */
 export function getAllSchematics(): Schematic[] {
 	const db = getDatabase();
-	const rows = db.prepare('SELECT data FROM schematics').all() as Array<{ data: string }>;
+	const rows = db.prepare('SELECT data, is_favorite FROM schematics').all() as Array<{
+		data: string;
+		is_favorite: number;
+	}>;
 
 	return rows
 		.map((row) => {
 			try {
-				return JSON.parse(row.data) as Schematic;
+				const schematic = JSON.parse(row.data) as Schematic;
+				schematic.is_favorite = Boolean(row.is_favorite);
+				return schematic;
 			} catch {
 				return null;
 			}
@@ -176,5 +181,37 @@ export function getSchematicById(id: string): Schematic | null {
 		return JSON.parse(row.data) as Schematic;
 	} catch {
 		return null;
+	}
+}
+
+/**
+ * Toggle the favorite status of a schematic
+ * @param schematicId The ID of the schematic to toggle
+ * @returns True if now favorited, false if unfavorited
+ */
+export function toggleSchematicFavorite(schematicId: string): boolean {
+	const db = getDatabase();
+
+	try {
+		// Get current favorite status
+		const current = db
+			.prepare('SELECT is_favorite FROM schematics WHERE id = ?')
+			.get(schematicId) as { is_favorite: number } | undefined;
+
+		if (!current) {
+			throw new Error(`Schematic with ID ${schematicId} not found`);
+		}
+
+		const newStatus = current.is_favorite ? 0 : 1;
+
+		// Update the favorite status
+		const stmt = db.prepare('UPDATE schematics SET is_favorite = ? WHERE id = ?');
+		stmt.run(newStatus, schematicId);
+
+		dbLogger.info(`Toggled schematic ${schematicId} favorite status to ${Boolean(newStatus)}`);
+		return Boolean(newStatus);
+	} catch (error) {
+		dbLogger.error('Error toggling schematic favorite', { error: error as Error, schematicId });
+		throw error;
 	}
 }

@@ -27,6 +27,7 @@ export function initDatabase() {
 	createInventoryTable();
 	createSettingsTable();
 	createSchematicsTable();
+	createFavoritesTable();
 	createResourcesTable();
 	createMailsTables();
 	createSalesTable();
@@ -97,6 +98,7 @@ function createSchematicsTable() {
       profession TEXT,
       complexity INTEGER,
       datapad INTEGER,
+      is_favorite BOOLEAN DEFAULT FALSE,
       data TEXT NOT NULL,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -109,6 +111,13 @@ function createSchematicsTable() {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+	// Add is_favorite column if it doesn't exist (migration)
+	try {
+		db.exec(`ALTER TABLE schematics ADD COLUMN is_favorite BOOLEAN DEFAULT FALSE`);
+	} catch (error) {
+		// Column already exists, ignore error
+	}
 }
 
 /**
@@ -227,6 +236,19 @@ function createLoadoutsTable() {
       schematic_id TEXT,
       description TEXT,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+}
+
+/**
+ * Create favorites table for storing user's favorite schematics
+ */
+function createFavoritesTable() {
+	db.exec(`
+    CREATE TABLE IF NOT EXISTS favorites (
+      schematic_id TEXT PRIMARY KEY,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (schematic_id) REFERENCES schematics (id)
     )
   `);
 }

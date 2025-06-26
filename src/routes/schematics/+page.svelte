@@ -12,38 +12,65 @@
 	let searchTerm = $state('');
 	let filteredSchematics = $state<Schematic[]>([]);
 
-	// Filter schematics based on search term
+	// Create a reactive copy of schematics that we can modify
+	let schematics = $state<Schematic[]>(data.schematics || []);
+
+	// Update schematics when data changes
 	$effect(() => {
-		if (!searchTerm.trim()) {
-			filteredSchematics = data.schematics || [];
-		} else {
-			const search = searchTerm.toLowerCase();
-			filteredSchematics = (data.schematics || []).filter((schematic) =>
-				schematic.name?.toLowerCase().includes(search)
-			);
-		}
+		schematics = data.schematics || [];
 	});
 
-	// Columns for the data table
-	const columns = [
-		{ key: 'name', label: 'Schematic Name', sortable: true },
-		{ key: 'id', label: 'ID', sortable: true },
-		{ key: 'category', label: 'Category', sortable: true },
-		{ key: 'profession', label: 'Profession', sortable: true },
-		{ key: 'complexity', label: 'Complexity', sortable: true }
-	];
+	// Filter and sort schematics - favorites first, then alphabetically
+	$effect(() => {
+		let filtered = schematics;
 
-	// Transform data for the table
-	const tableData = $derived(
-		filteredSchematics.map((schematic) => ({
-			...schematic,
-			raw: schematic
-		}))
-	);
+		// Apply search filter
+		if (searchTerm.trim()) {
+			const search = searchTerm.toLowerCase();
+			filtered = filtered.filter((schematic) => schematic.name?.toLowerCase().includes(search));
+		}
 
-	// Handle row click
-	function handleRowClick(row: any) {
-		window.location.href = `/schematics/${row.id}?from=schematics`;
+		// Sort: favorites first, then alphabetically by name
+		filtered.sort((a, b) => {
+			// First sort by favorite status (favorites first)
+			if (a.is_favorite && !b.is_favorite) return -1;
+			if (!a.is_favorite && b.is_favorite) return 1;
+
+			// Then sort alphabetically by name
+			return (a.name || '').localeCompare(b.name || '');
+		});
+
+		filteredSchematics = filtered;
+	});
+
+	// Toggle favorite status
+	async function toggleFavorite(schematicId: string, event: Event) {
+		event.stopPropagation(); // Prevent row click when clicking star
+
+		try {
+			const response = await fetch('/api/schematics/favorites', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ schematicId })
+			});
+
+			if (response.ok) {
+				const result = await response.json();
+
+				// Update the reactive schematics array
+				const schematicIndex = schematics.findIndex((s) => s.id === schematicId);
+				if (schematicIndex !== -1) {
+					schematics[schematicIndex].is_favorite = result.isFavorited;
+
+					// Trigger reactivity by reassigning the array
+					schematics = [...schematics];
+				}
+			}
+		} catch (error) {
+			console.error('Failed to toggle favorite:', error);
+		}
 	}
 </script>
 
@@ -70,30 +97,46 @@
 		</div>
 	</div>
 
-	<!-- Results Summary -->
-	<div class="mb-4 text-center text-sm text-slate-400">
-		Showing {filteredSchematics.length} of {data.schematics?.length || 0} schematics
-	</div>
-
 	<!-- Schematics Table -->
 	<DataTable
-		data={tableData}
-		{columns}
-		onRowClick={handleRowClick}
+		mode="table"
+		title="Schematics"
+		total={data.schematics?.length || 0}
+		items={filteredSchematics}
+		columns={[
+			{ key: 'favorite', label: '⭐' },
+			{ key: 'name', label: 'Schematic Name' },
+			{ key: 'id', label: 'ID' },
+			{ key: 'category', label: 'Category' }
+		]}
 		emptyMessage={searchTerm
 			? 'No schematics found matching your search.'
 			: 'No schematics available.'}
 	>
-		{#snippet cell(column, row)}
-			{#if column.key === 'name'}
+		{#snippet renderCell(schematic: Schematic, column: { key: string; label: string }, i: number)}
+			{#if column.key === 'favorite'}
+				<button
+					class="text-lg transition-colors hover:scale-110 {schematic.is_favorite
+						? 'text-yellow-400'
+						: 'text-slate-500 hover:text-yellow-300'}"
+					onclick={(event) => toggleFavorite(schematic.id, event)}
+					title={schematic.is_favorite ? 'Remove from favorites' : 'Add to favorites'}
+				>
+					{schematic.is_favorite ? '⭐' : '☆'}
+				</button>
+			{:else if column.key === 'name'}
 				<a
-					href="/schematics/{row.id}?from=schematics"
+					href="/schematics/{schematic.id}?from=schematics"
 					class="font-medium text-white transition-colors hover:text-yellow-400"
 				>
-					{row.name}
+					{schematic.name}
 				</a>
+			{:else if column.key === 'id'}
+				{schematic.id}
+			{:else if column.key === 'category'}
+				{schematic.category}
 			{:else}
-				{row[column.key]}
+				{schematic[column.key as keyof Schematic]}
 			{/if}
 		{/snippet}
 	</DataTable>

@@ -56,6 +56,7 @@ export interface Schematic {
 	profession: string;
 	complexity: number;
 	datapad: number;
+	is_favorite?: boolean;
 	ingredients: SchematicIngredient[];
 	resources: SchematicResource[];
 }
