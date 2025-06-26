@@ -56,6 +56,20 @@ export {
 	getResourceById
 } from './resources.js';
 
+// Resource Class Mapping
+export {
+	RESOURCE_CLASS_MAPPING,
+	getResourceInfo,
+	getResourceDisplayName,
+	getResourcesByCategory,
+	buildResourceTree,
+	searchResources as searchResourceClasses,
+	formatResourceClasses,
+	getResourceClassInfo,
+	getResourceClassName,
+	getResourceClassCategory
+} from './resource-class-mapping.js';
+
 // SOAP
 export {
 	getResourceInfoByName,

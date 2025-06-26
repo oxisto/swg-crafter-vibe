@@ -8,6 +8,7 @@ This directory contains comprehensive documentation for the Star Wars Galaxies S
 
 - **[API Documentation](./api-documentation.md)** - Complete API reference for the unified inventory endpoint
 - **[Schematics Analysis](./schematics-analysis.md)** - Detailed analysis of SWGAide schematics data and ID mappings
+- **[Resource Class Mapping](./resource-class-mapping.md)** - Resource code to human-readable name mapping system
 - **[AI Features](./ai-features.md)** - AI assistant setup, capabilities, and usage guide
 
 ## 🚀 Quick Start

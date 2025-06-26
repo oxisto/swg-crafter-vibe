@@ -1,0 +1,242 @@
+# Star Wars Galaxies Resource Class Hierarchy
+# This file represents the hierarchical tree structure of SWG resource classes
+# Keys are the resource class codes, making lookup efficient and eliminating redundancy
+# Each node contains only the human-readable name and optional children
+
+# Inorganic Resources
+inorganic:
+  name: "Inorganic"
+  children:
+    metal:
+      name: "Metal"
+      children:
+        fer:
+          name: "Ferrous Metal"
+          children:
+            irn:
+              name: "Iron"
+            stl:
+              name: "Steel"
+        mtl:
+          name: "Non-Ferrous Metal"
+          children:
+            alu:
+              name: "Aluminum"
+            cop:
+              name: "Copper"
+
+    gemstone:
+      name: "Gemstone"
+      children:
+        cry:
+          name: "Crystalline Gemstone"
+        amo:
+          name: "Amorphous Gemstone"
+
+    ore:
+      name: "Ore"
+      children:
+        igneous:
+          name: "Igneous Ore"
+          children:
+            int:
+              name: "Intrusive Ore"
+            ext:
+              name: "Extrusive Ore"
+        sedimentary:
+          name: "Sedimentary Ore"
+          children:
+            car:
+              name: "Carbonate Ore"
+            sil:
+              name: "Siliclastic Ore"
+
+# Organic Resources
+organic:
+  name: "Organic"
+  children:
+    flora:
+      name: "Flora"
+      children:
+        wood:
+          name: "Wood"
+          children:
+            hardwood:
+              name: "Hardwood"
+              children:
+                dec:
+                  name: "Deciduous Wood"
+            softwood:
+              name: "Softwood"
+              children:
+                con:
+                  name: "Conifer Wood"
+                eve:
+                  name: "Evergreen Wood"
+
+        vegetable:
+          name: "Vegetable"
+          children:
+            fun:
+              name: "Vegetable Fungus"
+            bea:
+              name: "Vegetable Beans"
+            tub:
+              name: "Vegetable Tubers"
+            gre:
+              name: "Vegetable Greens"
+
+        fruit:
+          name: "Fruit"
+          children:
+            ber:
+              name: "Berry Fruit"
+            flo:
+              name: "Flower Fruit"
+
+        grain:
+          name: "Grain"
+          children:
+            whe:
+              name: "Wheat"
+              children:
+                wwh:
+                  name: "Wild Wheat"
+                dwh:
+                  name: "Domesticated Wheat"
+            oat:
+              name: "Oats"
+              children:
+                woa:
+                  name: "Wild Oats"
+                doa:
+                  name: "Domesticated Oats"
+            ric:
+              name: "Rice"
+              children:
+                wri:
+                  name: "Wild Rice"
+                dri:
+                  name: "Domesticated Rice"
+            cor:
+              name: "Corn"
+              children:
+                wco:
+                  name: "Wild Corn"
+                dco:
+                  name: "Domesticated Corn"
+
+    fauna:
+      name: "Fauna"
+      children:
+        meat:
+          name: "Meat"
+          children:
+            wme:
+              name: "Wild Meat"
+            dme:
+              name: "Domesticated Meat"
+            hme:
+              name: "Herbivore Meat"
+            cme:
+              name: "Carnivore Meat"
+            rme:
+              name: "Reptilian Meat"
+            ame:
+              name: "Avian Meat"
+            ime:
+              name: "Insect Meat"
+            fme:
+              name: "Fish Meat"
+
+        hide:
+          name: "Hide"
+          children:
+            sch:
+              name: "Scaley Hide"
+            leh:
+              name: "Leathery Hide"
+            woh:
+              name: "Wooly Hide"
+            brh:
+              name: "Bristley Hide"
+
+        bone:
+          name: "Bone"
+          children:
+            anb:
+              name: "Animal Bones"
+            avb:
+              name: "Avian Bones"
+
+        dairy:
+          name: "Dairy"
+          children:
+            mil:
+              name: "Milk"
+              children:
+                wmi:
+                  name: "Wild Milk"
+                dmi:
+                  name: "Domesticated Milk"
+            egg:
+              name: "Egg"
+
+# Chemical Resources
+chm:
+  name: "Chemical"
+  children:
+    gas:
+      name: "Gas"
+      children:
+        ine:
+          name: "Inert Gas"
+        rea:
+          name: "Reactive Gas"
+        wva:
+          name: "Water Vapor"
+
+    petrochemical:
+      name: "Petrochemical"
+      children:
+        ptf:
+          name: "Petro Fuel"
+          children:
+            spf:
+              name: "Solid Petro Fuel"
+            lpf:
+              name: "Liquid Petro Fuel"
+        lub:
+          name: "Lubricating Oil"
+        pol:
+          name: "Polymer"
+        fib:
+          name: "Fiberplast"
+
+    rad:
+      name: "Radioactive"
+      children:
+        rd1:
+          name: "Class 1 Radioactive"
+        rd2:
+          name: "Class 2 Radioactive"
+        rd3:
+          name: "Class 3 Radioactive"
+        rd4:
+          name: "Class 4 Radioactive"
+        rd5:
+          name: "Class 5 Radioactive"
+        rd6:
+          name: "Class 6 Radioactive"
+        rd7:
+          name: "Class 7 Radioactive"
+
+# Energy Resources
+energy:
+  name: "Energy"
+  children:
+    renewable:
+      name: "Renewable Energy"
+      children:
+        geo:
+          name: "Geothermal Renewable Energy"

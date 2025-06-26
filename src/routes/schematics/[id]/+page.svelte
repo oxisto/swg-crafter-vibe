@@ -6,6 +6,11 @@
 	import PageLayout from '$lib/components/PageLayout.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Card from '$lib/components/Card.svelte';
+	import {
+		formatResourceClasses,
+		getResourceDisplayName,
+		getResourceInfo
+	} from '$lib/data/resource-class-mapping.js';
 
 	let { data }: { data: PageData } = $props();
 
@@ -182,12 +187,16 @@
 								<td class="px-6 py-4 text-sm text-slate-300">{resource.units}</td>
 								<td class="px-6 py-4 text-sm">
 									{#if resource.classes && resource.classes.length > 0}
-										{#each resource.classes as cls}
-											<span
-												class="mr-1 inline-flex items-center rounded bg-purple-500/20 px-2 py-1 text-xs text-purple-300"
-												>{cls}</span
-											>
-										{/each}
+										<div class="flex flex-wrap gap-1">
+											{#each resource.classes as cls}
+												{@const resourceInfo = getResourceInfo(cls)}
+												<span
+													class="inline-flex items-center rounded bg-purple-500/20 px-2 py-1 text-xs text-purple-300"
+												>
+													{resourceInfo ? resourceInfo.name : cls.toUpperCase()}
+												</span>
+											{/each}
+										</div>
 									{:else}
 										<span class="text-slate-500">-</span>
 									{/if}
