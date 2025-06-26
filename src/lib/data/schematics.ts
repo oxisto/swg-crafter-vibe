@@ -5,7 +5,7 @@
  * XML parsing, and database storage operations.
  */
 
-import type { Schematic } from '../types.js';
+import type { Schematic, SchematicComponent, SchematicResource } from '../types.js';
 import { getDatabase, dbLogger } from './database.js';
 import { checkCacheStatus, updateCacheTimestamp, CACHE_CONFIG } from './cache.js';
 import { downloadAndExtractXML, parseXMLContent } from './xml-parser.js';
@@ -89,6 +89,39 @@ async function processSchematics(parsedData: any): Promise<void> {
 	const insertMany = db.transaction(() => {
 		for (const rawSchematic of schematicsArray) {
 			if (rawSchematic && rawSchematic._id && rawSchematic._name) {
+				// Parse components (sub-components needed for crafting)
+				const components: SchematicComponent[] = [];
+				const componentData = rawSchematic.component;
+				if (componentData) {
+					const componentArray = Array.isArray(componentData) ? componentData : [componentData];
+					for (const component of componentArray) {
+						if (component._desc && component._number) {
+							components.push({
+								name: component._desc,
+								amount: parseInt(component._number) || 1,
+								units: component._type === 'schematic' ? 'units' : 'units'
+							});
+						}
+					}
+				}
+
+				// Parse resources
+				const resources: SchematicResource[] = [];
+				const resourceData = rawSchematic.resource;
+				if (resourceData) {
+					const resourceArray = Array.isArray(resourceData) ? resourceData : [resourceData];
+					for (const resource of resourceArray) {
+						if (resource._desc && resource._units) {
+							resources.push({
+								name: resource._desc,
+								amount: parseInt(resource._units) || 0,
+								units: 'units',
+								classes: resource._id ? [resource._id] : []
+							});
+						}
+					}
+				}
+
 				// Convert raw schematic with underscore-prefixed properties to clean Schematic object
 				const cleanSchematic: Schematic = {
 					id: rawSchematic._id,
@@ -97,12 +130,12 @@ async function processSchematics(parsedData: any): Promise<void> {
 					profession: rawSchematic._profession || '',
 					complexity: parseInt(rawSchematic._complexity) || 0,
 					datapad: parseInt(rawSchematic._datapad) || 0,
-					ingredients: [], // TODO: Parse ingredients from rawSchematic if needed
-					resources: [] // TODO: Parse resources from rawSchematic if needed
+					components,
+					resources
 				};
 
 				insertStmt.run(
-					cleanSchematic.id,
+					parseInt(cleanSchematic.id), // Convert to integer for database
 					cleanSchematic.name,
 					cleanSchematic.category,
 					cleanSchematic.profession,

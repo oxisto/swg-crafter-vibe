@@ -48,12 +48,8 @@
 		event.stopPropagation(); // Prevent row click when clicking star
 
 		try {
-			const response = await fetch('/api/schematics/favorites', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ schematicId })
+			const response = await fetch(`/api/schematics/${schematicId}/favorite`, {
+				method: 'POST'
 			});
 
 			if (response.ok) {
@@ -62,7 +58,7 @@
 				// Update the reactive schematics array
 				const schematicIndex = schematics.findIndex((s) => s.id === schematicId);
 				if (schematicIndex !== -1) {
-					schematics[schematicIndex].is_favorite = result.isFavorited;
+					schematics[schematicIndex].is_favorite = result.isFavorite;
 
 					// Trigger reactivity by reassigning the array
 					schematics = [...schematics];

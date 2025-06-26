@@ -57,12 +57,12 @@ export interface Schematic {
 	complexity: number;
 	datapad: number;
 	is_favorite?: boolean;
-	ingredients: SchematicIngredient[];
+	components: SchematicComponent[];
 	resources: SchematicResource[];
 }
 
-/** Ingredient required for a schematic */
-export interface SchematicIngredient {
+/** Component required for a schematic (sub-components that must be crafted or obtained) */
+export interface SchematicComponent {
 	name: string;
 	amount: number;
 	units: string;

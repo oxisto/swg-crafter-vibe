@@ -6,7 +6,6 @@
 	import PageLayout from '$lib/components/PageLayout.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Card from '$lib/components/Card.svelte';
-	import DataTable from '$lib/components/DataTable.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -46,36 +45,6 @@
 			}
 		}
 	});
-
-	// Prepare ingredient table data
-	const ingredientColumns = [
-		{ key: 'name', label: 'Ingredient' },
-		{ key: 'amount', label: 'Amount' },
-		{ key: 'units', label: 'Units' }
-	];
-
-	// Prepare resource table data
-	const resourceColumns = [
-		{ key: 'name', label: 'Resource' },
-		{ key: 'amount', label: 'Amount' },
-		{ key: 'units', label: 'Units' },
-		{ key: 'classes', label: 'Classes' }
-	];
-
-	// Transform resources to include formatted classes
-	const transformedResources = $derived(
-		schematic.resources?.map((resource) => ({
-			...resource,
-			classes: resource.classes?.length
-				? resource.classes
-						.map(
-							(cls) =>
-								`<span class="inline-flex items-center rounded bg-purple-500/20 px-2 py-1 text-xs text-purple-300">${cls}</span>`
-						)
-						.join(' ')
-				: '<span class="text-slate-500">-</span>'
-		})) || []
-	);
 </script>
 
 <svelte:head>
@@ -132,18 +101,46 @@
 		</div>
 	</Card>
 
-	<!-- Ingredients Section -->
+	<!-- Components Section -->
 	<Card
-		title="Required Ingredients"
+		title="Required Components"
 		icon="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
 		class="mb-6"
 	>
-		{#if schematic.ingredients && schematic.ingredients.length > 0}
-			<DataTable columns={ingredientColumns} data={schematic.ingredients} />
+		{#if schematic.components && schematic.components.length > 0}
+			<div class="overflow-hidden rounded-lg border border-slate-600">
+				<table class="min-w-full divide-y divide-slate-600">
+					<thead class="bg-slate-700">
+						<tr>
+							<th
+								class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>Component</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>Amount</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>Units</th
+							>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-slate-600 bg-slate-800">
+						{#each schematic.components as component, i}
+							<tr class={i % 2 === 0 ? 'bg-slate-800' : 'bg-slate-750'}>
+								<td class="px-6 py-4 text-sm text-white">{component.name}</td>
+								<td class="px-6 py-4 text-sm text-white">{component.amount}</td>
+								<td class="px-6 py-4 text-sm text-slate-300">{component.units}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 		{:else}
 			<div class="py-8 text-center text-slate-400">
-				<p>Ingredient data not yet available</p>
-				<p class="mt-1 text-sm">This information will be populated in a future update</p>
+				<p>No sub-components required</p>
+				<p class="mt-1 text-sm">This schematic only requires raw materials</p>
 			</div>
 		{/if}
 	</Card>
@@ -155,7 +152,51 @@
 		class="mb-6"
 	>
 		{#if schematic.resources && schematic.resources.length > 0}
-			<DataTable columns={resourceColumns} data={transformedResources} />
+			<div class="overflow-hidden rounded-lg border border-slate-600">
+				<table class="min-w-full divide-y divide-slate-600">
+					<thead class="bg-slate-700">
+						<tr>
+							<th
+								class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>Resource</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>Amount</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>Units</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+								>Classes</th
+							>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-slate-600 bg-slate-800">
+						{#each schematic.resources as resource, i}
+							<tr class={i % 2 === 0 ? 'bg-slate-800' : 'bg-slate-750'}>
+								<td class="px-6 py-4 text-sm text-white">{resource.name}</td>
+								<td class="px-6 py-4 text-sm text-white">{resource.amount}</td>
+								<td class="px-6 py-4 text-sm text-slate-300">{resource.units}</td>
+								<td class="px-6 py-4 text-sm">
+									{#if resource.classes && resource.classes.length > 0}
+										{#each resource.classes as cls}
+											<span
+												class="mr-1 inline-flex items-center rounded bg-purple-500/20 px-2 py-1 text-xs text-purple-300"
+												>{cls}</span
+											>
+										{/each}
+									{:else}
+										<span class="text-slate-500">-</span>
+									{/if}
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 		{:else}
 			<div class="py-8 text-center text-slate-400">
 				<p>Resource data not yet available</p>
