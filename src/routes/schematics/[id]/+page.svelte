@@ -1,16 +1,11 @@
 <script lang="ts">
-	import type { PageData } from './$types.js';
-	import type { Schematic } from '$lib/types.js';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import PageLayout from '$lib/components/PageLayout.svelte';
-	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Card from '$lib/components/Card.svelte';
-	import {
-		formatResourceClasses,
-		getResourceDisplayName,
-		getResourceInfo
-	} from '$lib/data/resource-class-mapping.js';
+	import PageHeader from '$lib/components/PageHeader.svelte';
+	import PageLayout from '$lib/components/PageLayout.svelte';
+	import type { Schematic } from '$lib/types';
+	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
@@ -189,11 +184,10 @@
 									{#if resource.classes && resource.classes.length > 0}
 										<div class="flex flex-wrap gap-1">
 											{#each resource.classes as cls}
-												{@const resourceInfo = getResourceInfo(cls)}
 												<span
 													class="inline-flex items-center rounded bg-purple-500/20 px-2 py-1 text-xs text-purple-300"
 												>
-													{resourceInfo ? resourceInfo.name : cls.toUpperCase()}
+													{typeof cls === 'string' ? cls : cls.displayName || cls.code}
 												</span>
 											{/each}
 										</div>

@@ -2,7 +2,7 @@
  * Resources API endpoints for retrieving SWG resource data
  */
 import { json } from '@sveltejs/kit';
-import * as db from '$lib/database';
+import * as db from '$lib/data';
 import type { RequestHandler } from './$types';
 
 /**

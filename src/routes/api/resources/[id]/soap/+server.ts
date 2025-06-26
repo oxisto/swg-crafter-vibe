@@ -4,7 +4,7 @@
  * Updates resources table directly with last update tracking
  */
 import { json } from '@sveltejs/kit';
-import * as db from '$lib/database';
+import * as db from '$lib/data';
 import type { RequestHandler } from './$types';
 
 /**

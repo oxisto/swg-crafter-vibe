@@ -16,7 +16,7 @@ import { json } from '@sveltejs/kit';
 import { OPENAI_API_KEY } from '$env/static/private';
 import { logger } from '$lib/logger.js';
 import OpenAI from 'openai';
-import { getAllInventory, getAllSchematics, getSchematicById } from '$lib/database.js';
+import { getAllInventory, getAllSchematics, getSchematicById } from '$lib/data';
 import { SCHEMATIC_ID_MAP, getBlasterName, PART_CATEGORIES, MARK_LEVELS } from '$lib/types.js';
 import type { RequestHandler } from './$types.js';
 

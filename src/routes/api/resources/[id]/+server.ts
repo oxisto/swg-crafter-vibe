@@ -3,7 +3,7 @@
  * Supports optional SOAP data enrichment for detailed resource attributes
  */
 import { json, error } from '@sveltejs/kit';
-import * as db from '$lib/database';
+import * as db from '$lib/data';
 import { logger } from '$lib/logger.js';
 import type { RequestHandler } from './$types';
 

@@ -11,7 +11,7 @@
 
 // filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/api/schematics/+server.ts
 import { json } from '@sveltejs/kit';
-import { getAllSchematics, getSchematicsByCategory, getSchematicById } from '$lib/database.js';
+import { getAllSchematics, getSchematicsByCategory, getSchematicById } from '$lib/data';
 import type { RequestHandler } from './$types.js';
 
 /**

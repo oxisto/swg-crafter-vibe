@@ -18,7 +18,7 @@ import {
 	setRecommendedStockLevel,
 	getSellValues,
 	setSellValues
-} from '$lib/database.js';
+} from '$lib/data';
 import type { RequestHandler } from './$types.js';
 
 /**

@@ -5,7 +5,7 @@ import {
 	importMailBatch,
 	extractSalesFromMails,
 	getMailImports
-} from '$lib/database.js';
+} from '$lib/data';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url }) => {

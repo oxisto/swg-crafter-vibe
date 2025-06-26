@@ -1,7 +1,7 @@
 /**
  * Resources page server load function
  */
-import * as db from '$lib/database';
+import * as db from '$lib/data';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {

@@ -73,7 +73,7 @@ export interface SchematicResource {
 	name: string;
 	amount: number;
 	units: string;
-	classes: string[];
+	classes: (string | { code: string; displayName: string })[];
 }
 
 export const MARK_LEVELS: MarkLevel[] = ['I', 'II', 'III', 'IV', 'V'];

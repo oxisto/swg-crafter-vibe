@@ -1,7 +1,7 @@
 /**
  * Resource detail page server load function
  */
-import * as db from '$lib/database';
+import * as db from '$lib/data';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 

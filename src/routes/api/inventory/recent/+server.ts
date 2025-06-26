@@ -7,7 +7,7 @@
  */
 
 import { json } from '@sveltejs/kit';
-import { getRecentlyUpdatedInventory, getSchematicById } from '$lib/database.js';
+import { getRecentlyUpdatedInventory, getSchematicById } from '$lib/data';
 import { SCHEMATIC_ID_MAP, getBlasterName, type MarkLevel } from '$lib/types.js';
 import type { RequestHandler } from './$types.js';
 

@@ -40,37 +40,32 @@ export {
 
 // Schematics
 export {
-	downloadAndCacheSchematics,
 	getAllSchematics,
 	getSchematicsByCategory,
 	getSchematicById,
-	toggleSchematicFavorite
+	toggleSchematicFavorite,
+	downloadAndCacheSchematics
 } from './schematics.js';
 
 // Resources
 export {
-	downloadAndCacheResources,
 	getAllResources,
 	getResourcesByClass,
 	searchResources,
-	getResourceById
+	getResourceById,
+	downloadAndCacheResources
 } from './resources.js';
 
-// Resource Class Mapping
+// Resource Classes (Database-driven, frontend-safe)
 export {
-	RESOURCE_CLASS_MAPPING,
-	getResourceInfo,
 	getResourceDisplayName,
-	getResourcesByCategory,
-	buildResourceTree,
-	searchResources as searchResourceClasses,
 	formatResourceClasses,
-	getResourceClassInfo,
 	getResourceClassName,
-	getResourceClassCategory
-} from './resource-class-mapping.js';
+	getResourceClassCategory,
+	type ResourceClassInfo
+} from './resource-functions.js';
 
-// SOAP
+// SOAP API integration
 export {
 	getResourceInfoByName,
 	getResourceInfoById,
@@ -95,37 +90,5 @@ export {
 	getLoadoutsByShipType
 } from './loadouts.js';
 
-// Initialization
-import { initializeInventoryDefaults } from './inventory.js';
-import { initializeSettingsDefaults } from './settings.js';
-import { initializeLoadoutDefaults } from './loadouts.js';
-import { downloadAndCacheSchematics } from './schematics.js';
-import { downloadAndCacheResources } from './resources.js';
-import { initDatabase } from './database.js';
-import { dbLogger } from './database.js';
-
-/**
- * Initializes the complete data layer with all default values and background downloads
- * This is the main initialization function that replaces the old initDatabase
- */
-export function initializeDataLayer() {
-	// Initialize core database
-	const db = initDatabase();
-
-	// Initialize default data
-	initializeInventoryDefaults();
-	initializeSettingsDefaults();
-	initializeLoadoutDefaults();
-
-	// Download and cache external data in the background
-	Promise.all([
-		downloadAndCacheSchematics().catch((error) =>
-			dbLogger.error('Failed to download schematics', { error })
-		),
-		downloadAndCacheResources().catch((error) =>
-			dbLogger.error('Failed to download resources', { error })
-		)
-	]);
-
-	return db;
-}
+// Server initialization
+export { initializeDataLayer } from './server-init.js';

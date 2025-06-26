@@ -29,7 +29,7 @@ import {
 	getAllInventoryWithTimestamps,
 	getRecentlyUpdatedInventory,
 	getSchematicById
-} from '$lib/database.js';
+} from '$lib/data';
 import { logger } from '$lib/logger.js';
 import {
 	SCHEMATIC_ID_MAP,

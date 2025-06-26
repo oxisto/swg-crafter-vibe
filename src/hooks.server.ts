@@ -1,4 +1,4 @@
-import { initDatabase } from '$lib/database.js';
+import { initializeDataLayer } from '$lib/data';
 import { setServerLogger, requestLogger } from '$lib/logger.js';
 import type { Handle } from '@sveltejs/kit';
 import pino from 'pino';
@@ -24,7 +24,7 @@ setServerLogger(pinoLogger);
 
 // Initialize database on server startup
 try {
-	initDatabase();
+	initializeDataLayer();
 	pinoLogger.info('Database initialized successfully');
 } catch (error) {
 	pinoLogger.fatal({ error }, 'Failed to initialize database');

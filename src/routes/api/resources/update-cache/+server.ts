@@ -2,7 +2,7 @@
  * Resource cache update API endpoint
  */
 import { json } from '@sveltejs/kit';
-import * as db from '$lib/database';
+import { getDatabase, downloadAndCacheResources } from '$lib/data';
 import type { RequestHandler } from './$types';
 
 /**
@@ -10,8 +10,7 @@ import type { RequestHandler } from './$types';
  * Returns the last update time for the resource cache
  */
 export const GET: RequestHandler = async () => {
-	const lastUpdate = db
-		.getDatabase()
+	const lastUpdate = getDatabase()
 		.prepare('SELECT value FROM resources_cache WHERE key = ?')
 		.get('resources_last_update') as { value: string } | undefined;
 
@@ -30,11 +29,10 @@ export const POST: RequestHandler = async ({ locals }) => {
 
 	try {
 		apiLogger?.info('Starting manual resources cache update');
-		await db.downloadAndCacheResources();
+		await downloadAndCacheResources();
 
 		// Get the updated timestamp
-		const lastUpdate = db
-			.getDatabase()
+		const lastUpdate = getDatabase()
 			.prepare('SELECT value FROM resources_cache WHERE key = ?')
 			.get('resources_last_update') as { value: string } | undefined;
 

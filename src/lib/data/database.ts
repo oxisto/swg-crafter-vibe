@@ -32,6 +32,8 @@ export function initDatabase() {
 	createMailsTables();
 	createSalesTable();
 	createLoadoutsTable();
+	// Add resource classes table for the comprehensive resource tree data
+	createResourceClassesTable();
 
 	return db;
 }
@@ -249,6 +251,75 @@ function createFavoritesTable() {
       schematic_id TEXT PRIMARY KEY,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (schematic_id) REFERENCES schematics (id)
+    )
+  `);
+}
+
+/**
+ * Create resource classes table for storing the comprehensive resource tree
+ */
+function createResourceClassesTable() {
+	db.exec(`
+    CREATE TABLE IF NOT EXISTS resource_classes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      swgcraft_id TEXT NOT NULL UNIQUE,
+      swgID INTEGER NOT NULL UNIQUE,
+      name TEXT NOT NULL,
+      parent_id TEXT,
+      depth INTEGER NOT NULL DEFAULT 0,
+      
+      -- Resource stat ranges
+      oq_min INTEGER,
+      oq_max INTEGER,
+      pe_min INTEGER,
+      pe_max INTEGER,
+      dr_min INTEGER,
+      dr_max INTEGER,
+      fl_min INTEGER,
+      fl_max INTEGER,
+      hr_min INTEGER,
+      hr_max INTEGER,
+      ma_min INTEGER,
+      ma_max INTEGER,
+      cd_min INTEGER,
+      cd_max INTEGER,
+      cr_min INTEGER,
+      cr_max INTEGER,
+      sh_min INTEGER,
+      sh_max INTEGER,
+      ut_min INTEGER,
+      ut_max INTEGER,
+      sr_min INTEGER,
+      sr_max INTEGER,
+      
+      -- Flags
+      recycled BOOLEAN DEFAULT FALSE,
+      harvested BOOLEAN DEFAULT TRUE,
+      
+      -- Metadata
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      
+      FOREIGN KEY (parent_id) REFERENCES resource_classes (swgcraft_id)
+    )
+  `);
+
+	// Create indexes for better query performance
+	db.exec(
+		`CREATE INDEX IF NOT EXISTS idx_resource_classes_swgcraft_id ON resource_classes(swgcraft_id)`
+	);
+	db.exec(`CREATE INDEX IF NOT EXISTS idx_resource_classes_swgid ON resource_classes(swgID)`);
+	db.exec(
+		`CREATE INDEX IF NOT EXISTS idx_resource_classes_parent_id ON resource_classes(parent_id)`
+	);
+	db.exec(`CREATE INDEX IF NOT EXISTS idx_resource_classes_name ON resource_classes(name)`);
+
+	// Create a metadata table to track when we last imported the resource tree
+	db.exec(`
+    CREATE TABLE IF NOT EXISTS resource_tree_metadata (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
 }
