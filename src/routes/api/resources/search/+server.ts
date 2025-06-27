@@ -2,25 +2,25 @@
  * Resource search API endpoint
  * Searches local database for resources
  */
-import { json } from '@sveltejs/kit';
 import * as db from '$lib/data';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
 import type { RequestHandler } from './$types';
 
 /**
  * GET /api/resources/search
  * Search resources in local database
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
+	const apiLogger = locals?.logger?.child({ component: 'api', endpoint: 'resources-search' });
 	const query = url.searchParams.get('q');
 	const limit = parseInt(url.searchParams.get('limit') || '50');
 
 	if (!query || query.length < 2) {
-		return json(
-			{
-				success: false,
-				error: 'Query must be at least 2 characters long'
-			},
-			{ status: 400 }
+		return logAndError(
+			'Query must be at least 2 characters long',
+			{},
+			apiLogger,
+			HttpStatus.BAD_REQUEST
 		);
 	}
 
@@ -31,22 +31,26 @@ export const GET: RequestHandler = async ({ url }) => {
 		// Apply limit
 		const limitedResults = limit > 0 ? results.slice(0, limit) : results;
 
-		return json({
-			success: true,
+		const responseData = {
 			query,
 			results: limitedResults,
 			total: results.length,
 			limited: limit > 0 && results.length > limit,
 			timestamp: new Date().toISOString()
-		});
+		};
+
+		return logAndSuccess(
+			responseData,
+			`Found ${results.length} resources for query: ${query}`,
+			{},
+			apiLogger
+		);
 	} catch (error) {
-		console.error('Resource search failed:', error);
-		return json(
-			{
-				success: false,
-				error: 'Search operation failed'
-			},
-			{ status: 500 }
+		return logAndError(
+			`Resource search failed: ${(error as Error).message}`,
+			{},
+			apiLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
 		);
 	}
 };

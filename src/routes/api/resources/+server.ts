@@ -1,10 +1,10 @@
 /**
  * Resources API endpoints for retrieving SWG resource data
  */
-import { json } from '@sveltejs/kit';
-import * as db from '$lib/data';
-import { createSuccessResponse, createErrorResponse, HttpStatus } from '$lib/api/utils.js';
+import { getAllResources } from '$lib/data';
 import { logger } from '$lib/logger.js';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import type { GetResourcesResponse } from '$lib/types/api.js';
 import type { RequestHandler } from './$types.js';
 
 const resourcesLogger = logger.child({ component: 'api', endpoint: 'resources' });
@@ -13,13 +13,13 @@ const resourcesLogger = logger.child({ component: 'api', endpoint: 'resources' }
  * GET /api/resources
  * Returns all available resources with optional filtering
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 	try {
 		const className = url.searchParams.get('class');
 		const searchTerm = url.searchParams.get('search');
 		const spawnStatus = url.searchParams.get('status');
 
-		let resources = db.getAllResources();
+		let resources = getAllResources();
 
 		// Apply spawn status filter if provided
 		if (spawnStatus === 'active') {
@@ -49,18 +49,30 @@ export const GET: RequestHandler = async ({ url }) => {
 			);
 		}
 
-		resourcesLogger.info('Successfully fetched resources', {
-			total: resources.length,
-			filters: { className, searchTerm, spawnStatus }
-		});
-
-		return createSuccessResponse({
+		const response: GetResourcesResponse = {
 			resources,
 			total: resources.length,
 			filters: { className, searchTerm, spawnStatus }
-		});
-	} catch (error) {
-		resourcesLogger.error('Error fetching resources', { error: error as Error });
-		return createErrorResponse('Failed to fetch resources', HttpStatus.INTERNAL_SERVER_ERROR);
+		};
+
+		return logAndSuccess(
+			response,
+			'Successfully fetched resources',
+			{
+				total: resources.length,
+				filtersApplied: !!(className || searchTerm || spawnStatus),
+				className: !!className,
+				searchTerm: !!searchTerm,
+				spawnStatus: !!spawnStatus
+			},
+			resourcesLogger
+		);
+	} catch (err) {
+		return logAndError(
+			'Error fetching resources',
+			{ error: err as Error },
+			resourcesLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };
