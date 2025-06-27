@@ -122,3 +122,6 @@ This is a SvelteKit application with Svelte 5 and TailwindCSS v4 for managing a 
   - All API responses should be typed and the types should be used in the frontend in the load functions
   - The load functions should not do complex computations, instead the API should do that
 - Use re-usable components for the frontend
+- API endpoints should use the `logAndSuccess` and `logAndError` utility functions with typed responses defined in `src/lib/types/api.ts`..
+  These functions use SvelteKit native `json` and `error` functions internally.
+- API types should follow the convention `ListXXX` for array responses and `GetXXX` for single item responses. `UpdateXXX` for update responses.

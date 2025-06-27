@@ -1,11 +1,11 @@
 /**
  * API utilities for standardized HTTP requests and error handling.
  * Provides consistent patterns for API responses and error handling across the application.
+ * Uses SvelteKit's native json() and error() functions for clean response handling.
  */
 
-import { json, type RequestEvent } from '@sveltejs/kit';
+import { json, error, type RequestEvent } from '@sveltejs/kit';
 import { logger } from '$lib/logger.js';
-import type { ApiResponse, ApiError } from '$lib/types/api.js';
 
 const apiLogger = logger.child({ component: 'api-utils' });
 
@@ -26,50 +26,78 @@ export const HttpStatus = {
 } as const;
 
 /**
- * Creates a standardized successful API response
+ * Creates a standardized successful API response using SvelteKit's json()
  * @param data - The response data
  * @param status - HTTP status code (default: 200)
- * @returns JSON response with success format
+ * @returns JSON response
  */
 export function createSuccessResponse<T>(data: T, status: number = HttpStatus.OK) {
-	const response: ApiResponse<T> = {
-		success: true,
-		data
-	};
-	return json(response, { status });
+	return json(data, { status });
 }
 
 /**
- * Creates a standardized error API response
- * @param error - Error message or Error object
+ * Creates a standardized error response using SvelteKit's error()
+ * @param message - Error message
  * @param status - HTTP status code (default: 500)
- * @param code - Optional error code
- * @param details - Optional error details
- * @returns JSON response with error format
+ * @returns SvelteKit error response
  */
 export function createErrorResponse(
-	error: string | Error,
-	status: number = HttpStatus.INTERNAL_SERVER_ERROR,
-	code?: string,
-	details?: Record<string, unknown>
+	message: string | Error,
+	status: number = HttpStatus.INTERNAL_SERVER_ERROR
 ) {
-	const errorMessage = error instanceof Error ? error.message : error;
-	const response: ApiError = {
-		success: false,
-		error: errorMessage,
-		code,
-		details
-	};
+	const errorMessage = message instanceof Error ? message.message : message;
 
 	// Log the error
 	apiLogger.error('API Error Response', {
 		error: errorMessage,
-		status,
-		code,
-		details
+		status
 	});
 
-	return json(response, { status });
+	return error(status, errorMessage);
+}
+
+/**
+ * Creates a success response with logging
+ * @param data - The response data
+ * @param logMessage - Message to log
+ * @param logContext - Additional context for logging
+ * @param logger - Logger instance to use
+ * @param status - HTTP status code (default: 200)
+ * @returns JSON response
+ */
+export function logAndSuccess<T>(
+	data: T,
+	logMessage: string,
+	logContext: Record<string, any> = {},
+	logger: any = apiLogger,
+	status: number = HttpStatus.OK
+) {
+	logger.info(logMessage, logContext);
+	return json(data, { status });
+}
+
+/**
+ * Creates an error response with logging
+ * @param message - Error message or Error object
+ * @param logContext - Additional context for logging
+ * @param logger - Logger instance to use
+ * @param status - HTTP status code (default: 500)
+ * @returns SvelteKit error response
+ */
+export function logAndError(
+	message: string | Error,
+	logContext: Record<string, any> = {},
+	logger: any = apiLogger,
+	status: number = HttpStatus.INTERNAL_SERVER_ERROR
+) {
+	const errorMessage = message instanceof Error ? message.message : message;
+
+	logger.error(errorMessage, {
+		status,
+		...logContext
+	});
+
+	return error(status, errorMessage);
 }
 
 /**
@@ -83,11 +111,17 @@ export function withErrorHandling<T extends RequestEvent>(
 	return async (event: T): Promise<Response> => {
 		try {
 			return await handler(event);
-		} catch (error) {
-			apiLogger.error('Unhandled API error', { error: error as Error });
-			return createErrorResponse(
-				error instanceof Error ? error : 'Internal server error',
-				HttpStatus.INTERNAL_SERVER_ERROR
+		} catch (err) {
+			// If it's already a SvelteKit error, re-throw it
+			if (err && typeof err === 'object' && 'status' in err) {
+				throw err;
+			}
+
+			// Otherwise, log and create a new error
+			apiLogger.error('Unhandled API error', { error: err as Error });
+			throw error(
+				HttpStatus.INTERNAL_SERVER_ERROR,
+				err instanceof Error ? err.message : 'Internal server error'
 			);
 		}
 	};

@@ -8,6 +8,7 @@
 
 import { logger } from '$lib/logger.js';
 import type { PageServerLoad } from './$types.js';
+import type { GetLoadoutsResponse, GetChassisResponse } from '$lib/types/api.js';
 
 const pageLogger = logger.child({ component: 'page-server', page: 'loadouts' });
 
@@ -23,20 +24,18 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	try {
 		// Fetch loadouts data from the loadouts API
 		const loadoutsResponse = await fetch('/api/loadouts');
-		const loadoutsData = await loadoutsResponse.json();
+		const loadoutsData: GetLoadoutsResponse = await loadoutsResponse.json();
 
 		if (!loadoutsResponse.ok) {
 			throw new Error('Failed to fetch loadouts data');
 		}
 
 		// Fetch chassis data from the chassis API (with error handling)
-		let chassisData = [];
+		let chassisData: GetChassisResponse = [];
 		try {
 			const chassisResponse = await fetch('/api/chassis');
 			if (chassisResponse.ok) {
-				const chassisResponseData = await chassisResponse.json();
-				// Handle both old and new response formats for backwards compatibility
-				chassisData = chassisResponseData.data || chassisResponseData || [];
+				chassisData = await chassisResponse.json();
 			} else {
 				pageLogger.warn('Failed to fetch chassis data, continuing without chassis');
 			}
@@ -45,7 +44,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		}
 
 		return {
-			loadouts: loadoutsData.loadouts || [],
+			loadouts: loadoutsData || [],
 			chassis: chassisData || []
 		};
 	} catch (error) {

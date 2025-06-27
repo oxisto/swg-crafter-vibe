@@ -22,6 +22,7 @@ import {
 	getSchematicById
 } from '$lib/data';
 import { logger } from '$lib/logger.js';
+import { createSuccessResponse, createErrorResponse, HttpStatus } from '$lib/api/utils.js';
 import {
 	SCHEMATIC_ID_MAP,
 	getBlasterName,
@@ -92,10 +93,10 @@ export const GET: RequestHandler = async ({ url }) => {
 					};
 				});
 
-				return json({ recentUpdates: enrichedItems });
+				return createSuccessResponse(enrichedItems);
 			}
 
-			return json({ recentUpdates: recentItems });
+			return createSuccessResponse(recentItems);
 		}
 
 		// If requesting all inventory data
@@ -134,10 +135,10 @@ export const GET: RequestHandler = async ({ url }) => {
 						};
 					});
 
-					return json({ inventory: enrichedInventory });
+					return createSuccessResponse(enrichedInventory);
 				}
 
-				return json({ inventory: inventoryWithTimestamps });
+				return createSuccessResponse(inventoryWithTimestamps);
 			}
 
 			const inventory = getAllInventory();
@@ -173,18 +174,18 @@ export const GET: RequestHandler = async ({ url }) => {
 					};
 				});
 
-				return json({ inventory: inventoryWithSchematics });
+				return createSuccessResponse(inventoryWithSchematics);
 			}
 
 			// Return just inventory quantities
-			return json({ inventory });
+			return createSuccessResponse(inventory);
 		}
 
 		// If requesting specific item
 		if (!category || !markLevel) {
-			return json(
-				{ error: 'Missing category or markLevel parameters. Use ?all=true for full inventory.' },
-				{ status: 400 }
+			return createErrorResponse(
+				'Missing category or markLevel parameters. Use ?all=true for full inventory.',
+				HttpStatus.BAD_REQUEST
 			);
 		}
 
@@ -193,7 +194,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			const itemData = getInventoryItemWithTimestamp(category, markLevel);
 
 			if (!itemData) {
-				return json({ error: 'Item not found' }, { status: 404 });
+				return createErrorResponse('Item not found', HttpStatus.NOT_FOUND);
 			}
 
 			let response: any = {
@@ -234,7 +235,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				}
 			}
 
-			return json(response);
+			return createSuccessResponse(response);
 		}
 
 		const quantity = getInventoryItem(category, markLevel);

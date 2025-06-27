@@ -7,7 +7,7 @@
  * @since 1.0.0
  */
 
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import {
 	getAllLoadouts,
 	updateLoadoutQuantity,
@@ -18,8 +18,15 @@ import {
 	getLoadoutsByShipType,
 	initializeLoadoutDefaults
 } from '$lib/data/loadouts.js';
+import { HttpStatus } from '$lib/api/utils.js';
 import { logger } from '$lib/logger.js';
 import type { RequestHandler } from './$types.js';
+import type {
+	GetLoadoutsResponse,
+	GetLoadoutResponse,
+	UpdateLoadoutResponse,
+	CreateLoadoutResponse
+} from '$lib/types/api.js';
 
 const loadoutsLogger = logger.child({ component: 'api', endpoint: 'loadouts' });
 
@@ -32,7 +39,7 @@ const loadoutsLogger = logger.child({ component: 'api', endpoint: 'loadouts' });
  * - shipType: string - Filter by ship type
  * - all: boolean - Return all loadouts (default behavior)
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 	try {
 		const id = url.searchParams.get('id');
 		const shipType = url.searchParams.get('shipType');
@@ -41,23 +48,23 @@ export const GET: RequestHandler = async ({ url }) => {
 			// Get specific loadout by ID
 			const loadout = getLoadoutById(id);
 			if (!loadout) {
-				return json({ error: 'Loadout not found' }, { status: 404 });
+				return error(HttpStatus.NOT_FOUND, 'Loadout not found');
 			}
-			return json({ loadout });
+			return json(loadout satisfies GetLoadoutResponse);
 		}
 
 		if (shipType) {
 			// Get loadouts for specific ship type
 			const loadouts = getLoadoutsByShipType(shipType as any);
-			return json({ loadouts });
+			return json(loadouts satisfies GetLoadoutsResponse);
 		}
 
 		// Get all loadouts
 		const loadouts = getAllLoadouts();
-		return json({ loadouts });
-	} catch (error) {
-		loadoutsLogger.error('Error fetching loadouts', { error: error as Error });
-		return json({ error: 'Failed to fetch loadouts' }, { status: 500 });
+		return json(loadouts satisfies GetLoadoutsResponse);
+	} catch (err) {
+		loadoutsLogger.error('Error fetching loadouts', { error: err as Error });
+		return error(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to fetch loadouts');
 	}
 };
 

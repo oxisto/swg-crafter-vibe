@@ -1,6 +1,9 @@
 /**
  * API response type definitions for the Star Wars Galaxies shipwright system.
- * Contains standardized response types for all API endpoints.
+ *
+ * Since we're using SvelteKit's native json() and error() functions,
+ * success responses return data directly, and errors throw with status codes.
+ * These types represent the actual data returned by successful API calls.
  */
 
 import type { InventoryItem, InventoryItemWithTimestamp, Settings } from './inventory.js';
@@ -9,23 +12,7 @@ import type { Schematic } from './schematics.js';
 import type { ShipLoadout, Chassis } from './ships.js';
 import type { MailData, MailImport, Sale } from './sales.js';
 
-// Base API response wrapper
-export interface ApiResponse<T = unknown> {
-	success: boolean;
-	data?: T;
-	error?: string;
-	message?: string;
-}
-
-// Standardized error response
-export interface ApiError {
-	success: false;
-	error: string;
-	code?: string;
-	details?: Record<string, unknown>;
-}
-
-// Inventory API responses
+// Enhanced inventory items with additional display information
 export interface InventoryItemResponse extends InventoryItem {
 	displayName?: string;
 	schematic?: Schematic;
@@ -38,41 +25,27 @@ export interface InventoryItemWithTimestampResponse extends InventoryItemWithTim
 	schematicId?: string;
 }
 
-export interface GetInventoryResponse extends ApiResponse {
-	success: true;
-	inventory: InventoryItemResponse[];
-}
+// API Response Types (data returned directly by successful calls)
 
-export interface GetInventoryWithTimestampsResponse extends ApiResponse {
-	success: true;
-	inventory: InventoryItemWithTimestampResponse[];
-}
-
-export interface GetRecentInventoryResponse extends ApiResponse {
-	success: true;
-	recentUpdates: InventoryItemWithTimestampResponse[];
-}
-
-export interface UpdateInventoryResponse extends ApiResponse {
-	success: true;
+// Inventory API responses
+export type GetInventoryResponse = InventoryItemResponse[];
+export type GetInventoryWithTimestampsResponse = InventoryItemWithTimestampResponse[];
+export type GetRecentInventoryResponse = InventoryItemWithTimestampResponse[];
+export type UpdateInventoryResponse = {
 	item: InventoryItemResponse;
 	previousQuantity: number;
-}
+};
 
 // Settings API responses
-export interface GetSettingsResponse extends ApiResponse {
-	success: true;
-	settings: Settings;
-}
+export type GetSettingsResponse = Settings;
+export type UpdateSettingsResponse = Settings;
 
-export interface UpdateSettingsResponse extends ApiResponse {
-	success: true;
-	settings: Settings;
-}
+// Chassis API responses
+export type GetChassisResponse = Chassis[];
+export type UpdateChassisResponse = Chassis;
 
 // Resources API responses
-export interface GetResourcesResponse extends ApiResponse {
-	success: true;
+export type GetResourcesResponse = {
 	resources: Resource[];
 	total?: number;
 	filters?: {
@@ -80,16 +53,11 @@ export interface GetResourcesResponse extends ApiResponse {
 		searchTerm?: string;
 		spawnStatus?: string;
 	};
-}
-
-export interface GetResourceResponse extends ApiResponse {
-	success: true;
-	resource: Resource;
-}
+};
+export type GetResourceResponse = Resource;
 
 // Schematics API responses
-export interface GetSchematicsResponse extends ApiResponse {
-	success: true;
+export type GetSchematicsResponse = {
 	schematics: Schematic[];
 	total?: number;
 	filters?: {
@@ -97,49 +65,27 @@ export interface GetSchematicsResponse extends ApiResponse {
 		searchTerm?: string;
 		profession?: string;
 	};
-}
-
-export interface GetSchematicResponse extends ApiResponse {
-	success: true;
-	schematic: Schematic;
-}
-
-export interface UpdateSchematicFavoriteResponse extends ApiResponse {
-	success: true;
-	schematic: Schematic;
-}
+};
+export type GetSchematicResponse = Schematic;
+export type UpdateSchematicFavoriteResponse = Schematic;
 
 // Loadouts API responses
-export interface GetLoadoutsResponse extends ApiResponse {
-	success: true;
-	loadouts: ShipLoadout[];
-	chassis: Chassis[];
-}
-
-export interface UpdateLoadoutResponse extends ApiResponse {
-	success: true;
-	loadout: ShipLoadout;
-}
-
-export interface UpdateChassisResponse extends ApiResponse {
-	success: true;
-	chassis: Chassis;
-}
+export type GetLoadoutsResponse = ShipLoadout[];
+export type GetLoadoutResponse = ShipLoadout;
+export type UpdateLoadoutResponse = ShipLoadout;
+export type CreateLoadoutResponse = ShipLoadout;
 
 // Mail API responses
-export interface GetMailsResponse extends ApiResponse {
-	success: true;
+export type GetMailsResponse = {
 	mails: MailData[];
 	imports: MailImport[];
 	sales: Sale[];
-}
-
-export interface ImportMailsResponse extends ApiResponse {
-	success: true;
+};
+export type ImportMailsResponse = {
 	imported: number;
 	total: number;
 	batchId: string;
-}
+};
 
 // Chat API responses
 export interface ChatMessage {
@@ -148,16 +94,15 @@ export interface ChatMessage {
 	timestamp: string;
 }
 
-export interface ChatResponse extends ApiResponse<ChatMessage> {
-	success: true;
-	data: ChatMessage;
+export type ChatResponse = {
+	message: ChatMessage;
 	analysis?: {
 		totalItems: number;
 		totalValue: number;
 		lowStockItems: InventoryItemResponse[];
 		recommendations: string[];
 	};
-}
+};
 
 // Common query parameters
 export interface PaginationParams {
@@ -178,6 +123,6 @@ export interface FilterParams {
 }
 
 // Utility type for API endpoints
-export type ApiEndpoint<TParams = unknown, TResponse = ApiResponse> = (
+export type ApiEndpoint<TParams = unknown, TResponse = unknown> = (
 	params: TParams
 ) => Promise<TResponse>;

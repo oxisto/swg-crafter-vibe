@@ -1,9 +1,11 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import { getDatabase } from '$lib/data/database.js';
 import { SHIP_CHASSIS } from '$lib/types.js';
-import { createSuccessResponse, createErrorResponse, HttpStatus } from '$lib/api/utils.js';
+import { HttpStatus, logAndSuccess, logAndError } from '$lib/api/utils.js';
 import { logger } from '$lib/logger.js';
 import type { RequestHandler } from './$types.js';
+import type { Chassis } from '$lib/types/ships.js';
+import type { GetChassisResponse, UpdateChassisResponse } from '$lib/types/api.js';
 
 const chassisLogger = logger.child({ component: 'api', endpoint: 'chassis' });
 
@@ -51,7 +53,7 @@ function initializeChassisTable() {
 	}
 }
 
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async (): Promise<Response> => {
 	try {
 		initializeChassisTable();
 
@@ -63,22 +65,35 @@ export const GET: RequestHandler = async () => {
 			ORDER BY shipType, variant, name
 		`
 			)
-			.all();
+			.all() as Chassis[];
 
-		chassisLogger.info('Successfully fetched chassis data', { count: chassis.length });
-		return createSuccessResponse(chassis);
-	} catch (error) {
-		chassisLogger.error('Error fetching chassis', { error: error as Error });
-		return createErrorResponse('Failed to fetch chassis', HttpStatus.INTERNAL_SERVER_ERROR);
+		return logAndSuccess(
+			chassis satisfies GetChassisResponse,
+			'Successfully fetched chassis data',
+			{ count: chassis.length },
+			chassisLogger
+		);
+	} catch (err) {
+		return logAndError(
+			'Error fetching chassis data',
+			{ error: err as Error },
+			chassisLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };
 
-export const PATCH: RequestHandler = async ({ request }) => {
+export const PATCH: RequestHandler = async ({ request }): Promise<Response> => {
 	try {
 		const { id, quantity } = await request.json();
 
 		if (!id || quantity === undefined || quantity < 0) {
-			return createErrorResponse('Invalid chassis ID or quantity', HttpStatus.BAD_REQUEST);
+			return logAndError(
+				'Invalid chassis ID or quantity',
+				{ id, quantity },
+				chassisLogger,
+				HttpStatus.BAD_REQUEST
+			);
 		}
 
 		initializeChassisTable();
@@ -93,14 +108,28 @@ export const PATCH: RequestHandler = async ({ request }) => {
 		const result = updateChassis.run(quantity, id);
 
 		if (result.changes === 0) {
-			return createErrorResponse('Chassis not found', HttpStatus.NOT_FOUND);
+			return logAndError(
+				'Chassis not found',
+				{ id, quantity },
+				chassisLogger,
+				HttpStatus.NOT_FOUND
+			);
 		}
 
-		const updatedChassis = db.prepare('SELECT * FROM chassis WHERE id = ?').get(id);
-		chassisLogger.info('Successfully updated chassis', { id, quantity });
-		return createSuccessResponse(updatedChassis);
-	} catch (error) {
-		chassisLogger.error('Error updating chassis', { error: error as Error });
-		return createErrorResponse('Failed to update chassis', HttpStatus.INTERNAL_SERVER_ERROR);
+		const updatedChassis = db.prepare('SELECT * FROM chassis WHERE id = ?').get(id) as Chassis;
+
+		return logAndSuccess(
+			updatedChassis satisfies UpdateChassisResponse,
+			'Successfully updated chassis',
+			{ id, quantity },
+			chassisLogger
+		);
+	} catch (err) {
+		return logAndError(
+			'Error updating chassis',
+			{ error: err as Error },
+			chassisLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };

@@ -9,6 +9,7 @@
 // filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/inventory/+page.server.ts
 import { logger } from '$lib/logger.js';
 import type { PageServerLoad } from './$types.js';
+import type { GetInventoryResponse, GetSettingsResponse } from '$lib/types/api.js';
 
 const pageLogger = logger.child({ component: 'page-server', page: 'inventory' });
 
@@ -25,11 +26,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	try {
 		// Fetch inventory data with schematic information from our API
 		const inventoryResponse = await fetch('/api/inventory?all=true&includeSchematic=true');
-		const inventoryData = await inventoryResponse.json();
+		const inventoryData: GetInventoryResponse = await inventoryResponse.json();
 
 		// Fetch settings from the settings API
 		const settingsResponse = await fetch('/api/settings');
-		const settingsData = await settingsResponse.json();
+		const settingsData: GetSettingsResponse = await settingsResponse.json();
 
 		if (!inventoryResponse.ok) {
 			throw new Error('Failed to fetch inventory data');
@@ -44,8 +45,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		const schematicNames: Record<string, string> = {};
 		const schematicIds: Record<string, string> = {};
 
-		if (inventoryData.inventory && Array.isArray(inventoryData.inventory)) {
-			inventoryData.inventory.forEach((item: any) => {
+		// Handle new API response structure with data field
+		const inventoryItems = inventoryData || [];
+
+		if (Array.isArray(inventoryItems)) {
+			inventoryItems.forEach((item) => {
 				const key = `${item.category}-${item.markLevel}`;
 				inventory[key] = item.quantity;
 				// Store the display name for each inventory item
@@ -57,16 +61,13 @@ export const load: PageServerLoad = async ({ fetch }) => {
 					schematicIds[key] = item.schematicId;
 				}
 			});
-		} else if (inventoryData.inventory && typeof inventoryData.inventory === 'object') {
-			// If it's already in object format
-			Object.assign(inventory, inventoryData.inventory);
 		}
 
 		return {
 			inventory,
 			schematicNames,
 			schematicIds,
-			settings: settingsData.data || settingsData
+			settings: settingsData
 		};
 	} catch (error) {
 		pageLogger.error('Error loading inventory data', { error: error as Error });
