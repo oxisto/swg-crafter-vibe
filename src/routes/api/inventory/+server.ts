@@ -3,34 +3,29 @@
  * Provides REST endpoints for managing ship part inventory including
  * retrieving current stock levels and updating quantities.
  *
- * Supports both individual item operations and bulk inventory retrieval,
- * with optional schematic data enrichment for enhanced display information.
- *
  * @author SWG Crafter Team
  * @since 1.0.0
  */
 
-// filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/api/inventory/+server.ts
-import { json } from '@sveltejs/kit';
 import {
 	updateInventoryItem,
 	getInventoryItem,
-	getInventoryItemWithTimestamp,
 	getAllInventory,
-	getAllInventoryWithTimestamps,
-	getRecentlyUpdatedInventory,
-	getSchematicById
+	getAllInventoryItems,
+	getAllInventoryItemsWithTimestamps,
+	getRecentInventoryItems,
+	getInventoryItemWithSchematic,
+	getInventoryItemWithTimestampAndSchematic
 } from '$lib/data';
 import { logger } from '$lib/logger.js';
-import { createSuccessResponse, createErrorResponse, HttpStatus } from '$lib/api/utils.js';
-import {
-	SCHEMATIC_ID_MAP,
-	getBlasterName,
-	type MarkLevel,
-	type PartCategory,
-	PART_CATEGORIES,
-	MARK_LEVELS
-} from '$lib/types.js';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import { type MarkLevel, type PartCategory } from '$lib/types.js';
+import type {
+	GetInventoryResponse,
+	GetInventoryWithTimestampsResponse,
+	GetRecentInventoryResponse,
+	UpdateInventoryResponse
+} from '$lib/types/api.js';
 import type { RequestHandler } from './$types.js';
 
 const inventoryLogger = logger.child({ component: 'api', endpoint: 'inventory' });
@@ -51,7 +46,7 @@ const inventoryLogger = logger.child({ component: 'api', endpoint: 'inventory' }
  * @param {URL} params.url - Request URL containing query parameters
  * @returns {Promise<Response>} JSON response with inventory data
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 	const category = url.searchParams.get('category') as PartCategory;
 	const markLevel = url.searchParams.get('markLevel') as MarkLevel;
 	const includeSchematic = url.searchParams.get('includeSchematic') === 'true';
@@ -63,224 +58,106 @@ export const GET: RequestHandler = async ({ url }) => {
 	try {
 		// If requesting recently updated items
 		if (recent) {
-			const recentItems = getRecentlyUpdatedInventory(limit);
-
-			if (includeSchematic) {
-				const enrichedItems = recentItems.map((item) => {
-					const key = `${item.category}-${item.markLevel}`;
-					const schematicId = SCHEMATIC_ID_MAP[key];
-
-					let schematic = null;
-					let displayName = `Mark ${item.markLevel} ${item.category}`;
-
-					if (schematicId) {
-						schematic = getSchematicById(schematicId);
-						if (schematic) {
-							displayName = schematic.name;
-							// For blasters, use custom naming
-							if (item.category.startsWith('Blaster')) {
-								const color = item.category.includes('Green') ? 'Green' : 'Red';
-								displayName = getBlasterName(item.markLevel as MarkLevel, color as 'Green' | 'Red');
-							}
-						}
-					}
-
-					return {
-						...item,
-						displayName,
-						schematic,
-						schematicId
-					};
-				});
-
-				return createSuccessResponse(enrichedItems);
-			}
-
-			return createSuccessResponse(recentItems);
+			const recentItems = getRecentInventoryItems(limit, includeSchematic);
+			return logAndSuccess(
+				recentItems satisfies GetRecentInventoryResponse,
+				'Successfully fetched recent inventory items',
+				{ count: recentItems.length, limit },
+				inventoryLogger
+			);
 		}
 
 		// If requesting all inventory data
 		if (includeAll) {
 			if (includeTimestamp) {
-				const inventoryWithTimestamps = getAllInventoryWithTimestamps();
-
-				if (includeSchematic) {
-					const enrichedInventory = inventoryWithTimestamps.map((item) => {
-						const key = `${item.category}-${item.markLevel}`;
-						const schematicId = SCHEMATIC_ID_MAP[key];
-
-						let schematic = null;
-						let displayName = `Mark ${item.markLevel} ${item.category}`;
-
-						if (schematicId) {
-							schematic = getSchematicById(schematicId);
-							if (schematic) {
-								displayName = schematic.name;
-								// For blasters, use custom naming
-								if (item.category.startsWith('Blaster')) {
-									const color = item.category.includes('Green') ? 'Green' : 'Red';
-									displayName = getBlasterName(
-										item.markLevel as MarkLevel,
-										color as 'Green' | 'Red'
-									);
-								}
-							}
-						}
-
-						return {
-							...item,
-							displayName,
-							schematic,
-							schematicId
-						};
-					});
-
-					return createSuccessResponse(enrichedInventory);
-				}
-
-				return createSuccessResponse(inventoryWithTimestamps);
+				const inventoryWithTimestamps = getAllInventoryItemsWithTimestamps(includeSchematic);
+				return logAndSuccess(
+					inventoryWithTimestamps satisfies GetInventoryWithTimestampsResponse,
+					'Successfully fetched inventory with timestamps',
+					{ count: inventoryWithTimestamps.length, includeSchematic },
+					inventoryLogger
+				);
 			}
-
-			const inventory = getAllInventory();
 
 			if (includeSchematic) {
-				// Add schematic data for each inventory item
-				const inventoryWithSchematics = Object.entries(inventory).map(([key, quantity]) => {
-					const [cat, mark] = key.split('-');
-					const schematicId = SCHEMATIC_ID_MAP[key];
-
-					let schematic = null;
-					let displayName = `Mark ${mark} ${cat}`;
-
-					if (schematicId) {
-						schematic = getSchematicById(schematicId);
-						if (schematic) {
-							displayName = schematic.name;
-							// For blasters, use custom naming
-							if (cat.startsWith('Blaster')) {
-								const color = cat.includes('Green') ? 'Green' : 'Red';
-								displayName = getBlasterName(mark as MarkLevel, color as 'Green' | 'Red');
-							}
-						}
-					}
-
-					return {
-						category: cat,
-						markLevel: mark,
-						quantity,
-						displayName,
-						schematic,
-						schematicId
-					};
-				});
-
-				return createSuccessResponse(inventoryWithSchematics);
+				const inventoryItems = getAllInventoryItems(includeSchematic);
+				return logAndSuccess(
+					inventoryItems satisfies GetInventoryResponse,
+					'Successfully fetched inventory with schematics',
+					{ count: inventoryItems.length },
+					inventoryLogger
+				);
 			}
 
-			// Return just inventory quantities
-			return createSuccessResponse(inventory);
+			// Return just inventory quantities for backward compatibility
+			const inventory = getAllInventory();
+			return logAndSuccess(
+				inventory,
+				'Successfully fetched inventory quantities',
+				{ count: Object.keys(inventory).length },
+				inventoryLogger
+			);
 		}
 
 		// If requesting specific item
 		if (!category || !markLevel) {
-			return createErrorResponse(
+			return logAndError(
 				'Missing category or markLevel parameters. Use ?all=true for full inventory.',
+				{ category, markLevel },
+				inventoryLogger,
 				HttpStatus.BAD_REQUEST
 			);
 		}
 
 		// Get item data with or without timestamp
 		if (includeTimestamp) {
-			const itemData = getInventoryItemWithTimestamp(category, markLevel);
-
-			if (!itemData) {
-				return createErrorResponse('Item not found', HttpStatus.NOT_FOUND);
-			}
-
-			let response: any = {
+			const itemData = getInventoryItemWithTimestampAndSchematic(
 				category,
 				markLevel,
-				quantity: itemData.quantity,
-				updatedAt: itemData.updatedAt
-			};
+				includeSchematic
+			);
 
-			// Add schematic data if requested
-			if (includeSchematic) {
-				const inventoryKey = `${category}-${markLevel}`;
-				const schematicId = SCHEMATIC_ID_MAP[inventoryKey];
-
-				if (schematicId) {
-					const schematic = getSchematicById(schematicId);
-
-					if (schematic) {
-						let displayName = schematic.name;
-
-						// For blasters, use custom naming
-						if (category.startsWith('Blaster')) {
-							const color = category.includes('Green') ? 'Green' : 'Red';
-							displayName = getBlasterName(markLevel, color as 'Green' | 'Red');
-						}
-
-						response.displayName = displayName;
-						response.schematic = {
-							id: schematic.id,
-							name: schematic.name,
-							category: schematic.category,
-							profession: schematic.profession,
-							complexity: schematic.complexity,
-							datapad: schematic.datapad
-						};
-						response.schematicId = schematicId;
-					}
-				}
+			if (!itemData) {
+				return logAndError(
+					'Item not found',
+					{ category, markLevel },
+					inventoryLogger,
+					HttpStatus.NOT_FOUND
+				);
 			}
 
-			return createSuccessResponse(response);
+			return logAndSuccess(
+				itemData,
+				'Successfully fetched inventory item with timestamp',
+				{ category, markLevel, includeSchematic },
+				inventoryLogger
+			);
 		}
 
-		const quantity = getInventoryItem(category, markLevel);
-		const inventoryKey = `${category}-${markLevel}`;
+		const itemData = getInventoryItemWithSchematic(category, markLevel, includeSchematic);
 
-		let response: any = {
-			category,
-			markLevel,
-			quantity
-		};
-
-		// Add schematic data if requested
-		if (includeSchematic) {
-			const schematicId = SCHEMATIC_ID_MAP[inventoryKey];
-
-			if (schematicId) {
-				const schematic = getSchematicById(schematicId);
-
-				if (schematic) {
-					let displayName = schematic.name;
-
-					// For blasters, use custom naming
-					if (category.startsWith('Blaster')) {
-						const color = category.includes('Green') ? 'Green' : 'Red';
-						displayName = getBlasterName(markLevel, color as 'Green' | 'Red');
-					}
-
-					response.displayName = displayName;
-					response.schematic = {
-						id: schematic.id,
-						name: schematic.name,
-						category: schematic.category,
-						profession: schematic.profession,
-						complexity: schematic.complexity,
-						datapad: schematic.datapad
-					};
-					response.schematicId = schematicId;
-				}
-			}
+		if (!itemData) {
+			return logAndError(
+				'Item not found',
+				{ category, markLevel },
+				inventoryLogger,
+				HttpStatus.NOT_FOUND
+			);
 		}
 
-		return json(response);
-	} catch (error) {
-		inventoryLogger.error('Error fetching inventory', { error: error as Error });
-		return json({ error: 'Internal server error' }, { status: 500 });
+		return logAndSuccess(
+			itemData,
+			'Successfully fetched inventory item',
+			{ category, markLevel, includeSchematic },
+			inventoryLogger
+		);
+	} catch (err) {
+		return logAndError(
+			'Error fetching inventory data',
+			{ error: err as Error },
+			inventoryLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };
 
@@ -298,12 +175,17 @@ export const GET: RequestHandler = async ({ url }) => {
  * @param {Request} params.request - The incoming HTTP request
  * @returns {Promise<Response>} JSON response with updated inventory data
  */
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request }): Promise<Response> => {
 	try {
 		const { category, markLevel, action, quantity } = await request.json();
 
 		if (!category || !markLevel || !action) {
-			return json({ error: 'Missing required fields' }, { status: 400 });
+			return logAndError(
+				'Missing required fields',
+				{ category, markLevel, action },
+				inventoryLogger,
+				HttpStatus.BAD_REQUEST
+			);
 		}
 
 		let newQuantity: number;
@@ -318,28 +200,50 @@ export const POST: RequestHandler = async ({ request }) => {
 				break;
 			case 'set':
 				if (typeof quantity !== 'number' || quantity < 0) {
-					return json({ error: 'Invalid quantity' }, { status: 400 });
+					return logAndError(
+						'Invalid quantity',
+						{ category, markLevel, quantity },
+						inventoryLogger,
+						HttpStatus.BAD_REQUEST
+					);
 				}
 				newQuantity = quantity;
 				break;
 			default:
-				return json({ error: 'Invalid action' }, { status: 400 });
+				return logAndError(
+					'Invalid action',
+					{ category, markLevel, action },
+					inventoryLogger,
+					HttpStatus.BAD_REQUEST
+				);
 		}
 
 		updateInventoryItem(category, markLevel, newQuantity);
 
-		// Get the updated item with timestamp
-		const updatedItem = getInventoryItemWithTimestamp(category, markLevel);
+		// Get the updated item with timestamp for response
+		const updatedItem = getInventoryItemWithTimestampAndSchematic(category, markLevel, false);
 
-		return json({
-			success: true,
-			category,
-			markLevel,
-			quantity: newQuantity,
-			updatedAt: updatedItem?.updatedAt || new Date().toISOString()
-		});
-	} catch (error) {
-		inventoryLogger.error('Error updating inventory', { error: error as Error });
-		return json({ error: 'Internal server error' }, { status: 500 });
+		const response: UpdateInventoryResponse = {
+			item: {
+				category,
+				markLevel,
+				quantity: newQuantity
+			},
+			previousQuantity: currentQuantity
+		};
+
+		return logAndSuccess(
+			response,
+			'Successfully updated inventory item',
+			{ category, markLevel, action, newQuantity, previousQuantity: currentQuantity },
+			inventoryLogger
+		);
+	} catch (err) {
+		return logAndError(
+			'Error updating inventory',
+			{ error: err as Error },
+			inventoryLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };

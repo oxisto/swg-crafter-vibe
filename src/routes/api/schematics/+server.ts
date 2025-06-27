@@ -2,17 +2,17 @@
  * @fileoverview Schematics API server for the SWG Shipwright application.
  * Provides REST endpoints for retrieving schematic data from the SWGAide database.
  *
- * Supports querying schematics by ID, category, or retrieving all available schematics.
- * Data is sourced from the cached SWGAide schematics database.
- *
  * @author SWG Crafter Team
  * @since 1.0.0
  */
 
-// filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/api/schematics/+server.ts
-import { json } from '@sveltejs/kit';
 import { getAllSchematics, getSchematicsByCategory, getSchematicById } from '$lib/data';
+import { logger } from '$lib/logger.js';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import type { GetSchematicsResponse, GetSchematicResponse } from '$lib/types/api.js';
 import type { RequestHandler } from './$types.js';
+
+const schematicsLogger = logger.child({ component: 'api', endpoint: 'schematics' });
 
 /**
  * GET endpoint handler for retrieving schematic data.
@@ -27,8 +27,7 @@ import type { RequestHandler } from './$types.js';
  * @param {URL} params.url - Request URL containing query parameters
  * @returns {Promise<Response>} JSON response with schematic data or error message
  */
-export const GET: RequestHandler = async ({ url, locals }) => {
-	const apiLogger = locals.logger?.child({ component: 'api', endpoint: 'schematics' }) || console;
+export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 	const category = url.searchParams.get('category');
 	const id = url.searchParams.get('id');
 
@@ -36,19 +35,40 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		if (id) {
 			const schematic = getSchematicById(id);
 			if (!schematic) {
-				apiLogger.warn(`Schematic not found: ${id}`);
-				return new Response('Schematic not found', { status: 404 });
+				return logAndError('Schematic not found', { id }, schematicsLogger, HttpStatus.NOT_FOUND);
 			}
-			return json(schematic);
+
+			return logAndSuccess(
+				schematic satisfies GetSchematicResponse,
+				'Successfully fetched schematic',
+				{ id },
+				schematicsLogger
+			);
 		} else if (category) {
 			const schematics = getSchematicsByCategory(category);
-			return json(schematics);
+
+			return logAndSuccess(
+				{ schematics } satisfies GetSchematicsResponse,
+				'Successfully fetched schematics by category',
+				{ category, count: schematics.length },
+				schematicsLogger
+			);
 		} else {
 			const schematics = getAllSchematics();
-			return json(schematics);
+
+			return logAndSuccess(
+				{ schematics } satisfies GetSchematicsResponse,
+				'Successfully fetched all schematics',
+				{ count: schematics.length },
+				schematicsLogger
+			);
 		}
-	} catch (error) {
-		apiLogger.error(`Schematics API error: ${(error as Error).message}`);
-		return new Response('Internal server error', { status: 500 });
+	} catch (err) {
+		return logAndError(
+			'Error fetching schematics',
+			{ error: err as Error, category, id },
+			schematicsLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };

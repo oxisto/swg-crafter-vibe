@@ -15,7 +15,12 @@ export {
 	getInventoryItem,
 	getInventoryItemWithTimestamp,
 	getAllInventoryWithTimestamps,
-	getRecentlyUpdatedInventory
+	getRecentlyUpdatedInventory,
+	getAllInventoryItems,
+	getAllInventoryItemsWithTimestamps,
+	getRecentInventoryItems,
+	getInventoryItemWithSchematic,
+	getInventoryItemWithTimestampAndSchematic
 } from './inventory.js';
 
 // Settings
@@ -89,6 +94,9 @@ export {
 	deleteLoadout,
 	getLoadoutsByShipType
 } from './loadouts.js';
+
+// Chassis
+export { getAllChassis, getChassisById, updateChassisQuantity } from './chassis.js';
 
 // Server initialization
 export { initializeDataLayer } from './server-init.js';

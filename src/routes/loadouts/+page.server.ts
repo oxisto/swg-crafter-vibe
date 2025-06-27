@@ -8,7 +8,7 @@
 
 import { logger } from '$lib/logger.js';
 import type { PageServerLoad } from './$types.js';
-import type { GetLoadoutsResponse, GetChassisResponse } from '$lib/types/api.js';
+import type { GetLoadoutsResponse, ListChassisResponse } from '$lib/types/api.js';
 
 const pageLogger = logger.child({ component: 'page-server', page: 'loadouts' });
 
@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		}
 
 		// Fetch chassis data from the chassis API (with error handling)
-		let chassisData: GetChassisResponse = [];
+		let chassisData: ListChassisResponse = [];
 		try {
 			const chassisResponse = await fetch('/api/chassis');
 			if (chassisResponse.ok) {

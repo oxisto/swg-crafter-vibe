@@ -7,7 +7,6 @@
  * @since 1.0.0
  */
 
-import { json, error } from '@sveltejs/kit';
 import {
 	getAllLoadouts,
 	updateLoadoutQuantity,
@@ -15,11 +14,10 @@ import {
 	getLoadoutById,
 	createLoadout,
 	deleteLoadout,
-	getLoadoutsByShipType,
-	initializeLoadoutDefaults
+	getLoadoutsByShipType
 } from '$lib/data/loadouts.js';
-import { HttpStatus } from '$lib/api/utils.js';
 import { logger } from '$lib/logger.js';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
 import type { RequestHandler } from './$types.js';
 import type {
 	GetLoadoutsResponse,
@@ -48,23 +46,43 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 			// Get specific loadout by ID
 			const loadout = getLoadoutById(id);
 			if (!loadout) {
-				return error(HttpStatus.NOT_FOUND, 'Loadout not found');
+				return logAndError('Loadout not found', { id }, loadoutsLogger, HttpStatus.NOT_FOUND);
 			}
-			return json(loadout satisfies GetLoadoutResponse);
+
+			return logAndSuccess(
+				loadout satisfies GetLoadoutResponse,
+				'Successfully fetched loadout',
+				{ id },
+				loadoutsLogger
+			);
 		}
 
 		if (shipType) {
 			// Get loadouts for specific ship type
 			const loadouts = getLoadoutsByShipType(shipType as any);
-			return json(loadouts satisfies GetLoadoutsResponse);
+			return logAndSuccess(
+				loadouts satisfies GetLoadoutsResponse,
+				'Successfully fetched loadouts by ship type',
+				{ shipType, count: loadouts.length },
+				loadoutsLogger
+			);
 		}
 
 		// Get all loadouts
 		const loadouts = getAllLoadouts();
-		return json(loadouts satisfies GetLoadoutsResponse);
+		return logAndSuccess(
+			loadouts satisfies GetLoadoutsResponse,
+			'Successfully fetched all loadouts',
+			{ count: loadouts.length },
+			loadoutsLogger
+		);
 	} catch (err) {
-		loadoutsLogger.error('Error fetching loadouts', { error: err as Error });
-		return error(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to fetch loadouts');
+		return logAndError(
+			'Error fetching loadouts',
+			{ error: err as Error },
+			loadoutsLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };
 
@@ -77,45 +95,81 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
  * - quantity?: number - New quantity (optional)
  * - price?: number - New price (optional)
  */
-export const PATCH: RequestHandler = async ({ request }) => {
+export const PATCH: RequestHandler = async ({ request }): Promise<Response> => {
 	try {
 		const body = await request.json();
 		const { id, quantity, price } = body;
 
 		if (!id) {
-			return json({ error: 'Loadout ID is required' }, { status: 400 });
+			return logAndError(
+				'Loadout ID is required',
+				{ body },
+				loadoutsLogger,
+				HttpStatus.BAD_REQUEST
+			);
 		}
 
 		// Check if loadout exists
 		const existingLoadout = getLoadoutById(id);
 		if (!existingLoadout) {
-			return json({ error: 'Loadout not found' }, { status: 404 });
+			return logAndError('Loadout not found', { id }, loadoutsLogger, HttpStatus.NOT_FOUND);
 		}
 
 		// Update quantity if provided
 		if (typeof quantity === 'number') {
 			if (quantity < 0) {
-				return json({ error: 'Quantity cannot be negative' }, { status: 400 });
+				return logAndError(
+					'Quantity cannot be negative',
+					{ id, quantity },
+					loadoutsLogger,
+					HttpStatus.BAD_REQUEST
+				);
 			}
 			updateLoadoutQuantity(id, quantity);
-			loadoutsLogger.info('Loadout quantity updated', { id, quantity });
 		}
 
 		// Update price if provided
 		if (typeof price === 'number') {
 			if (price < 0) {
-				return json({ error: 'Price cannot be negative' }, { status: 400 });
+				return logAndError(
+					'Price cannot be negative',
+					{ id, price },
+					loadoutsLogger,
+					HttpStatus.BAD_REQUEST
+				);
 			}
 			updateLoadoutPrice(id, price);
-			loadoutsLogger.info('Loadout price updated', { id, price });
 		}
 
 		// Return updated loadout
 		const updatedLoadout = getLoadoutById(id);
-		return json({ loadout: updatedLoadout });
-	} catch (error) {
-		loadoutsLogger.error('Error updating loadout', { error: error as Error });
-		return json({ error: 'Failed to update loadout' }, { status: 500 });
+
+		if (!updatedLoadout) {
+			return logAndError(
+				'Loadout not found after update',
+				{ id },
+				loadoutsLogger,
+				HttpStatus.INTERNAL_SERVER_ERROR
+			);
+		}
+
+		return logAndSuccess(
+			updatedLoadout satisfies UpdateLoadoutResponse,
+			'Successfully updated loadout',
+			{
+				id,
+				quantityUpdated: typeof quantity === 'number',
+				priceUpdated: typeof price === 'number'
+			},
+			loadoutsLogger
+		);
+	} catch (err) {
+		return logAndError(
+			'Error updating loadout',
+			{ error: err as Error },
+			loadoutsLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };
 
@@ -133,7 +187,7 @@ export const PATCH: RequestHandler = async ({ request }) => {
  * - schematicId?: string - Related schematic ID (optional)
  * - description?: string - Description (optional)
  */
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request }): Promise<Response> => {
 	try {
 		const body = await request.json();
 		const { id, name, shipType, variant, markLevel, price, quantity, schematicId, description } =
@@ -141,13 +195,31 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// Validate required fields
 		if (!id || !name || !shipType || !markLevel || typeof price !== 'number') {
-			return json({ error: 'Missing required fields' }, { status: 400 });
+			return logAndError(
+				'Missing required fields',
+				{
+					body: {
+						id: !!id,
+						name: !!name,
+						shipType: !!shipType,
+						markLevel: !!markLevel,
+						priceValid: typeof price === 'number'
+					}
+				},
+				loadoutsLogger,
+				HttpStatus.BAD_REQUEST
+			);
 		}
 
 		// Check if loadout ID already exists
 		const existingLoadout = getLoadoutById(id);
 		if (existingLoadout) {
-			return json({ error: 'Loadout with this ID already exists' }, { status: 409 });
+			return logAndError(
+				'Loadout with this ID already exists',
+				{ id },
+				loadoutsLogger,
+				HttpStatus.CONFLICT
+			);
 		}
 
 		// Create new loadout
@@ -164,12 +236,20 @@ export const POST: RequestHandler = async ({ request }) => {
 		};
 
 		createLoadout(newLoadout);
-		loadoutsLogger.info('New loadout created', { id, name, shipType });
 
-		return json({ loadout: newLoadout }, { status: 201 });
-	} catch (error) {
-		loadoutsLogger.error('Error creating loadout', { error: error as Error });
-		return json({ error: 'Failed to create loadout' }, { status: 500 });
+		return logAndSuccess(
+			newLoadout satisfies CreateLoadoutResponse,
+			'Successfully created loadout',
+			{ id, name, shipType },
+			loadoutsLogger
+		);
+	} catch (err) {
+		return logAndError(
+			'Error creating loadout',
+			{ error: err as Error },
+			loadoutsLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };
 
@@ -179,35 +259,39 @@ export const POST: RequestHandler = async ({ request }) => {
  * Query parameters:
  * - id: string - Loadout ID to delete
  */
-export const DELETE: RequestHandler = async ({ url }) => {
+export const DELETE: RequestHandler = async ({ url }): Promise<Response> => {
 	try {
 		const id = url.searchParams.get('id');
 
 		if (!id) {
-			return json({ error: 'Loadout ID is required' }, { status: 400 });
+			return logAndError(
+				'Loadout ID is required',
+				{ query: Object.fromEntries(url.searchParams) },
+				loadoutsLogger,
+				HttpStatus.BAD_REQUEST
+			);
 		}
 
 		// Check if loadout exists
 		const existingLoadout = getLoadoutById(id);
 		if (!existingLoadout) {
-			return json({ error: 'Loadout not found' }, { status: 404 });
+			return logAndError('Loadout not found', { id }, loadoutsLogger, HttpStatus.NOT_FOUND);
 		}
 
 		deleteLoadout(id);
-		loadoutsLogger.info('Loadout deleted', { id });
 
-		return json({ message: 'Loadout deleted successfully' });
-	} catch (error) {
-		loadoutsLogger.error('Error deleting loadout', { error: error as Error });
-		return json({ error: 'Failed to delete loadout' }, { status: 500 });
+		return logAndSuccess(
+			{ message: 'Loadout deleted successfully' },
+			'Successfully deleted loadout',
+			{ id },
+			loadoutsLogger
+		);
+	} catch (err) {
+		return logAndError(
+			'Error deleting loadout',
+			{ error: err as Error },
+			loadoutsLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };
-
-/**
- * Initialize loadouts with defaults on first API call if needed
- */
-try {
-	initializeLoadoutDefaults();
-} catch (error) {
-	loadoutsLogger.error('Error initializing loadout defaults', { error: error as Error });
-}

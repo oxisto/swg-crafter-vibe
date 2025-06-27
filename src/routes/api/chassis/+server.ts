@@ -1,74 +1,17 @@
-import { json, error } from '@sveltejs/kit';
-import { getDatabase } from '$lib/data/database.js';
-import { SHIP_CHASSIS } from '$lib/types.js';
-import { HttpStatus, logAndSuccess, logAndError } from '$lib/api/utils.js';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import { getAllChassis, updateChassisQuantity } from '$lib/data';
 import { logger } from '$lib/logger.js';
+import type { ListChassisResponse, UpdateChassisResponse } from '$lib/types/api.js';
 import type { RequestHandler } from './$types.js';
-import type { Chassis } from '$lib/types/ships.js';
-import type { GetChassisResponse, UpdateChassisResponse } from '$lib/types/api.js';
 
 const chassisLogger = logger.child({ component: 'api', endpoint: 'chassis' });
 
-// Ensure chassis table exists and is populated
-function initializeChassisTable() {
-	const db = getDatabase();
-
-	// Create chassis table if it doesn't exist
-	db.exec(`
-		CREATE TABLE IF NOT EXISTS chassis (
-			id TEXT PRIMARY KEY,
-			name TEXT NOT NULL,
-			shipType TEXT NOT NULL,
-			variant TEXT,
-			price INTEGER NOT NULL,
-			quantity INTEGER NOT NULL DEFAULT 0,
-			schematicId TEXT,
-			description TEXT,
-			updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
-		)
-	`);
-
-	// Check if we need to populate with default data
-	const existingChassis = db.prepare('SELECT COUNT(*) as count FROM chassis').get() as {
-		count: number;
-	};
-
-	if (existingChassis.count === 0) {
-		const insertChassis = db.prepare(`
-			INSERT INTO chassis (id, name, shipType, variant, price, quantity, description)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
-		`);
-
-		for (const chassis of SHIP_CHASSIS) {
-			insertChassis.run(
-				chassis.id,
-				chassis.name,
-				chassis.shipType,
-				chassis.variant || null,
-				chassis.price,
-				chassis.quantity,
-				chassis.description || null
-			);
-		}
-	}
-}
-
 export const GET: RequestHandler = async (): Promise<Response> => {
 	try {
-		initializeChassisTable();
-
-		const db = getDatabase();
-		const chassis = db
-			.prepare(
-				`
-			SELECT * FROM chassis 
-			ORDER BY shipType, variant, name
-		`
-			)
-			.all() as Chassis[];
+		const chassis = getAllChassis();
 
 		return logAndSuccess(
-			chassis satisfies GetChassisResponse,
+			chassis satisfies ListChassisResponse,
 			'Successfully fetched chassis data',
 			{ count: chassis.length },
 			chassisLogger
@@ -96,18 +39,9 @@ export const PATCH: RequestHandler = async ({ request }): Promise<Response> => {
 			);
 		}
 
-		initializeChassisTable();
-		const db = getDatabase();
+		const updatedChassis = updateChassisQuantity(id, quantity);
 
-		const updateChassis = db.prepare(`
-			UPDATE chassis 
-			SET quantity = ?, updatedAt = CURRENT_TIMESTAMP 
-			WHERE id = ?
-		`);
-
-		const result = updateChassis.run(quantity, id);
-
-		if (result.changes === 0) {
+		if (!updatedChassis) {
 			return logAndError(
 				'Chassis not found',
 				{ id, quantity },
@@ -115,8 +49,6 @@ export const PATCH: RequestHandler = async ({ request }): Promise<Response> => {
 				HttpStatus.NOT_FOUND
 			);
 		}
-
-		const updatedChassis = db.prepare('SELECT * FROM chassis WHERE id = ?').get(id) as Chassis;
 
 		return logAndSuccess(
 			updatedChassis satisfies UpdateChassisResponse,

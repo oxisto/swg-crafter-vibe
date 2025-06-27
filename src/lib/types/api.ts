@@ -41,7 +41,8 @@ export type GetSettingsResponse = Settings;
 export type UpdateSettingsResponse = Settings;
 
 // Chassis API responses
-export type GetChassisResponse = Chassis[];
+export type ListChassisResponse = Chassis[];
+export type GetChassisResponse = Chassis;
 export type UpdateChassisResponse = Chassis;
 
 // Resources API responses

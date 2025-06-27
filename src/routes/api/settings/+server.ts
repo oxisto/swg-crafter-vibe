@@ -3,14 +3,10 @@
  * Provides REST endpoints for managing application settings including
  * recommended stock levels and other configuration options.
  *
- * Handles both retrieval and updates of persistent settings stored in the database.
- *
  * @author SWG Crafter Team
  * @since 1.0.0
  */
 
-// filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/api/settings/+server.ts
-import { json } from '@sveltejs/kit';
 import {
 	getSetting,
 	setSetting,
@@ -19,8 +15,12 @@ import {
 	getSellValues,
 	setSellValues
 } from '$lib/data';
-import { createSuccessResponse, createErrorResponse, HttpStatus } from '$lib/api/utils.js';
+import { logger } from '$lib/logger.js';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import type { GetSettingsResponse, UpdateSettingsResponse } from '$lib/types/api.js';
 import type { RequestHandler } from './$types.js';
+
+const settingsLogger = logger.child({ component: 'api', endpoint: 'settings' });
 
 /**
  * GET endpoint handler for retrieving application settings.
@@ -28,21 +28,28 @@ import type { RequestHandler } from './$types.js';
  *
  * @returns {Promise<Response>} JSON response with current settings
  */
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async (): Promise<Response> => {
 	try {
 		const recommendedStockLevel = getRecommendedStockLevel();
 		const sellValues = getSellValues();
 
-		return createSuccessResponse({
+		const settings: GetSettingsResponse = {
 			recommendedStockLevel,
 			sellValues
-		});
-	} catch (error) {
-		console.error('Error getting settings:', error);
-		return createErrorResponse(
-			'Failed to get settings',
-			HttpStatus.INTERNAL_SERVER_ERROR,
-			error as Error
+		};
+
+		return logAndSuccess(
+			settings,
+			'Successfully fetched settings',
+			{ recommendedStockLevel },
+			settingsLogger
+		);
+	} catch (err) {
+		return logAndError(
+			'Error fetching settings',
+			{ error: err as Error },
+			settingsLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
 		);
 	}
 };
@@ -63,7 +70,7 @@ export const GET: RequestHandler = async () => {
  * @param {Request} params.request - The incoming HTTP request
  * @returns {Promise<Response>} JSON response with update confirmation
  */
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request }): Promise<Response> => {
 	try {
 		const body = await request.json();
 
@@ -73,15 +80,22 @@ export const POST: RequestHandler = async ({ request }) => {
 
 			// Validate sell values
 			if (typeof sellValues !== 'object' || sellValues === null) {
-				return createErrorResponse('Invalid sell values format', HttpStatus.BAD_REQUEST);
+				return logAndError(
+					'Invalid sell values format',
+					{ sellValues },
+					settingsLogger,
+					HttpStatus.BAD_REQUEST
+				);
 			}
 
 			// Validate all values are numbers
 			for (const [markLevel, value] of Object.entries(sellValues)) {
 				const numValue = parseFloat(value as string);
 				if (isNaN(numValue) || numValue < 0) {
-					return createErrorResponse(
+					return logAndError(
 						`Invalid sell value for mark level ${markLevel}`,
+						{ markLevel, value },
+						settingsLogger,
 						HttpStatus.BAD_REQUEST
 					);
 				}
@@ -89,39 +103,76 @@ export const POST: RequestHandler = async ({ request }) => {
 
 			setSellValues(sellValues as Record<string, number>);
 
-			return createSuccessResponse({
+			const updatedSettings: UpdateSettingsResponse = {
+				recommendedStockLevel: getRecommendedStockLevel(),
 				sellValues
-			});
+			};
+
+			return logAndSuccess(
+				updatedSettings,
+				'Successfully updated sell values',
+				{ sellValuesCount: Object.keys(sellValues).length },
+				settingsLogger
+			);
 		}
 
 		const { key, value } = body;
 
+		if (!key) {
+			return logAndError(
+				'Missing required key field',
+				{ body },
+				settingsLogger,
+				HttpStatus.BAD_REQUEST
+			);
+		}
+
 		if (key === 'recommendedStockLevel') {
 			const level = parseInt(value.toString(), 10);
 			if (isNaN(level) || level < 0) {
-				return createErrorResponse('Invalid recommended stock level', HttpStatus.BAD_REQUEST);
+				return logAndError(
+					'Invalid recommended stock level',
+					{ key, value, level },
+					settingsLogger,
+					HttpStatus.BAD_REQUEST
+				);
 			}
 
 			setRecommendedStockLevel(level);
 
-			return createSuccessResponse({
-				recommendedStockLevel: level
-			});
+			const updatedSettings: UpdateSettingsResponse = {
+				recommendedStockLevel: level,
+				sellValues: getSellValues()
+			};
+
+			return logAndSuccess(
+				updatedSettings,
+				'Successfully updated recommended stock level',
+				{ key, oldValue: getRecommendedStockLevel(), newValue: level },
+				settingsLogger
+			);
 		} else {
 			// Generic setting update
 			setSetting(key, value.toString());
 
-			return createSuccessResponse({
-				key,
-				value: value.toString()
-			});
+			const updatedSettings: UpdateSettingsResponse = {
+				recommendedStockLevel: getRecommendedStockLevel(),
+				sellValues: getSellValues()
+			};
+
+			return logAndSuccess(
+				updatedSettings,
+				'Successfully updated setting',
+				{ key, value: value.toString() },
+				settingsLogger
+			);
 		}
-	} catch (error) {
-		console.error('Error updating setting:', error);
-		return createErrorResponse(
-			'Failed to update setting',
-			HttpStatus.INTERNAL_SERVER_ERROR,
-			(error as Error).message
+	} catch (err) {
+		return logAndError(
+			'Error updating settings',
+			{ error: err as Error },
+			settingsLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
 		);
 	}
 };

@@ -7,6 +7,7 @@ import { initDatabase, dbLogger } from './database.js';
 import { initializeInventoryDefaults } from './inventory.js';
 import { initializeSettingsDefaults } from './settings.js';
 import { initializeLoadoutDefaults } from './loadouts.js';
+import { initializeChassisDefaults } from './chassis.js';
 import { downloadAndCacheSchematics } from './schematics.js';
 import { downloadAndCacheResources } from './resources.js';
 import { shouldUpdateResourceTree, importResourceTree } from './resource-tree-importer.js';
@@ -24,6 +25,7 @@ export function initializeDataLayer() {
 	initializeInventoryDefaults();
 	initializeSettingsDefaults();
 	initializeLoadoutDefaults();
+	initializeChassisDefaults();
 
 	// Download and cache external data in the background
 	Promise.all([
