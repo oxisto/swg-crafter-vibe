@@ -34,7 +34,9 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		try {
 			const chassisResponse = await fetch('/api/chassis');
 			if (chassisResponse.ok) {
-				chassisData = await chassisResponse.json();
+				const chassisResponseData = await chassisResponse.json();
+				// Handle both old and new response formats for backwards compatibility
+				chassisData = chassisResponseData.data || chassisResponseData || [];
 			} else {
 				pageLogger.warn('Failed to fetch chassis data, continuing without chassis');
 			}

@@ -1,7 +1,11 @@
 import { json } from '@sveltejs/kit';
 import { getDatabase } from '$lib/data/database.js';
 import { SHIP_CHASSIS } from '$lib/types.js';
+import { createSuccessResponse, createErrorResponse, HttpStatus } from '$lib/api/utils.js';
+import { logger } from '$lib/logger.js';
 import type { RequestHandler } from './$types.js';
+
+const chassisLogger = logger.child({ component: 'api', endpoint: 'chassis' });
 
 // Ensure chassis table exists and is populated
 function initializeChassisTable() {
@@ -61,10 +65,11 @@ export const GET: RequestHandler = async () => {
 			)
 			.all();
 
-		return json(chassis);
+		chassisLogger.info('Successfully fetched chassis data', { count: chassis.length });
+		return createSuccessResponse(chassis);
 	} catch (error) {
-		console.error('Error fetching chassis:', error);
-		return json({ error: 'Failed to fetch chassis' }, { status: 500 });
+		chassisLogger.error('Error fetching chassis', { error: error as Error });
+		return createErrorResponse('Failed to fetch chassis', HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 };
 
@@ -73,7 +78,7 @@ export const PATCH: RequestHandler = async ({ request }) => {
 		const { id, quantity } = await request.json();
 
 		if (!id || quantity === undefined || quantity < 0) {
-			return json({ error: 'Invalid chassis ID or quantity' }, { status: 400 });
+			return createErrorResponse('Invalid chassis ID or quantity', HttpStatus.BAD_REQUEST);
 		}
 
 		initializeChassisTable();
@@ -88,13 +93,14 @@ export const PATCH: RequestHandler = async ({ request }) => {
 		const result = updateChassis.run(quantity, id);
 
 		if (result.changes === 0) {
-			return json({ error: 'Chassis not found' }, { status: 404 });
+			return createErrorResponse('Chassis not found', HttpStatus.NOT_FOUND);
 		}
 
 		const updatedChassis = db.prepare('SELECT * FROM chassis WHERE id = ?').get(id);
-		return json(updatedChassis);
+		chassisLogger.info('Successfully updated chassis', { id, quantity });
+		return createSuccessResponse(updatedChassis);
 	} catch (error) {
-		console.error('Error updating chassis:', error);
-		return json({ error: 'Failed to update chassis' }, { status: 500 });
+		chassisLogger.error('Error updating chassis', { error: error as Error });
+		return createErrorResponse('Failed to update chassis', HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 };

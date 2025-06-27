@@ -1,14 +1,5 @@
 /**
- * @fileoverview Inve	SCHEMATIC_ID_MAP,
-	getBlasterName,
-	type MarkLevel,
-	type PartCategory,
-	PART_CATEGORIES,
-	MARK_LEVELS
-} from '$lib/types.js';
-import type { RequestHandler } from './$types';
-
-const inventoryLogger = logger.child({ component: 'api', endpoint: 'inventory' });I server for the SWG Shipwright application.
+ * @fileoverview Inventory API endpoints for the SWG Shipwright application.
  * Provides REST endpoints for managing ship part inventory including
  * retrieving current stock levels and updating quantities.
  *

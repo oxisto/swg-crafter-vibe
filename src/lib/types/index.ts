@@ -46,6 +46,36 @@ export { SHIP_CHASSIS, SHIP_LOADOUTS, calculateLoadoutsValue, getLoadoutKey } fr
 // Re-export sales types
 export type { MailData, Sale, MailImport, MailBatch, MailStats, SalesAnalytics } from './sales.js';
 
+// Re-export API response types
+export type {
+	ApiResponse,
+	ApiError,
+	InventoryItemResponse,
+	InventoryItemWithTimestampResponse,
+	GetInventoryResponse,
+	GetInventoryWithTimestampsResponse,
+	GetRecentInventoryResponse,
+	UpdateInventoryResponse,
+	GetSettingsResponse,
+	UpdateSettingsResponse,
+	GetResourcesResponse,
+	GetResourceResponse,
+	GetSchematicsResponse,
+	GetSchematicResponse,
+	UpdateSchematicFavoriteResponse,
+	GetLoadoutsResponse,
+	UpdateLoadoutResponse,
+	UpdateChassisResponse,
+	GetMailsResponse,
+	ImportMailsResponse,
+	ChatMessage,
+	ChatResponse,
+	PaginationParams,
+	SortParams,
+	FilterParams,
+	ApiEndpoint
+} from './api.js';
+
 // Legacy compatibility - re-export everything as it was before
 // This ensures existing imports continue to work
 export * from './inventory.js';
@@ -53,3 +83,4 @@ export * from './schematics.js';
 export * from './resources.js';
 export * from './ships.js';
 export * from './sales.js';
+export * from './api.js';

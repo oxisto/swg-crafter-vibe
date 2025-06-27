@@ -3,7 +3,8 @@
  */
 import { json } from '@sveltejs/kit';
 import * as db from '$lib/data';
-import type { RequestHandler } from './$types';
+import { createSuccessResponse } from '$lib/api/utils.js';
+import type { RequestHandler } from './$types.js';
 
 /**
  * GET /api/resources
@@ -44,8 +45,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		);
 	}
 
-	return json({
-		success: true,
+	return createSuccessResponse({
 		resources
 	});
 };

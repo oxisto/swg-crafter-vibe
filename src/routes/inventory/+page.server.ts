@@ -66,7 +66,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 			inventory,
 			schematicNames,
 			schematicIds,
-			settings: settingsData
+			settings: settingsData.data || settingsData
 		};
 	} catch (error) {
 		pageLogger.error('Error loading inventory data', { error: error as Error });

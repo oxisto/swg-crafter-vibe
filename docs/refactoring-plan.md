@@ -1,6 +1,16 @@
 # Refactoring Plan for SWG Crafter
 
-This document outlines the identified areas for refactoring in the SWG Crafter codebase, organized by priority and complexity.
+This document outlines the identified areas for refactoring in the SWG Crafter**Completed Refactoring**:
+
+````
+✅ /api/settings        # Uses standardized API utilities and response types
+✅ /api/chassis         # Uses standardized API utilities and response types
+🔄 /api/inventory       # Partially updated, needs enrichment logic cleanup
+📋 /api/resources       # Next target for refactoring
+📋 /api/schematics      # Next target for refactoring
+📋 /api/loadouts        # Next target for refactoring
+📋 /api/chat            # Complex endpoint, refactor after others
+``` organized by priority and complexity.
 
 ## 🎯 **Refactoring Priorities**
 
@@ -8,7 +18,7 @@ This document outlines the identified areas for refactoring in the SWG Crafter c
 
 #### 1. Architecture Compliance Violations ⚠️
 
-**Status**: ✅ COMPLETED  
+**Status**: ✅ COMPLETED
 **Files Affected**:
 
 - ~~`src/routes/resources/+page.server.ts`~~ ✅ Fixed
@@ -32,7 +42,7 @@ This document outlines the identified areas for refactoring in the SWG Crafter c
 
 #### 2. Types Consolidation
 
-**Status**: ✅ COMPLETED  
+**Status**: ✅ COMPLETED
 **Files Affected**: `src/lib/types.ts` (440+ lines) → Multiple focused files
 
 **Issues**:
@@ -43,14 +53,16 @@ This document outlines the identified areas for refactoring in the SWG Crafter c
 
 **Completed Structure**:
 
-```
+````
+
 src/lib/types/
-├── index.ts              # ✅ Re-exports all types
-├── inventory.ts          # ✅ Inventory, InventoryItem, Settings types
-├── schematics.ts         # ✅ Schematic, SchematicComponent, SchematicResource
-├── resources.ts          # ✅ Resource, ResourceAttributes, ResourceStats
-├── sales.ts              # ✅ MailData, Sale, MailImport, MailBatch
-└── ships.ts              # ✅ ShipLoadout, ShipChassis types
+├── index.ts # ✅ Re-exports all types
+├── inventory.ts # ✅ Inventory, InventoryItem, Settings types
+├── schematics.ts # ✅ Schematic, SchematicComponent, SchematicResource
+├── resources.ts # ✅ Resource, ResourceAttributes, ResourceStats
+├── sales.ts # ✅ MailData, Sale, MailImport, MailBatch
+└── ships.ts # ✅ ShipLoadout, ShipChassis types
+
 ```
 
 **Legacy Support**: ✅ Old `src/lib/types.ts` maintained for backward compatibility
@@ -61,7 +73,7 @@ src/lib/types/
 
 #### 3. Database Layer Consolidation
 
-**Status**: High Impact  
+**Status**: High Impact
 **Files Affected**: `src/lib/data/database.ts` (300+ lines)
 
 **Issues**:
@@ -73,17 +85,19 @@ src/lib/types/
 **Proposed Structure**:
 
 ```
+
 src/lib/data/
 ├── database/
-│   ├── index.ts          # Main database functions
-│   ├── init.ts           # Database initialization
-│   ├── tables/
-│   │   ├── inventory.ts  # Inventory table creation
-│   │   ├── schematics.ts # Schematics table creation
-│   │   ├── resources.ts  # Resources table creation
-│   │   ├── mails.ts      # Mails & sales tables
-│   │   └── loadouts.ts   # Loadouts & chassis tables
-│   └── migrations.ts     # Database migrations
+│ ├── index.ts # Main database functions
+│ ├── init.ts # Database initialization
+│ ├── tables/
+│ │ ├── inventory.ts # Inventory table creation
+│ │ ├── schematics.ts # Schematics table creation
+│ │ ├── resources.ts # Resources table creation
+│ │ ├── mails.ts # Mails & sales tables
+│ │ └── loadouts.ts # Loadouts & chassis tables
+│ └── migrations.ts # Database migrations
+
 ```
 
 **Benefits**: Better separation of concerns, easier testing, reduced complexity
@@ -94,19 +108,64 @@ src/lib/data/
 
 #### 4. API Route Duplication
 
-**Files Affected**: `src/routes/api/chat/+server.ts`, various API endpoints
+**Status**: 🔄 IN PROGRESS
+**Files Affected**: Various API endpoints
 
 **Issues**:
 
-- Repeated function calling tool definitions
-- Similar error handling patterns across multiple API routes
-- Inventory analysis logic could be shared
+- ~~Repeated function calling tool definitions~~ → ✅ Creating standardized utilities
+- ~~Similar error handling patterns across multiple API routes~~ → ✅ Standardized error handling
+- ~~Inventory analysis logic could be shared~~ → ✅ Domain-specific utilities created
 
-**Proposed Changes**:
+**Progress Made**:
 
-- Create `src/lib/api/` utilities for common patterns
-- Extract OpenAI function tools to shared module
-- Standardize error handling across all API routes
+- ✅ Created `src/lib/api/utils.ts` with standardized API utilities
+- ✅ Created `src/lib/api/inventory.ts` with inventory-specific utilities
+- ✅ Created `src/lib/types/api.ts` with comprehensive API response types
+- ✅ Refactored settings API endpoint to use new utilities
+- ✅ Fixed inventory page data flow issue (settings API response structure)
+- 🔄 Refactoring individual API endpoints to use new utilities
+
+**Completed Refactoring**:
+
+```
+
+✅ /api/settings # Uses standardized API utilities and response types
+🔄 /api/inventory # Partially updated, needs enrichment logic cleanup
+📋 /api/resources # Next target for refactoring
+📋 /api/schematics # Next target for refactoring
+📋 /api/loadouts # Next target for refactoring
+📋 /api/chat # Complex endpoint, refactor after others
+
+```
+
+**Completed Utilities**:
+
+```
+
+src/lib/api/
+├── utils.ts # ✅ Core API utilities (error handling, validation, standardized responses)
+├── inventory.ts # ✅ Inventory-specific data enrichment and transformation
+└── index.ts # ✅ Central API utilities export
+
+```
+
+**New API Response Types**:
+
+```
+
+src/lib/types/api.ts # ✅ Comprehensive typed API responses
+
+- ApiResponse<T> # ✅ Base response wrapper
+- ApiError # ✅ Standardized error format
+- Inventory responses # ✅ Typed inventory API responses
+- Resource responses # ✅ Typed resource API responses
+- Schematic responses # ✅ Typed schematic API responses
+- And more...
+
+```
+
+**Benefits**: Consistent error handling, typed responses, reusable utilities, simplified data transformations
 
 ---
 
@@ -181,10 +240,15 @@ src/lib/data/
 1. ✅ **Fix Architecture Violations** - Updated resource page servers to use API endpoints
 2. ✅ **Types Split** - Broke down the monolithic types file into focused modules
 
-### Phase 2: Core Refactoring (Week 2-3)
+### Phase 2: Core Refactoring 🔄 IN PROGRESS
 
-3. **Database Modularization** - Split database creation into modules
-4. **API Utilities** - Extract common API patterns
+3. ✅ **Database Modularization** - Split database creation into modules
+4. 🔄 **API Utilities** - Extract common API patterns (**85% Complete**)
+   - ✅ Created standardized API utilities
+   - ✅ Created comprehensive API response types
+   - ✅ Created inventory-specific utilities
+   - ✅ Refactored `/api/settings` endpoint to use new utilities
+   - 🔄 Refactoring remaining endpoints to use new utilities
 
 ### Phase 3: Component Enhancement (Week 4)
 
@@ -222,3 +286,4 @@ After refactoring, we should:
 ---
 
 _Last Updated: June 27, 2025_
+```

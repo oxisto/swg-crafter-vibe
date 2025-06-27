@@ -19,6 +19,7 @@ import {
 	getSellValues,
 	setSellValues
 } from '$lib/data';
+import { createSuccessResponse, createErrorResponse, HttpStatus } from '$lib/api/utils.js';
 import type { RequestHandler } from './$types.js';
 
 /**
@@ -32,13 +33,17 @@ export const GET: RequestHandler = async () => {
 		const recommendedStockLevel = getRecommendedStockLevel();
 		const sellValues = getSellValues();
 
-		return json({
+		return createSuccessResponse({
 			recommendedStockLevel,
 			sellValues
 		});
 	} catch (error) {
 		console.error('Error getting settings:', error);
-		return json({ error: 'Failed to get settings' }, { status: 500 });
+		return createErrorResponse(
+			'Failed to get settings',
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			error as Error
+		);
 	}
 };
 
@@ -68,21 +73,23 @@ export const POST: RequestHandler = async ({ request }) => {
 
 			// Validate sell values
 			if (typeof sellValues !== 'object' || sellValues === null) {
-				return json({ error: 'Invalid sell values format' }, { status: 400 });
+				return createErrorResponse('Invalid sell values format', HttpStatus.BAD_REQUEST);
 			}
 
 			// Validate all values are numbers
 			for (const [markLevel, value] of Object.entries(sellValues)) {
 				const numValue = parseFloat(value as string);
 				if (isNaN(numValue) || numValue < 0) {
-					return json({ error: `Invalid sell value for mark level ${markLevel}` }, { status: 400 });
+					return createErrorResponse(
+						`Invalid sell value for mark level ${markLevel}`,
+						HttpStatus.BAD_REQUEST
+					);
 				}
 			}
 
 			setSellValues(sellValues as Record<string, number>);
 
-			return json({
-				success: true,
+			return createSuccessResponse({
 				sellValues
 			});
 		}
@@ -92,27 +99,29 @@ export const POST: RequestHandler = async ({ request }) => {
 		if (key === 'recommendedStockLevel') {
 			const level = parseInt(value.toString(), 10);
 			if (isNaN(level) || level < 0) {
-				return json({ error: 'Invalid recommended stock level' }, { status: 400 });
+				return createErrorResponse('Invalid recommended stock level', HttpStatus.BAD_REQUEST);
 			}
 
 			setRecommendedStockLevel(level);
 
-			return json({
-				success: true,
+			return createSuccessResponse({
 				recommendedStockLevel: level
 			});
 		} else {
 			// Generic setting update
 			setSetting(key, value.toString());
 
-			return json({
-				success: true,
+			return createSuccessResponse({
 				key,
 				value: value.toString()
 			});
 		}
 	} catch (error) {
 		console.error('Error updating setting:', error);
-		return json({ error: 'Failed to update setting' }, { status: 500 });
+		return createErrorResponse(
+			'Failed to update setting',
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			(error as Error).message
+		);
 	}
 };

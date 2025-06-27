@@ -117,5 +117,8 @@ This is a SvelteKit application with Svelte 5 and TailwindCSS v4 for managing a 
 - SWGAide data source: `https://swgaide.com/pub/exports/schematics_unity.xml.gz`
 - Inventory uses composite keys: `${category}-${markLevel}`
 - All inventory operations go through Svelte stores for reactivity
-- SvelteKit loading functions should fetch data from the API endpoints, not from the database directly
+- SvelteKit loading functions should
+  - fetch data from the API endpoints, not from the database directly
+  - All API responses should be typed and the types should be used in the frontend in the load functions
+  - The load functions should not do complex computations, instead the API should do that
 - Use re-usable components for the frontend
