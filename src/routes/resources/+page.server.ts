@@ -8,6 +8,7 @@
 
 // filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/resources/+page.server.ts
 import { logger } from '$lib/logger.js';
+import type { GetResourcesResponse } from '$lib/types/api.js';
 import type { PageServerLoad } from './$types';
 
 const pageLogger = logger.child({ component: 'page-server', page: 'resources' });
@@ -38,10 +39,11 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 			throw new Error('Failed to fetch resources data');
 		}
 
-		const resources = await response.json();
+		const data: GetResourcesResponse = await response.json();
 
 		return {
-			resources: Array.isArray(resources) ? resources : [],
+			resources: data.resources || [],
+			total: data.total || 0,
 			filters: {
 				className,
 				searchTerm
@@ -51,6 +53,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		pageLogger.error('Error loading resources data', { error: error as Error });
 		return {
 			resources: [],
+			total: 0,
 			filters: {
 				className: '',
 				searchTerm: ''

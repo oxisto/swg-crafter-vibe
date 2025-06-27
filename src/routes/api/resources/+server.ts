@@ -15,9 +15,9 @@ const resourcesLogger = logger.child({ component: 'api', endpoint: 'resources' }
  */
 export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 	try {
-		const className = url.searchParams.get('class');
-		const searchTerm = url.searchParams.get('search');
-		const spawnStatus = url.searchParams.get('status');
+		const className = url.searchParams.get('class') || undefined;
+		const searchTerm = url.searchParams.get('search') || undefined;
+		const spawnStatus = url.searchParams.get('status') || undefined;
 
 		let resources = getAllResources();
 

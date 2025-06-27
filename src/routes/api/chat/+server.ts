@@ -12,13 +12,14 @@
  */
 
 // filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/api/chat/+server.ts
-import { json } from '@sveltejs/kit';
 import { OPENAI_API_KEY } from '$env/static/private';
 import { logger } from '$lib/logger.js';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
 import OpenAI from 'openai';
 import { getAllInventory, getAllSchematics, getSchematicById } from '$lib/data';
 import { SCHEMATIC_ID_MAP, getBlasterName, PART_CATEGORIES, MARK_LEVELS } from '$lib/types.js';
 import type { RequestHandler } from './$types.js';
+import type { ChatResponse } from '$lib/types/api.js';
 
 const chatLogger = logger.child({ component: 'api', endpoint: 'chat' });
 
@@ -276,11 +277,21 @@ export const POST: RequestHandler = async ({ request }) => {
 		const { message, conversation = [] } = await request.json();
 
 		if (!message) {
-			return json({ error: 'Message is required' }, { status: 400 });
+			return logAndError(
+				'Chat message is required',
+				{ endpoint: 'chat', method: 'POST' },
+				chatLogger,
+				HttpStatus.BAD_REQUEST
+			);
 		}
 
 		if (!OPENAI_API_KEY) {
-			return json({ error: 'OpenAI API key not configured' }, { status: 500 });
+			return logAndError(
+				'OpenAI API key not configured',
+				{ endpoint: 'chat', method: 'POST' },
+				chatLogger,
+				HttpStatus.INTERNAL_SERVER_ERROR
+			);
 		}
 
 		// Create system message without bulky data - AI will fetch what it needs
@@ -401,20 +412,49 @@ Always use the tools to get current data before providing advice. Be specific an
 		const aiResponse = assistantMessage.content;
 
 		if (!aiResponse) {
-			return json({ error: 'No response from AI' }, { status: 500 });
+			return logAndError(
+				'No response from AI',
+				{ endpoint: 'chat', method: 'POST' },
+				chatLogger,
+				HttpStatus.INTERNAL_SERVER_ERROR
+			);
 		}
 
-		return json({
-			message: aiResponse,
-			usage: completion.usage
-		});
+		const chatResponse: ChatResponse = {
+			message: {
+				role: 'assistant',
+				content: aiResponse,
+				timestamp: new Date().toISOString()
+			}
+		};
+
+		return logAndSuccess(
+			chatResponse,
+			'Chat response generated successfully',
+			{
+				endpoint: 'chat',
+				method: 'POST',
+				usage: completion.usage
+			},
+			chatLogger
+		);
 	} catch (error) {
-		chatLogger.error('Error in chat API', { error: error as Error });
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
 		if (error instanceof Error && error.message.includes('API key')) {
-			return json({ error: 'Invalid OpenAI API key' }, { status: 401 });
+			return logAndError(
+				'Invalid OpenAI API key',
+				{ endpoint: 'chat', method: 'POST', error: errorMessage },
+				chatLogger,
+				HttpStatus.UNAUTHORIZED
+			);
 		}
 
-		return json({ error: 'Internal server error' }, { status: 500 });
+		return logAndError(
+			error instanceof Error ? error : 'Internal server error',
+			{ endpoint: 'chat', method: 'POST' },
+			chatLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };

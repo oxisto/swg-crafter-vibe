@@ -1,4 +1,8 @@
+import { logger } from '$lib/logger.js';
 import type { PageServerLoad } from './$types';
+import type { GetMailsResponse, GetMailImportsResponse } from '$lib/types/api.js';
+
+const pageLogger = logger.child({ component: 'page', page: 'mails' });
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
 	try {
@@ -19,11 +23,11 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		// Fetch mails data
 		const mailsResponse = await fetch(`/api/mails?${params}`);
-		const mailsData = await mailsResponse.json();
+		const mailsData: GetMailsResponse = await mailsResponse.json();
 
 		// Fetch import history
 		const importsResponse = await fetch('/api/mails?action=imports');
-		const importsData = await importsResponse.json();
+		const importsData: GetMailImportsResponse = await importsResponse.json();
 
 		if (!mailsResponse.ok) {
 			throw new Error('Failed to fetch mails data');
@@ -45,7 +49,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 			}
 		};
 	} catch (error) {
-		console.error('Failed to load mails data:', error);
+		pageLogger.error('Failed to load mails page data', { error: error as Error });
 		return {
 			mails: [],
 			total: 0,

@@ -28,7 +28,17 @@
 		columns = [],
 		renderCell,
 		// Extended header content
-		headerExtension
+		headerExtension,
+		// Table styling props
+		tableClass = '',
+		headerClass = 'bg-slate-700',
+		bodyClass = 'divide-y divide-slate-600 bg-slate-800',
+		rowClass = '',
+		cellClass = 'px-6 py-4',
+		// Simplified table props
+		showHeader = true,
+		showBorder = true,
+		showPagination = true
 	} = $props<{
 		title: string;
 		total?: number;
@@ -48,6 +58,16 @@
 		renderCell?: any;
 		// Extended header content
 		headerExtension?: any;
+		// Table styling props
+		tableClass?: string;
+		headerClass?: string;
+		bodyClass?: string;
+		rowClass?: string;
+		cellClass?: string;
+		// Simplified table props
+		showHeader?: boolean;
+		showBorder?: boolean;
+		showPagination?: boolean;
 	}>();
 
 	function generatePageNumbers() {

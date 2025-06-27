@@ -6,10 +6,13 @@
  * @since 1.0.0
  */
 
-import { json } from '@sveltejs/kit';
 import { getRecentlyUpdatedInventory, getSchematicById } from '$lib/data';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import { logger } from '$lib/logger.js';
 import { SCHEMATIC_ID_MAP, getBlasterName, type MarkLevel } from '$lib/types.js';
 import type { RequestHandler } from './$types.js';
+
+const recentLogger = logger.child({ component: 'api', endpoint: 'inventory-recent' });
 
 /**
  * GET endpoint handler for retrieving recently updated inventory items.

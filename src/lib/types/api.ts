@@ -79,8 +79,10 @@ export type CreateLoadoutResponse = ShipLoadout;
 // Mail API responses
 export type GetMailsResponse = {
 	mails: MailData[];
+	total?: number;
+};
+export type GetMailImportsResponse = {
 	imports: MailImport[];
-	sales: Sale[];
 };
 export type ImportMailsResponse = {
 	imported: number;

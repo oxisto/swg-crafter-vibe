@@ -1,6 +1,10 @@
 import { error } from '@sveltejs/kit';
+import { logger } from '$lib/logger.js';
 import type { PageServerLoad } from './$types';
 import type { Schematic } from '$lib/types';
+import type { GetSchematicResponse } from '$lib/types/api.js';
+
+const pageLogger = logger.child({ component: 'page', page: 'schematic-detail' });
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
 	try {
@@ -13,13 +17,16 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 			throw error(response.status, 'Failed to load schematic');
 		}
 
-		const schematic: Schematic = await response.json();
+		const schematic: GetSchematicResponse = await response.json();
 
 		return {
 			schematic
 		};
 	} catch (err) {
-		console.error('Error loading schematic:', err);
+		pageLogger.error('Error loading schematic page data', {
+			schematicId: params.id,
+			error: err as Error
+		});
 		throw error(500, 'Failed to load schematic data');
 	}
 };

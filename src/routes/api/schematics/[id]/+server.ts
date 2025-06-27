@@ -1,8 +1,15 @@
-import { json, error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import { logger } from '$lib/logger.js';
 import type { RequestHandler } from './$types';
 import { getSchematicById, getResourceDisplayName } from '$lib/data';
 
-export const GET: RequestHandler = async ({ params }) => {
+const schematicsLogger = logger.child({ component: 'api', endpoint: 'schematics' });
+
+export const GET: RequestHandler = async ({ params, locals }) => {
+	const apiLogger =
+		locals?.logger?.child({ component: 'api', endpoint: 'schematics' }) || schematicsLogger;
+
 	try {
 		const schematic = getSchematicById(params.id);
 
@@ -30,9 +37,21 @@ export const GET: RequestHandler = async ({ params }) => {
 			}))
 		};
 
-		return json(processedSchematic);
+		return logAndSuccess(
+			processedSchematic,
+			`Retrieved schematic: ${schematic.name}`,
+			{ schematicId: params.id },
+			apiLogger
+		);
 	} catch (err) {
-		console.error('Error fetching schematic:', err);
-		throw error(500, 'Failed to fetch schematic data');
+		if (err instanceof Error && err.message === 'Schematic not found') {
+			throw err; // Re-throw SvelteKit errors
+		}
+		return logAndError(
+			`Error fetching schematic: ${(err as Error).message}`,
+			{ schematicId: params.id, error: err as Error },
+			apiLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };

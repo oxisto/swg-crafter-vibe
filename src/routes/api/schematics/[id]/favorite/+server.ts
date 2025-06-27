@@ -5,42 +5,64 @@
  * Uses path parameter for the schematic ID.
  */
 
-import { json } from '@sveltejs/kit';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import { logger } from '$lib/logger.js';
 import type { RequestHandler } from '@sveltejs/kit';
 import { toggleSchematicFavorite as toggleFavorite } from '$lib/data/index.js';
-import { createLogger } from '$lib/logger.js';
 
-const logger = createLogger({ component: 'schematic-favorite-api' });
+const favoritesLogger = logger.child({ component: 'api', endpoint: 'schematic-favorite' });
 
 /**
  * POST /api/schematics/[id]/favorite
  * Toggle favorite status of a schematic using path parameter
  */
-export const POST: RequestHandler = async ({ params }) => {
+export const POST: RequestHandler = async ({ params, locals }) => {
+	const apiLogger =
+		locals?.logger?.child({ component: 'api', endpoint: 'schematic-favorite' }) || favoritesLogger;
+
 	try {
 		const { id: schematicId } = params;
 
 		// Validate parameter exists
 		if (!schematicId) {
-			return new Response('Schematic ID is required', { status: 400 });
+			return logAndError(
+				'Schematic ID is required',
+				{ schematicId },
+				apiLogger,
+				HttpStatus.BAD_REQUEST
+			);
 		}
 
 		// Convert to integer and validate
 		const id = parseInt(schematicId, 10);
 		if (isNaN(id) || id <= 0) {
-			return new Response('Invalid schematic ID - must be a positive integer', { status: 400 });
+			return logAndError(
+				'Invalid schematic ID - must be a positive integer',
+				{ schematicId },
+				apiLogger,
+				HttpStatus.BAD_REQUEST
+			);
 		}
 
 		// Use the integer ID as a string for the database query (SQLite handles this conversion)
 		const isFavorite = toggleFavorite(id.toString());
 
-		return json({
-			schematicId: id,
-			isFavorite,
-			message: isFavorite ? 'Added to favorites' : 'Removed from favorites'
-		});
+		return logAndSuccess(
+			{
+				schematicId: id,
+				isFavorite,
+				message: isFavorite ? 'Added to favorites' : 'Removed from favorites'
+			},
+			`${isFavorite ? 'Added to' : 'Removed from'} favorites: schematic ${id}`,
+			{ schematicId: id, isFavorite },
+			apiLogger
+		);
 	} catch (error) {
-		logger.error('Failed to toggle schematic favorite', { error: error as Error });
-		return new Response('Internal Server Error', { status: 500 });
+		return logAndError(
+			`Failed to toggle schematic favorite: ${(error as Error).message}`,
+			{ schematicId: params.id, error: error as Error },
+			apiLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
+		);
 	}
 };

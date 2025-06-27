@@ -7,7 +7,11 @@
  */
 
 // filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/schematics/+page.server.ts
+import { logger } from '$lib/logger.js';
 import type { PageServerLoad } from './$types.js';
+import type { GetSchematicsResponse } from '$lib/types/api.js';
+
+const pageLogger = logger.child({ component: 'page', page: 'schematics' });
 
 /**
  * Page load function for the schematics browser page.
@@ -21,20 +25,23 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	try {
 		// Fetch all schematics from our API (now includes favorites)
 		const schematicsResponse = await fetch('/api/schematics');
-		const schematics = await schematicsResponse.json();
+		const data: GetSchematicsResponse = await schematicsResponse.json();
 
 		if (!schematicsResponse.ok) {
-			console.error('Failed to fetch schematics:', schematics);
+			pageLogger.error('Failed to fetch schematics from API', {
+				status: schematicsResponse.status,
+				statusText: schematicsResponse.statusText
+			});
 			return {
 				schematics: []
 			};
 		}
 
 		return {
-			schematics: Array.isArray(schematics) ? schematics : []
+			schematics: data.schematics || []
 		};
 	} catch (error) {
-		console.error('Error loading schematics:', error);
+		pageLogger.error('Error loading schematics page data', { error: error as Error });
 		return {
 			schematics: []
 		};

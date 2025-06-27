@@ -7,7 +7,10 @@
  */
 
 // filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/settings/+page.server.ts
+import { logger } from '$lib/logger.js';
 import type { PageServerLoad } from './$types.js';
+
+const pageLogger = logger.child({ component: 'page', page: 'settings' });
 
 /**
  * Page load function for the settings management page.
@@ -32,7 +35,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 			settings: data
 		};
 	} catch (error) {
-		console.error('Error loading settings:', error);
+		pageLogger.error('Error loading settings page data', { error: error as Error });
 		return {
 			settings: {
 				recommendedStockLevel: 10,

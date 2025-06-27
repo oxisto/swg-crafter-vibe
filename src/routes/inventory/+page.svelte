@@ -5,7 +5,6 @@
 	import InventoryHeader from '$lib/components/InventoryHeader.svelte';
 	import InventoryGrid from '$lib/components/InventoryGrid.svelte';
 	import InventoryValueSummary from '$lib/components/InventoryValueSummary.svelte';
-	import RecentActivity from '$lib/components/RecentActivity.svelte';
 	import type { PageData } from './$types.js';
 
 	let { data }: { data: PageData } = $props();
@@ -65,19 +64,6 @@
 		totalValue={totalInventoryValue()}
 		valuesByMarkLevel={valuesByMarkLevel()}
 	/>
-
-	<!-- Recent Activity Summary
-	<div class="mb-8 flex w-full justify-center">
-		<div class="w-full max-w-4xl rounded-lg border border-slate-700 bg-slate-800 p-6">
-			<RecentActivity
-				limit={8}
-				includeSchematic={true}
-				title="📈 Recent Activity"
-				showTitle={true}
-			/>
-		</div>
-	</div>
-	-->
 
 	<InventoryGrid
 		inventory={currentInventory}

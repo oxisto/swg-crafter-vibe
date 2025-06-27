@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import {
 	getMails,
 	getMailsCount,
@@ -6,9 +5,15 @@ import {
 	extractSalesFromMails,
 	getMailImports
 } from '$lib/data';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import { logger } from '$lib/logger.js';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ url }) => {
+const mailsLogger = logger.child({ component: 'api', endpoint: 'mails' });
+
+export const GET: RequestHandler = async ({ url, locals }) => {
+	const apiLogger = locals?.logger?.child({ component: 'api', endpoint: 'mails' }) || mailsLogger;
+
 	try {
 		const action = url.searchParams.get('action') || 'list';
 
@@ -32,30 +37,41 @@ export const GET: RequestHandler = async ({ url }) => {
 				const mails = getMails(options);
 				const total = getMailsCount(options);
 
-				return json({ mails, total });
+				return logAndSuccess(
+					{ mails, total },
+					`Retrieved ${mails.length} mails (total: ${total})`,
+					{ action, filters: options },
+					apiLogger
+				);
 			}
 
 			case 'imports': {
 				const imports = getMailImports();
-				return json({ imports });
+
+				return logAndSuccess(
+					{ imports },
+					`Retrieved ${imports.length} mail imports`,
+					{ action },
+					apiLogger
+				);
 			}
 
 			default:
-				return json({ error: 'Invalid action' }, { status: 400 });
+				return logAndError('Invalid action', { action }, apiLogger, HttpStatus.BAD_REQUEST);
 		}
 	} catch (error) {
-		console.error('Failed to get mails data:', error);
-		return json(
-			{
-				error: 'Failed to get mails data',
-				details: error instanceof Error ? error.message : String(error)
-			},
-			{ status: 500 }
+		return logAndError(
+			`Failed to get mails data: ${(error as Error).message}`,
+			{ error: error as Error },
+			apiLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
 		);
 	}
 };
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, locals }) => {
+	const apiLogger = locals?.logger?.child({ component: 'api', endpoint: 'mails' }) || mailsLogger;
+
 	try {
 		const body = await request.json();
 		const action = body.action;
@@ -64,29 +80,44 @@ export const POST: RequestHandler = async ({ request }) => {
 			case 'import': {
 				const mailBatch = body.mailBatch;
 				if (!mailBatch) {
-					return json({ error: 'Mail batch data is required' }, { status: 400 });
+					return logAndError(
+						'Mail batch data is required',
+						{ action },
+						apiLogger,
+						HttpStatus.BAD_REQUEST
+					);
 				}
 
 				const result = importMailBatch(mailBatch);
-				return json({ result });
+
+				return logAndSuccess(
+					{ result },
+					`Imported mail batch successfully`,
+					{ action, batchSize: mailBatch.length || 0 },
+					apiLogger
+				);
 			}
 
 			case 'extract-sales': {
 				const extractedCount = extractSalesFromMails();
-				return json({ extractedCount });
+
+				return logAndSuccess(
+					{ extractedCount },
+					`Extracted ${extractedCount} sales from mails`,
+					{ action, extractedCount },
+					apiLogger
+				);
 			}
 
 			default:
-				return json({ error: 'Invalid action' }, { status: 400 });
+				return logAndError('Invalid action', { action }, apiLogger, HttpStatus.BAD_REQUEST);
 		}
 	} catch (error) {
-		console.error('Failed to process mails request:', error);
-		return json(
-			{
-				error: 'Failed to process mails request',
-				details: error instanceof Error ? error.message : String(error)
-			},
-			{ status: 500 }
+		return logAndError(
+			`Failed to process mails request: ${(error as Error).message}`,
+			{ error: error as Error },
+			apiLogger,
+			HttpStatus.INTERNAL_SERVER_ERROR
 		);
 	}
 };
