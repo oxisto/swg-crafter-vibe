@@ -118,3 +118,4 @@ This is a SvelteKit application with Svelte 5 and TailwindCSS v4 for managing a 
 - Inventory uses composite keys: `${category}-${markLevel}`
 - All inventory operations go through Svelte stores for reactivity
 - SvelteKit loading functions should fetch data from the API endpoints, not from the database directly
+- Use re-usable components for the frontend

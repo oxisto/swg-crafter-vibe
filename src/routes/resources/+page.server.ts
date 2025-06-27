@@ -1,28 +1,60 @@
 /**
- * Resources page server load function
+ * @fileoverview Resources page server loader for the SWG Shipwright application.
+ * Loads resource data for the resources browser interface using API endpoints.
+ *
+ * @author SWG Crafter Team
+ * @since 1.0.0
  */
-import * as db from '$lib/data';
+
+// filepath: /Users/oxisto/Repositories/swg-crafter/src/routes/resources/+page.server.ts
+import { logger } from '$lib/logger.js';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
-	const className = url.searchParams.get('class') || '';
-	const searchTerm = url.searchParams.get('search') || '';
+const pageLogger = logger.child({ component: 'page-server', page: 'resources' });
 
-	let resources;
+/**
+ * Page load function for the resources browser page.
+ * Fetches resource data from the API with optional filtering.
+ *
+ * @param {object} params - Load function parameters
+ * @param {Function} params.fetch - SvelteKit fetch function for server-side requests
+ * @param {URL} params.url - URL object with search parameters
+ * @returns {Promise<object>} Page data containing resources and filter state
+ */
+export const load: PageServerLoad = async ({ url, fetch }) => {
+	try {
+		const className = url.searchParams.get('class') || '';
+		const searchTerm = url.searchParams.get('search') || '';
 
-	if (className) {
-		resources = db.getResourcesByClass(className);
-	} else if (searchTerm) {
-		resources = db.searchResources(searchTerm);
-	} else {
-		resources = db.getAllResources().slice(0, 100); // Limit to 100 resources for initial load
-	}
+		// Build API request URL with filters
+		const apiParams = new URLSearchParams();
+		if (className) apiParams.set('class', className);
+		if (searchTerm) apiParams.set('search', searchTerm);
 
-	return {
-		resources,
-		filters: {
-			className,
-			searchTerm
+		// Fetch resources from our API
+		const response = await fetch(`/api/resources?${apiParams}`);
+
+		if (!response.ok) {
+			throw new Error('Failed to fetch resources data');
 		}
-	};
+
+		const resources = await response.json();
+
+		return {
+			resources: Array.isArray(resources) ? resources : [],
+			filters: {
+				className,
+				searchTerm
+			}
+		};
+	} catch (error) {
+		pageLogger.error('Error loading resources data', { error: error as Error });
+		return {
+			resources: [],
+			filters: {
+				className: '',
+				searchTerm: ''
+			}
+		};
+	}
 };
