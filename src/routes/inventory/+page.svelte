@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { inventory, settings } from '$lib/stores.js';
-	import { calculateInventoryValue, calculateMarkLevelValue, MARK_LEVELS } from '$lib/types.js';
-	import PageLayout from '$lib/components/PageLayout.svelte';
-	import InventoryHeader from '$lib/components/InventoryHeader.svelte';
 	import InventoryGrid from '$lib/components/InventoryGrid.svelte';
 	import InventoryValueSummary from '$lib/components/InventoryValueSummary.svelte';
+	import PageLayout from '$lib/components/PageLayout.svelte';
+	import { inventory, settings } from '$lib/stores.js';
+	import { calculateInventoryValue, calculateMarkLevelValue, MARK_LEVELS } from '$lib/types.js';
 	import type { PageData } from './$types.js';
 
 	let { data }: { data: PageData } = $props();
@@ -13,44 +12,28 @@
 	inventory.set(data.inventory);
 	settings.set(data.settings);
 
-	// Subscribe to the stores
-	let currentInventory = $state($inventory || {});
-	let currentSettings = $state(
-		$settings || {
-			recommendedStockLevel: 10,
-			sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
-		}
-	);
+	// Use reactive store values directly
 	let schematicNames = $state(data.schematicNames || {});
 	let schematicIds = $state(data.schematicIds || {});
 
-	// Calculate total inventory value
+	// Calculate total inventory value using reactive store
 	let totalInventoryValue = $derived(() => {
-		if (!currentSettings.sellValues) return 0;
-		return calculateInventoryValue(currentInventory, currentSettings.sellValues);
+		if (!$settings?.sellValues) return 0;
+		return calculateInventoryValue($inventory, $settings.sellValues);
 	});
 
-	// Calculate value by mark level
+	// Calculate value by mark level using reactive store
 	let valuesByMarkLevel = $derived(() => {
-		if (!currentSettings.sellValues) return {};
+		if (!$settings?.sellValues) return {};
 		const values: Record<string, number> = {};
 		for (const markLevel of MARK_LEVELS) {
 			values[markLevel] = calculateMarkLevelValue(
-				currentInventory,
+				$inventory,
 				markLevel,
-				currentSettings.sellValues[markLevel] || 0
+				$settings.sellValues[markLevel] || 0
 			);
 		}
 		return values;
-	});
-
-	// Update local state when stores change
-	$effect(() => {
-		currentInventory = $inventory || {};
-		currentSettings = $settings || {
-			recommendedStockLevel: 10,
-			sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
-		};
 	});
 </script>
 
@@ -60,15 +43,18 @@
 
 <PageLayout>
 	<InventoryValueSummary
-		settings={currentSettings}
+		settings={$settings || {
+			recommendedStockLevel: 10,
+			sellValues: { I: 0, II: 0, III: 0, IV: 0, V: 0 }
+		}}
 		totalValue={totalInventoryValue()}
 		valuesByMarkLevel={valuesByMarkLevel()}
 	/>
 
 	<InventoryGrid
-		inventory={currentInventory}
+		inventory={$inventory}
 		{schematicNames}
 		{schematicIds}
-		recommendedStockLevel={currentSettings.recommendedStockLevel}
+		recommendedStockLevel={$settings?.recommendedStockLevel || 10}
 	/>
 </PageLayout>

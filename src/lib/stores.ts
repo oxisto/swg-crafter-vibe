@@ -14,6 +14,7 @@
 import { writable } from 'svelte/store';
 import { createLogger } from './logger.js';
 import type { Inventory, Settings } from './types.js';
+import type { UpdateInventoryResponse } from './types/api.js';
 
 const storeLogger = createLogger({ component: 'stores' });
 
@@ -55,10 +56,10 @@ export async function incrementStock(category: string, markLevel: string) {
 		});
 
 		if (response.ok) {
-			const result = await response.json();
+			const result: UpdateInventoryResponse = await response.json();
 			inventory.update((inv) => {
 				const key = `${category}-${markLevel}`;
-				inv[key] = result.quantity;
+				inv[key] = result.item.quantity;
 				return inv;
 			});
 		}
@@ -90,10 +91,10 @@ export async function decrementStock(category: string, markLevel: string) {
 		});
 
 		if (response.ok) {
-			const result = await response.json();
+			const result: UpdateInventoryResponse = await response.json();
 			inventory.update((inv) => {
 				const key = `${category}-${markLevel}`;
-				inv[key] = result.quantity;
+				inv[key] = result.item.quantity;
 				return inv;
 			});
 		}
@@ -127,10 +128,10 @@ export async function setStock(category: string, markLevel: string, quantity: nu
 		});
 
 		if (response.ok) {
-			const result = await response.json();
+			const result: UpdateInventoryResponse = await response.json();
 			inventory.update((inv) => {
 				const key = `${category}-${markLevel}`;
-				inv[key] = result.quantity;
+				inv[key] = result.item.quantity;
 				return inv;
 			});
 		}
