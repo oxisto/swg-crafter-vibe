@@ -260,7 +260,7 @@
 			{ key: 'timestamp', label: 'Date' }
 		]}
 	>
-		{#snippet renderCell(mail, column, i)}
+		{#snippet renderCell(mail: MailData, column: { key: string; label: string }, i: number)}
 			{#if column.key === 'sender'}
 				<span class="text-base font-medium text-blue-400">{mail.sender}</span>
 			{:else if column.key === 'subject'}

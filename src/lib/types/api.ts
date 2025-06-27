@@ -15,13 +15,13 @@ import type { MailData, MailImport, Sale } from './sales.js';
 // Enhanced inventory items with additional display information
 export interface InventoryItemResponse extends InventoryItem {
 	displayName?: string;
-	schematic?: Schematic;
+	schematic?: Schematic | null;
 	schematicId?: string;
 }
 
 export interface InventoryItemWithTimestampResponse extends InventoryItemWithTimestamp {
 	displayName?: string;
-	schematic?: Schematic;
+	schematic?: Schematic | null;
 	schematicId?: string;
 }
 

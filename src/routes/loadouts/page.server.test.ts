@@ -42,7 +42,7 @@ describe('Loadouts Page Server', () => {
 			]
 		});
 
-		const result = await load({ fetch: mockFetch });
+		const result = await load({ fetch: mockFetch } as any);
 
 		expect(result).toEqual({
 			loadouts: expect.arrayContaining([
@@ -69,7 +69,7 @@ describe('Loadouts Page Server', () => {
 			json: async () => ({ error: 'Failed to fetch loadouts' })
 		});
 
-		const result = await load({ fetch: mockFetch });
+		const result = await load({ fetch: mockFetch } as any);
 
 		expect(result).toEqual({
 			loadouts: [],
@@ -92,7 +92,7 @@ describe('Loadouts Page Server', () => {
 			json: async () => ({ error: 'Failed to fetch chassis' })
 		});
 
-		const result = await load({ fetch: mockFetch });
+		const result = await load({ fetch: mockFetch } as any);
 
 		expect(result).toEqual({
 			loadouts: [],

@@ -26,10 +26,10 @@
 	// Format the planet distribution to show only planets with spawns
 	const activePlanets = $derived(
 		Object.entries(data.resource.planetDistribution)
-			.filter(([_, value]) => value > 0)
+			.filter(([_, value]) => (value as number) > 0)
 			.map(([planet, concentration]) => ({
 				planet,
-				concentration,
+				concentration: concentration as number,
 				formattedName: planet.charAt(0).toUpperCase() + planet.slice(1).replace('_', ' ')
 			}))
 			.sort((a, b) => b.concentration - a.concentration)
@@ -136,7 +136,7 @@
 								<div class="h-3 w-full rounded-full bg-slate-700">
 									<div
 										class="h-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-300"
-										style="width: {value / 10}%"
+										style="width: {(value as number) / 10}%"
 									></div>
 								</div>
 							</div>

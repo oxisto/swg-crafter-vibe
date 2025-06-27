@@ -234,7 +234,7 @@
 					</div>
 				{/if}
 			{/snippet}
-			{#snippet renderCell(resource, column, i)}
+			{#snippet renderCell(resource: Resource, column: { key: string; label: string }, i: number)}
 				{#if column.key === 'name'}
 					<a
 						href="/resources/{resource.id}"
@@ -261,7 +261,7 @@
 						</span>
 					{/if}
 				{:else if ['oq', 'cr', 'cd', 'dr', 'fl', 'hr', 'ma', 'pe', 'sr', 'ut'].includes(column.key)}
-					{@const statValue = resource.attributes?.[column.key]}
+					{@const statValue = resource.attributes?.[column.key as keyof typeof resource.attributes]}
 					{#if statValue !== undefined && statValue !== null}
 						<span
 							class="text-base font-medium {statValue > 900

@@ -230,10 +230,10 @@ function enrichInventoryItem(item: {
 		return {
 			...baseItem,
 			updatedAt: item.updatedAt
-		};
+		} as InventoryItemWithTimestampResponse;
 	}
 
-	return baseItem;
+	return baseItem as InventoryItemResponse;
 }
 
 /**

@@ -211,13 +211,13 @@ Ask me anything about your inventory or Star Wars Galaxies shipwright business!`
 		subtitle="Enhanced with OpenAI Function Calling - dynamic data querying"
 		centered
 	>
-		<div slot="actions">
+		{#snippet actions()}
 			<div
 				class="inline-flex items-center rounded-full bg-blue-900/40 px-3 py-1 text-xs text-blue-400"
 			>
 				⚡ Function Calling Enabled
 			</div>
-		</div>
+		{/snippet}
 	</PageHeader>
 
 	{#if !data.hasApiKey}

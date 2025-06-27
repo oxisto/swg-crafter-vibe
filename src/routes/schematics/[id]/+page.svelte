@@ -5,7 +5,7 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import PageLayout from '$lib/components/PageLayout.svelte';
 	import SimpleTable from '$lib/components/SimpleTable.svelte';
-	import type { Schematic } from '$lib/types';
+	import type { Schematic, SchematicComponent, SchematicResource } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -127,7 +127,11 @@
 			items={schematic.components || []}
 			emptyMessage="No sub-components required"
 		>
-			{#snippet renderCell(item, column, i)}
+			{#snippet renderCell(
+				item: SchematicComponent,
+				column: { key: string; label: string },
+				i: number
+			)}
 				{#if column.key === 'name'}
 					{item.name}
 				{:else if column.key === 'amount'}
@@ -152,7 +156,11 @@
 			items={schematic.resources || []}
 			emptyMessage="Resource data not yet available"
 		>
-			{#snippet renderCell(item, column, i)}
+			{#snippet renderCell(
+				item: SchematicResource,
+				column: { key: string; label: string },
+				i: number
+			)}
 				{#if column.key === 'name'}
 					{item.name}
 				{:else if column.key === 'amount'}

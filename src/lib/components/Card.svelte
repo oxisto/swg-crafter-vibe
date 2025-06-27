@@ -8,18 +8,27 @@
 	let {
 		children,
 		className = '',
+		class: classAlias = '',
 		padding = 'p-6',
 		background = 'bg-slate-800',
 		border = 'border border-slate-700',
-		maxWidth = 'full'
+		maxWidth = 'full',
+		title,
+		icon
 	} = $props<{
 		children: any;
 		className?: string;
+		class?: string;
 		padding?: string;
 		background?: string;
 		border?: string;
 		maxWidth?: 'full' | '7xl' | '6xl' | '5xl' | '4xl' | '3xl' | '2xl' | 'xl' | 'lg' | 'md' | 'sm';
+		title?: string;
+		icon?: string;
 	}>();
+
+	// Combine className and class prop for compatibility
+	const finalClassName = `${className} ${classAlias}`.trim();
 
 	// Determine max width classes
 	const maxWidthClasses = {
@@ -40,7 +49,17 @@
 <div
 	class="{maxWidthClasses[
 		maxWidth as keyof typeof maxWidthClasses
-	]} rounded-lg {border} {background} {padding} {className}"
+	]} rounded-lg {border} {background} {padding} {finalClassName}"
 >
+	{#if title}
+		<div class="mb-4 flex items-center gap-2">
+			{#if icon}
+				<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={icon}></path>
+				</svg>
+			{/if}
+			<h2 class="text-lg font-semibold text-white">{title}</h2>
+		</div>
+	{/if}
 	{@render children()}
 </div>

@@ -1,8 +1,8 @@
 import { expect, vi } from 'vitest';
 
 // Make sure globals are available
-global.expect = expect;
-global.vi = vi;
+(global as any).expect = expect;
+(global as any).vi = vi;
 
 // Mock SvelteKit environment
 global.fetch = vi.fn();

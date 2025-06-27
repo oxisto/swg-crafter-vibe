@@ -11,13 +11,15 @@
 		children,
 		className = '',
 		dismissible = false,
-		onDismiss
+		onDismiss,
+		title
 	}: {
 		variant?: AlertVariant;
 		children: any;
 		className?: string;
 		dismissible?: boolean;
 		onDismiss?: () => void;
+		title?: string;
 	} = $props();
 
 	const variantClasses: Record<AlertVariant, string> = {
@@ -31,6 +33,9 @@
 <div class="rounded border p-3 {variantClasses[variant]} {className}">
 	<div class="flex items-start justify-between">
 		<div class="flex-1">
+			{#if title}
+				<h3 class="mb-2 font-semibold">{title}</h3>
+			{/if}
 			{@render children()}
 		</div>
 		{#if dismissible && onDismiss}

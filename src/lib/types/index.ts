@@ -48,8 +48,6 @@ export type { MailData, Sale, MailImport, MailBatch, MailStats, SalesAnalytics }
 
 // Re-export API response types
 export type {
-	ApiResponse,
-	ApiError,
 	InventoryItemResponse,
 	InventoryItemWithTimestampResponse,
 	GetInventoryResponse,
