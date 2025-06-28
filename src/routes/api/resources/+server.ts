@@ -24,7 +24,9 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 
 		// Get inventory data and create a map for quick lookup
 		const inventory = getAllResourceInventory();
-		const inventoryMap = new Map(inventory.map((item: ResourceInventoryItem) => [item.resourceId, item]));
+		const inventoryMap = new Map(
+			inventory.map((item: ResourceInventoryItem) => [item.resourceId, item])
+		);
 
 		// Apply spawn status filter if provided
 		if (spawnStatus === 'active') {
@@ -55,7 +57,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		}
 
 		// Enrich resources with inventory data
-		const resourcesWithInventory = resources.map(resource => ({
+		const resourcesWithInventory = resources.map((resource) => ({
 			...resource,
 			inventory: inventoryMap.get(resource.id) || null
 		}));

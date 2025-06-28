@@ -63,7 +63,7 @@ export const PUT: RequestHandler = async ({ params, request }): Promise<Response
 };
 
 /**
- * DELETE /api/resources/[id]/inventory  
+ * DELETE /api/resources/[id]/inventory
  * Remove inventory tracking for a specific resource
  */
 export const DELETE: RequestHandler = async ({ params }): Promise<Response> => {

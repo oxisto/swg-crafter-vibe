@@ -48,4 +48,5 @@ export const RESOURCE_INVENTORY_AMOUNTS = {
 	}
 } as const;
 
-export type ResourceInventoryAmountConfig = typeof RESOURCE_INVENTORY_AMOUNTS[ResourceInventoryAmount];
+export type ResourceInventoryAmountConfig =
+	(typeof RESOURCE_INVENTORY_AMOUNTS)[ResourceInventoryAmount];
