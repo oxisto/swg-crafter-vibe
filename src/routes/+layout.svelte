@@ -88,6 +88,18 @@
 						<span class="font-medium">Resources</span>
 					</a>
 				</li>
+				<li>
+					<a
+						href="/resources/inventory"
+						class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors {$page.url
+							.pathname === '/resources/inventory'
+							? 'bg-blue-600 text-white'
+							: 'text-slate-300 hover:bg-slate-700 hover:text-white'}"
+					>
+						<span class="text-lg">🎒</span>
+						<span class="font-medium">Resource Inventory</span>
+					</a>
+				</li>
 			</ul>
 
 			<!-- Separator -->

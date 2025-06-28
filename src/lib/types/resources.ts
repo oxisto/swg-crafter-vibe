@@ -17,6 +17,7 @@ export interface Resource {
 	isCurrentlySpawned: boolean;
 	soapLastUpdated?: string;
 	stats?: ResourceStats;
+	inventory?: ResourceInventoryItem | null;
 }
 
 /** Resource attribute values */
@@ -136,4 +137,30 @@ export function getPlanetInfo(planetName: string): PlanetInfo {
 			name: planetName
 		}
 	);
+}
+
+/** Resource inventory amount categories */
+export type ResourceInventoryAmount =
+	| 'none' // 0
+	| 'very_low' // < 10k
+	| 'low' // 10k - 100k
+	| 'medium' // 100k - 1m
+	| 'high'; // > 1m
+
+/** Resource inventory entry for tracking owned resources */
+export interface ResourceInventoryItem {
+	resourceId: number;
+	amount: ResourceInventoryAmount;
+	notes?: string;
+	lastUpdated: string;
+	createdAt: string;
+}
+
+/** Resource inventory amount display information */
+export interface ResourceInventoryAmountInfo {
+	value: ResourceInventoryAmount;
+	label: string;
+	description: string;
+	color: string;
+	sortOrder: number;
 }

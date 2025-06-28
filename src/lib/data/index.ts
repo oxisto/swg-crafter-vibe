@@ -70,6 +70,15 @@ export {
 	type ResourceClassInfo
 } from './resource-functions.js';
 
+// Resource Inventory
+export {
+	getAllResourceInventory,
+	getResourceInventoryByResourceId,
+	setResourceInventory,
+	removeResourceInventory,
+	getResourceInventoryStats
+} from './resource-inventory.js';
+
 // SOAP API integration
 export {
 	getResourceInfoByName,

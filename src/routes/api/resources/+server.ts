@@ -1,10 +1,11 @@
 /**
  * Resources API endpoints for retrieving SWG resource data
  */
-import { getAllResources } from '$lib/data';
+import { getAllResources, getAllResourceInventory } from '$lib/data';
 import { logger } from '$lib/logger.js';
 import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
 import type { GetResourcesResponse } from '$lib/types/api.js';
+import type { ResourceInventoryItem } from '$lib/types/resources.js';
 import type { RequestHandler } from './$types.js';
 
 const resourcesLogger = logger.child({ component: 'api', endpoint: 'resources' });
@@ -20,6 +21,10 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		const spawnStatus = url.searchParams.get('status') || undefined;
 
 		let resources = getAllResources();
+
+		// Get inventory data and create a map for quick lookup
+		const inventory = getAllResourceInventory();
+		const inventoryMap = new Map(inventory.map((item: ResourceInventoryItem) => [item.resourceId, item]));
 
 		// Apply spawn status filter if provided
 		if (spawnStatus === 'active') {
@@ -49,9 +54,15 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 			);
 		}
 
+		// Enrich resources with inventory data
+		const resourcesWithInventory = resources.map(resource => ({
+			...resource,
+			inventory: inventoryMap.get(resource.id) || null
+		}));
+
 		const response: GetResourcesResponse = {
-			resources,
-			total: resources.length,
+			resources: resourcesWithInventory,
+			total: resourcesWithInventory.length,
 			filters: { className, searchTerm, spawnStatus }
 		};
 
@@ -59,7 +70,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 			response,
 			'Successfully fetched resources',
 			{
-				total: resources.length,
+				total: resourcesWithInventory.length,
 				filtersApplied: !!(className || searchTerm || spawnStatus),
 				className: !!className,
 				searchTerm: !!searchTerm,

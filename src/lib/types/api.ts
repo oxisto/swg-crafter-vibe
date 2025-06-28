@@ -7,7 +7,7 @@
  */
 
 import type { InventoryItem, InventoryItemWithTimestamp, Settings } from './inventory.js';
-import type { Resource } from './resources.js';
+import type { Resource, ResourceInventoryItem, ResourceInventoryAmount } from './resources.js';
 import type { Schematic } from './schematics.js';
 import type { ShipLoadout, Chassis } from './ships.js';
 import type { MailData, MailImport, Sale } from './sales.js';
@@ -56,6 +56,45 @@ export type GetResourcesResponse = {
 	};
 };
 export type GetResourceResponse = Resource;
+
+// Resource Inventory API responses
+export type ListResourceInventoryResponse = ResourceInventoryItem[];
+export type GetResourceInventoryResponse = ResourceInventoryItem;
+export type CreateResourceInventoryResponse = ResourceInventoryItem;
+export type UpdateResourceInventoryResponse = ResourceInventoryItem;
+export type ResourceInventoryStatsResponse = {
+	items: ResourceInventoryItem[];
+	stats: {
+		totalItems: number;
+		byAmount: Record<ResourceInventoryAmount, number>;
+		byType: Record<string, number>;
+		recentlyUpdated: ResourceInventoryItem[];
+	};
+	amounts: Record<
+		string,
+		{
+			value: ResourceInventoryAmount;
+			label: string;
+			description: string;
+			color: string;
+			sortOrder: number;
+		}
+	>;
+};
+
+// Resource Inventory API requests
+export interface CreateResourceInventoryRequest {
+	resourceId: number;
+	resourceName: string;
+	resourceType?: string;
+	amount: ResourceInventoryAmount;
+	notes?: string;
+}
+
+export interface UpdateResourceInventoryRequest {
+	amount?: ResourceInventoryAmount;
+	notes?: string;
+}
 
 // Schematics API responses
 export type GetSchematicsResponse = {

@@ -14,7 +14,11 @@ export { initDatabase } from './init.js';
 export { createInventoryTable } from './inventory.js';
 export { createSettingsTable } from './settings.js';
 export { createSchematicsTable, createFavoritesTable } from './schematics.js';
-export { createResourcesTable, createResourceClassesTable } from './resources.js';
+export {
+	createResourcesTable,
+	createResourceClassesTable,
+	createResourceInventoryTable
+} from './resources.js';
 export { createMailsTables } from './mails.js';
 export { createSalesTable } from './sales.js';
 export { createLoadoutsTable } from './loadouts.js';

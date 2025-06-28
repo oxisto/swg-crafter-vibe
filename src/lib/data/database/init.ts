@@ -9,7 +9,11 @@ import { getDatabase, dbLogger } from './connection.js';
 import { createInventoryTable } from './inventory.js';
 import { createSettingsTable } from './settings.js';
 import { createSchematicsTable, createFavoritesTable } from './schematics.js';
-import { createResourcesTable, createResourceClassesTable } from './resources.js';
+import {
+	createResourcesTable,
+	createResourceClassesTable,
+	createResourceInventoryTable
+} from './resources.js';
 import { createMailsTables } from './mails.js';
 import { createSalesTable } from './sales.js';
 import { createLoadoutsTable } from './loadouts.js';
@@ -30,6 +34,7 @@ export function initDatabase() {
 	createSchematicsTable();
 	createFavoritesTable();
 	createResourcesTable();
+	createResourceInventoryTable();
 	createMailsTables();
 	createSalesTable();
 	createLoadoutsTable();
