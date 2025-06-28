@@ -2,12 +2,9 @@
  * Resource API endpoint for retrieving a specific resource by ID
  * Supports optional SOAP data enrichment for detailed resource attributes
  */
-import { json, error } from '@sveltejs/kit';
 import * as db from '$lib/data';
-import { logger } from '$lib/logger.js';
+import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
 import type { RequestHandler } from './$types';
-
-const apiLogger = logger.child({ component: 'api', endpoint: 'resources' });
 
 /**
  * GET /api/resources/[id]
@@ -16,24 +13,24 @@ const apiLogger = logger.child({ component: 'api', endpoint: 'resources' });
  * Query parameters:
  * - force=true: Force refresh SOAP data (bypasses cache)
  */
-export const GET: RequestHandler = async ({ params, url }) => {
+export const GET: RequestHandler = async ({ params, url, locals }) => {
 	const rawId = params.id;
 	const forceUpdate = url.searchParams.get('force') === 'true';
 
 	if (!rawId) {
-		throw error(400, 'Resource ID is required');
+		return logAndError('Resource ID is required', {}, locals.logger, HttpStatus.BAD_REQUEST);
 	}
 
 	// Parse ID as integer
 	const id = parseInt(rawId, 10);
 	if (isNaN(id) || id <= 0) {
-		throw error(400, 'Invalid resource ID');
+		return logAndError('Invalid resource ID', {}, locals.logger, HttpStatus.BAD_REQUEST);
 	}
 
 	const resource = db.getResourceById(id);
 
 	if (!resource) {
-		throw error(404, 'Resource not found');
+		return logAndError('Resource not found', {}, locals.logger, HttpStatus.NOT_FOUND);
 	}
 
 	let soapResult = null;
@@ -60,7 +57,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 			};
 		}
 	} catch (error) {
-		apiLogger.error('SOAP API request failed', { error: error as Error, resourceId: id });
+		locals.logger?.error('SOAP API request failed', { error: error as Error, resourceId: id });
 		soapResult = {
 			data: null,
 			updated: false,
@@ -72,9 +69,13 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	// Get the potentially updated resource data
 	const updatedResource = soapResult.updated ? db.getResourceById(id) : resource;
 
-	return json({
-		success: true,
-		resource: updatedResource,
-		soap: soapResult
-	});
+	return logAndSuccess(
+		{
+			resource: updatedResource,
+			soap: soapResult
+		},
+		'Resource retrieved successfully',
+		{},
+		locals.logger
+	);
 };
