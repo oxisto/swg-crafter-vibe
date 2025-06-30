@@ -49,6 +49,9 @@ export type UpdateChassisResponse = Chassis;
 export type GetResourcesResponse = {
 	resources: Resource[];
 	total?: number;
+	page?: number;
+	limit?: number;
+	totalPages?: number;
 	filters?: {
 		className?: string;
 		searchTerm?: string;

@@ -26,11 +26,17 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 	try {
 		const className = url.searchParams.get('class') || '';
 		const searchTerm = url.searchParams.get('search') || '';
+		const spawnStatus = url.searchParams.get('status') || 'all';
+		const page = parseInt(url.searchParams.get('page') || '1');
+		const limit = parseInt(url.searchParams.get('limit') || '50');
 
-		// Build API request URL with filters
+		// Build API request URL with filters and pagination
 		const apiParams = new URLSearchParams();
 		if (className) apiParams.set('class', className);
 		if (searchTerm) apiParams.set('search', searchTerm);
+		if (spawnStatus !== 'all') apiParams.set('status', spawnStatus);
+		apiParams.set('page', page.toString());
+		apiParams.set('limit', limit.toString());
 
 		// Fetch resources from our API
 		const response = await fetch(`/api/resources?${apiParams}`);
@@ -44,9 +50,15 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		return {
 			resources: data.resources || [],
 			total: data.total || 0,
+			pagination: {
+				page: data.page || 1,
+				limit: data.limit || 50,
+				totalPages: data.totalPages || 1
+			},
 			filters: {
 				className,
-				searchTerm
+				searchTerm,
+				spawnStatus
 			}
 		};
 	} catch (error) {
@@ -54,9 +66,15 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		return {
 			resources: [],
 			total: 0,
+			pagination: {
+				page: 1,
+				limit: 50,
+				totalPages: 1
+			},
 			filters: {
 				className: '',
-				searchTerm: ''
+				searchTerm: '',
+				spawnStatus: 'all'
 			}
 		};
 	}

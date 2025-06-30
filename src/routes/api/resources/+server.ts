@@ -12,7 +12,7 @@ const resourcesLogger = logger.child({ component: 'api', endpoint: 'resources' }
 
 /**
  * GET /api/resources
- * Returns all available resources with optional filtering
+ * Returns available resources with optional filtering and pagination
  */
 export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 	try {
@@ -20,15 +20,14 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		const searchTerm = url.searchParams.get('search') || undefined;
 		const spawnStatus = url.searchParams.get('status') || undefined;
 
+		// Pagination parameters
+		const page = parseInt(url.searchParams.get('page') || '1');
+		const limit = parseInt(url.searchParams.get('limit') || '50');
+		const offset = (page - 1) * limit;
+
 		let resources = getAllResources();
 
-		// Get inventory data and create a map for quick lookup
-		const inventory = getAllResourceInventory();
-		const inventoryMap = new Map(
-			inventory.map((item: ResourceInventoryItem) => [item.resourceId, item])
-		);
-
-		// Apply spawn status filter if provided
+		// Apply spawn status filter first (most selective)
 		if (spawnStatus === 'active') {
 			resources = resources.filter((resource) => resource.isCurrentlySpawned);
 		} else if (spawnStatus === 'despawned') {
@@ -56,15 +55,30 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 			);
 		}
 
-		// Enrich resources with inventory data
-		const resourcesWithInventory = resources.map((resource) => ({
+		// Get total count before pagination
+		const totalResources = resources.length;
+
+		// Apply pagination
+		const paginatedResources = resources.slice(offset, offset + limit);
+
+		// Only get inventory for the paginated resources (much more efficient)
+		const inventory = getAllResourceInventory();
+		const inventoryMap = new Map(
+			inventory.map((item: ResourceInventoryItem) => [item.resourceId, item])
+		);
+
+		// Enrich only the paginated resources with inventory data
+		const resourcesWithInventory = paginatedResources.map((resource) => ({
 			...resource,
 			inventory: inventoryMap.get(resource.id) || null
 		}));
 
 		const response: GetResourcesResponse = {
 			resources: resourcesWithInventory,
-			total: resourcesWithInventory.length,
+			total: totalResources,
+			page,
+			limit,
+			totalPages: Math.ceil(totalResources / limit),
 			filters: { className, searchTerm, spawnStatus }
 		};
 
@@ -72,7 +86,11 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 			response,
 			'Successfully fetched resources',
 			{
-				total: resourcesWithInventory.length,
+				total: totalResources,
+				returned: resourcesWithInventory.length,
+				page,
+				limit,
+				totalPages: response.totalPages,
 				filtersApplied: !!(className || searchTerm || spawnStatus),
 				className: !!className,
 				searchTerm: !!searchTerm,
