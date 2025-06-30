@@ -32,7 +32,7 @@
 
 	const resourceClasses = [
 		'Aluminum',
-		'Copper', 
+		'Copper',
 		'Iron',
 		'Steel',
 		'Crystalline Gemstone',
@@ -118,7 +118,7 @@
 	$effect(() => {
 		if (!showInventoryModal) {
 			selectedResource = null;
-			selectedAmount = 'very_low';  
+			selectedAmount = 'very_low';
 			inventoryNotes = '';
 			isUpdating = false;
 		}
@@ -131,7 +131,7 @@
 		isUpdating = true;
 		try {
 			const response = await fetch(`/api/resources/${selectedResource.id}/inventory`, {
-				method: 'POST',
+				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
 				},
@@ -184,7 +184,7 @@
 	// Get inventory status class
 	function getInventoryStatusClass(resource: Resource): string {
 		if (!resource.inventory) return 'text-slate-500';
-		
+
 		switch (resource.inventory.amount) {
 			case 'very_low':
 				return 'text-red-400';
@@ -202,30 +202,30 @@
 	// Get inventory display text
 	function getInventoryDisplayText(resource: Resource): string {
 		if (!resource.inventory) return 'None';
-		return resource.inventory.amount.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+		return resource.inventory.amount.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 	}
 
 	// Get stat value safely
 	function getStatValue(resource: Resource, stat: string): string {
 		if (!resource.attributes) return '-';
-		
+
 		const value = resource.attributes[stat as keyof typeof resource.attributes];
 		return value ? value.toString() : '-';
 	}
 
 	// Get stat color class based on value quality
 	function getStatColorClass(resource: Resource, stat: string): string {
-		if (!resource.attributes) return 'text-slate-500';
-		
+		if (!resource.attributes) return 'text-slate-400';
+
 		const value = resource.attributes[stat as keyof typeof resource.attributes];
-		if (!value) return 'text-slate-500';
-		
-		// Color coding based on resource stat quality ranges
-		if (value >= 900) return 'text-green-400 font-semibold'; // Excellent
-		if (value >= 750) return 'text-emerald-400'; // Very Good
-		if (value >= 600) return 'text-yellow-400'; // Good
-		if (value >= 400) return 'text-orange-400'; // Average
-		return 'text-red-400'; // Poor
+		if (!value) return 'text-slate-400';
+
+		// Simplified color coding: gray for <500, yellow/green scale for 500+
+		if (value < 500) return 'text-slate-400';
+		if (value >= 900) return 'text-green-500 font-semibold'; // Excellent
+		if (value >= 750) return 'text-emerald-500'; // Very Good
+		if (value >= 600) return 'text-yellow-500'; // Good
+		return 'text-yellow-400'; // Decent (500-599)
 	}
 </script>
 
@@ -244,12 +244,7 @@
 	<!-- Filters -->
 	<FilterSection onApply={applyFilters} onClear={clearFilters}>
 		<div>
-			<Input
-				id="search"
-				label="Search"
-				bind:value={searchTerm}
-				placeholder="Search resources..."
-			/>
+			<Input id="search" label="Search" bind:value={searchTerm} placeholder="Search resources..." />
 		</div>
 
 		<div>
@@ -259,7 +254,7 @@
 			<select
 				id="class"
 				bind:value={className}
-				class="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+				class="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
 			>
 				<option value="">All Classes</option>
 				{#each resourceClasses as resourceClass}
@@ -275,7 +270,7 @@
 			<select
 				id="status"
 				bind:value={spawnStatus}
-				class="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+				class="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
 			>
 				<option value="all">All Resources</option>
 				<option value="active">Currently Spawned</option>
@@ -291,7 +286,9 @@
 		total={data.total}
 		items={data.resources}
 		emptyMessage="No resources found"
-		emptySubMessage={data.filters.searchTerm || data.filters.className || (data.filters.spawnStatus && data.filters.spawnStatus !== 'all')
+		emptySubMessage={data.filters.searchTerm ||
+		data.filters.className ||
+		(data.filters.spawnStatus && data.filters.spawnStatus !== 'all')
 			? 'Try adjusting your filters to see more resources.'
 			: 'No resource data available.'}
 		pagination={data.pagination}
@@ -316,29 +313,40 @@
 		{#snippet renderCell(resource: Resource, column: { key: string; label: string }, i: number)}
 			{#if column.key === 'name'}
 				<div>
-					<span class="text-base font-medium text-white">{resource.name}</span>
+					<a
+						href="/resources/{resource.id}"
+						class="text-base font-medium text-white hover:text-blue-400 transition-colors"
+					>
+						{resource.name}
+					</a>
 					<div class="text-xs text-slate-500">{resource.type}</div>
 				</div>
 			{:else if ['oq', 'cr', 'cd', 'dr', 'fl', 'hr', 'ma', 'pe', 'sr', 'ut'].includes(column.key)}
-				<span class="text-sm font-mono {getStatColorClass(resource, column.key)}">
+				<span class="font-mono text-sm {getStatColorClass(resource, column.key)}">
 					{getStatValue(resource, column.key)}
 				</span>
 			{:else if column.key === 'planets'}
-				<div class="flex flex-wrap gap-1">
-					{#each Object.keys(resource.planetDistribution) as planet}
-						{@const planetInfo = getPlanetInfo(planet)}
-						<span
-							class="inline-flex h-6 w-6 cursor-default items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
-							title={planetInfo.name}
-						>
-							{planetInfo.letter}
-						</span>
-					{/each}
+				<div class="flex flex-wrap justify-end gap-1">
+					{#if resource.isCurrentlySpawned}
+						{#each Object.keys(resource.planetDistribution) as planet}
+							{@const planetInfo = getPlanetInfo(planet)}
+							<span
+								class="inline-flex h-6 w-6 cursor-default items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
+								title={planetInfo.name}
+							>
+								{planetInfo.letter}
+							</span>
+						{/each}
+					{:else}
+						<span class="text-xs text-slate-500">-</span>
+					{/if}
 				</div>
 			{:else if column.key === 'status'}
 				<div class="flex items-center gap-2">
 					<div
-						class="h-2 w-2 rounded-full {resource.isCurrentlySpawned ? 'bg-green-400' : 'bg-red-400'}"
+						class="h-2 w-2 rounded-full {resource.isCurrentlySpawned
+							? 'bg-green-400'
+							: 'bg-red-400'}"
 						title={resource.isCurrentlySpawned ? 'Currently spawned' : 'Despawned'}
 					></div>
 					<span class="text-sm {resource.isCurrentlySpawned ? 'text-green-400' : 'text-red-400'}">
@@ -346,19 +354,14 @@
 					</span>
 				</div>
 			{:else if column.key === 'inventory'}
-				<div class="flex items-center justify-between">
-					<span class="text-sm {getInventoryStatusClass(resource)}">
-						{getInventoryDisplayText(resource)}
-					</span>
-					<Button
-						onclick={() => openInventoryModal(resource)}
-						variant="ghost"
-						size="sm"
-						class="ml-2"
-					>
-						{resource.inventory ? 'Edit' : 'Add'}
-					</Button>
-				</div>
+				<button
+					onclick={() => openInventoryModal(resource)}
+					class="cursor-pointer text-sm {getInventoryStatusClass(
+						resource
+					)} hover:underline focus:underline focus:outline-none"
+				>
+					{getInventoryDisplayText(resource)}
+				</button>
 			{/if}
 		{/snippet}
 	</DataTable>
@@ -376,13 +379,15 @@
 					{selectedResource.className} • {selectedResource.type}
 				</p>
 				{#if selectedResource.attributes}
-					<div class="mt-2 text-xs text-slate-500 grid grid-cols-5 gap-2">
+					<div class="mt-2 grid grid-cols-5 gap-2 text-xs text-slate-500">
 						{#each ['oq', 'cr', 'cd', 'dr', 'fl', 'hr', 'ma', 'pe', 'sr', 'ut'] as stat}
 							{@const value = getStatValue(selectedResource, stat)}
 							{#if value !== '-'}
 								<div class="text-center">
-									<div class="uppercase font-mono text-blue-300 text-xs">{stat}</div>
-									<div class="font-mono font-semibold {getStatColorClass(selectedResource, stat)}">{value}</div>
+									<div class="font-mono text-xs text-blue-300 uppercase">{stat}</div>
+									<div class="font-mono font-semibold {getStatColorClass(selectedResource, stat)}">
+										{value}
+									</div>
 								</div>
 							{/if}
 						{/each}
@@ -391,13 +396,11 @@
 			</div>
 
 			<div>
-				<label for="amount" class="mb-2 block text-sm font-medium text-slate-300">
-					Amount
-				</label>
+				<label for="amount" class="mb-2 block text-sm font-medium text-slate-300"> Amount </label>
 				<select
 					id="amount"
 					bind:value={selectedAmount}
-					class="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+					class="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
 				>
 					{#each Object.values(RESOURCE_INVENTORY_AMOUNTS) as amountDef}
 						<option value={amountDef.value}>
