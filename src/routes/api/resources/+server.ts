@@ -79,7 +79,7 @@ async function performEnhancedSOAPSearch(searchTerm: string): Promise<void> {
  */
 export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 	try {
-		const className = url.searchParams.get('class') || undefined;
+		const classId = url.searchParams.get('class') || undefined;
 		const searchTerm = url.searchParams.get('search') || undefined;
 		const spawnStatus = url.searchParams.get('status') || undefined;
 
@@ -104,13 +104,12 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 			resources = resources.filter((resource) => !resource.isCurrentlySpawned);
 		}
 
-		// Apply class filter if provided
-		if (className) {
+		// Apply class filter if provided (expects swgcraft_id)
+		if (classId) {
+			// Filter by checking if the resource class ID is in the class path
+			// This handles hierarchical filtering - resources inherit from parent classes
 			resources = resources.filter(
-				(resource) =>
-					resource.className.toLowerCase().includes(className.toLowerCase()) ||
-					(resource.classPath &&
-						resource.classPath.some((path) => path.toLowerCase().includes(className.toLowerCase())))
+				(resource) => resource.classPath && resource.classPath.includes(classId)
 			);
 		}
 
@@ -149,7 +148,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 			page,
 			limit,
 			totalPages: Math.ceil(totalResources / limit),
-			filters: { className, searchTerm, spawnStatus }
+			filters: { classId, searchTerm, spawnStatus }
 		};
 
 		return logAndSuccess(
@@ -161,7 +160,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 				page,
 				limit,
 				totalPages: response.totalPages,
-				filtersApplied: !!(className || searchTerm || spawnStatus)
+				filtersApplied: !!(classId || searchTerm || spawnStatus)
 			},
 			resourcesLogger
 		);

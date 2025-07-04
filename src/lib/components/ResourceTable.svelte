@@ -221,7 +221,8 @@
 				</div>
 			{:else if column.key === 'inventory'}
 				<button
-					onclick={() => onResourceAction ? handleResourceAction(resource) : handleResourceClick(resource)}
+					onclick={() =>
+						onResourceAction ? handleResourceAction(resource) : handleResourceClick(resource)}
 					class="cursor-pointer text-sm {getInventoryStatusClass(
 						resource
 					)} hover:underline focus:underline focus:outline-none"

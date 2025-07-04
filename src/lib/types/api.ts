@@ -16,6 +16,24 @@ import type {
 	SchematicLoadoutSummary
 } from '../data/database/schematic-resource-loadouts.js';
 
+// Resource tree types
+export interface ResourceClass {
+	id: number;
+	swgcraft_id: string;
+	swgID: number;
+	name: string;
+	parent_id: string | null;
+	depth: number;
+	harvested: boolean;
+	recycled: boolean;
+	children?: ResourceClass[];
+}
+
+export interface GetResourceTreeResponse {
+	tree: ResourceClass[];
+	flat: ResourceClass[];
+}
+
 // Enhanced inventory items with additional display information
 export interface InventoryItemResponse extends InventoryItem {
 	displayName?: string;
@@ -57,7 +75,7 @@ export type GetResourcesResponse = {
 	limit?: number;
 	totalPages?: number;
 	filters?: {
-		className?: string;
+		classId?: string;
 		searchTerm?: string;
 		spawnStatus?: string;
 	};

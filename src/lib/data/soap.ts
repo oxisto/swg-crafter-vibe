@@ -7,6 +7,11 @@
 
 import { getDatabase, dbLogger } from './database.js';
 import { getResourceById } from './resources.js';
+import {
+	getResourceClassIdPath,
+	getResourceClassByName,
+	getProperClassPathForType
+} from './resource-functions.js';
 import { XMLParser } from 'fast-xml-parser';
 
 // SOAP API Configuration
@@ -40,35 +45,6 @@ function getResourceClassBySoapId(soapClassId: number): ResourceClassLookup | nu
 			error: error as Error
 		});
 		return null;
-	}
-}
-
-/**
- * Get the full class path for a resource class
- * @param swgcraftId - The SWGCraft ID for the resource class
- * @returns Array of class names from root to leaf
- */
-function getResourceClassPath(swgcraftId: string): string[] {
-	try {
-		const db = getDatabase();
-		const path: string[] = [];
-		let currentId = swgcraftId;
-
-		while (currentId) {
-			const record = db
-				.prepare('SELECT name, parent_id FROM resource_classes WHERE swgcraft_id = ?')
-				.get(currentId) as { name: string; parent_id: string | null } | undefined;
-
-			if (!record) break;
-
-			path.unshift(record.name);
-			currentId = record.parent_id || '';
-		}
-
-		return path;
-	} catch (error) {
-		dbLogger.warn(`Failed to get class path for ${swgcraftId}:`, { error: error as Error });
-		return [];
 	}
 }
 
@@ -179,10 +155,10 @@ function createResourceFromSOAPData(soapData: SOAPResourceInfo): number | null {
 	// Look up resource class information from SOAP class ID
 	const resourceClass = getResourceClassBySoapId(soapData.Class);
 	const className = resourceClass?.name || 'Unknown';
-	const classPath = resourceClass ? getResourceClassPath(resourceClass.swgcraft_id) : [];
+	const classPath = resourceClass ? getResourceClassIdPath(resourceClass.swgcraft_id) : [];
 
-	// For type, use the most specific class name (last in path) or the class name itself
-	const type = classPath.length > 0 ? classPath[classPath.length - 1] : className;
+	// For type, use the resource class name itself (the most specific class)
+	const type = className;
 
 	// Create resource attributes from SOAP data
 	const attributes = {

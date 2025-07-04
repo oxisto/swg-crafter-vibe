@@ -138,3 +138,71 @@ export function getResourceClassCategory(code: string): string {
 export function formatResourceClasses(codes: string[]): string {
 	return codes.map((code) => getResourceDisplayName(code)).join(', ');
 }
+
+/**
+ * Get the full path of a resource class as swgcraft_ids (from root to this class)
+ */
+export function getResourceClassIdPath(swgcraftId: string): string[] {
+	try {
+		const db = getDatabase();
+		const path: string[] = [];
+		let currentId = swgcraftId;
+
+		while (currentId) {
+			const record = db
+				.prepare('SELECT name, parent_id FROM resource_classes WHERE swgcraft_id = ?')
+				.get(currentId) as { name: string; parent_id: string | null } | undefined;
+
+			if (!record) break;
+
+			path.unshift(currentId); // Store the swgcraft_id instead of name
+			currentId = record.parent_id || '';
+		}
+
+		return path;
+	} catch (error) {
+		console.warn(`ID path lookup failed for ${swgcraftId}:`, error);
+		return [];
+	}
+}
+
+/**
+ * Look up resource class information by name
+ * @param name - The resource class name (e.g. "Phrik Aluminum", "Energy", etc.)
+ * @returns Resource class info or null if not found
+ */
+export function getResourceClassByName(
+	name: string
+): { swgcraft_id: string; name: string; parent_id: string | null } | null {
+	try {
+		const db = getDatabase();
+		const result = db
+			.prepare('SELECT swgcraft_id, name, parent_id FROM resource_classes WHERE name = ?')
+			.get(name) as { swgcraft_id: string; name: string; parent_id: string | null } | undefined;
+		return result || null;
+	} catch (error) {
+		console.warn(`Failed to lookup resource class for name ${name}:`, error);
+		return null;
+	}
+}
+
+/**
+ * Get proper class path for a resource type name (e.g. "Phrik Aluminum")
+ * This function looks up the resource class by name and returns the proper swgcraft_id path
+ * @param typeName - The resource type name
+ * @returns Array of swgcraft_ids from root to leaf, or empty array if not found
+ */
+export function getProperClassPathForType(typeName: string): string[] {
+	try {
+		const resourceClass = getResourceClassByName(typeName);
+		if (!resourceClass) {
+			console.warn(`Resource class not found for type: ${typeName}`);
+			return [];
+		}
+
+		return getResourceClassIdPath(resourceClass.swgcraft_id);
+	} catch (error) {
+		console.warn(`Failed to get proper class path for type ${typeName}:`, error);
+		return [];
+	}
+}

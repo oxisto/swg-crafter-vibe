@@ -58,7 +58,7 @@
 			resourceClass = '';
 			spawnStatus = 'all';
 			currentPage = 1;
-			
+
 			if (onClose) {
 				onClose();
 			}
@@ -178,7 +178,9 @@
 			totalPages: totalPages
 		};
 	});
-</script>	<Modal bind:open {title} maxWidth="max-w-7xl">
+</script>
+
+<Modal bind:open {title} maxWidth="max-w-7xl">
 	<div class="space-y-6">
 		<!-- Filters -->
 		<ResourceFilters
@@ -187,7 +189,6 @@
 			bind:spawnStatus
 			onApply={applyFilters}
 			onClear={clearFilters}
-			{resourceClasses}
 			{showSpawnStatus}
 		/>
 

@@ -9,6 +9,7 @@ import type { Resource } from '../types.js';
 import { getDatabase, dbLogger } from './database.js';
 import { checkCacheStatus, updateCacheTimestamp, CACHE_CONFIG } from './cache.js';
 import { downloadAndExtractXML, parseXMLContent } from './xml-parser.js';
+import { getProperClassPathForType } from './resource-functions.js';
 
 // Resources data source
 const RESOURCES_URL = 'https://swgaide.com/pub/exports/currentresources_162.xml.gz';
@@ -183,8 +184,8 @@ async function processResources(parsedData: any): Promise<void> {
 					}
 				}
 
-				// Build class path from type (simplified approach)
-				const classPath = rawResource.type ? rawResource.type.split(' ') : [];
+				// Build proper class path from type using resource class lookup
+				const classPath = rawResource.type ? getProperClassPathForType(rawResource.type) : [];
 
 				// Calculate simple stats
 				const stats = {
