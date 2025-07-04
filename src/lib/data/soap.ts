@@ -36,7 +36,9 @@ function getResourceClassBySoapId(soapClassId: number): ResourceClassLookup | nu
 			.get(soapClassId) as ResourceClassLookup | undefined;
 		return result || null;
 	} catch (error) {
-		dbLogger.warn(`Failed to lookup resource class for SOAP class ID ${soapClassId}:`, { error: error as Error });
+		dbLogger.warn(`Failed to lookup resource class for SOAP class ID ${soapClassId}:`, {
+			error: error as Error
+		});
 		return null;
 	}
 }
@@ -258,7 +260,7 @@ function extractStringValue(element: any): string {
 	if (typeof element === 'string') value = element;
 	else if (element.text !== undefined) value = String(element.text);
 	else value = String(element);
-	
+
 	// Handle malformed XML like "Behabet</n>" by removing trailing incomplete tags
 	return value.replace(/<\/n>?$/, '');
 }
@@ -434,14 +436,14 @@ function parseSOAPResourceList(xmlText: string): SimpleResourceInfo[] {
 			if (item && item.Name) {
 				// Extract the name, handling both string and object formats
 				let name = extractStringValue(item.Name);
-				
+
 				// Debug: log the structure of the name to understand parsing issues
-				dbLogger.debug(`Parsing resource name from FindResources:`, { 
-					rawName: item.Name, 
-					extractedName: name, 
-					nameType: typeof item.Name 
+				dbLogger.debug(`Parsing resource name from FindResources:`, {
+					rawName: item.Name,
+					extractedName: name,
+					nameType: typeof item.Name
 				});
-				
+
 				if (name && name.trim().length > 0) {
 					resources.push({ Name: name });
 				}
@@ -666,10 +668,10 @@ export async function findResourcesByName(
 
 		const resourceList = parseSOAPResourceList(xmlText);
 		dbLogger.debug(`Found ${resourceList.length} resources matching "${searchTerm}"`);
-		
+
 		// Debug: log the actual resource names found
 		if (resourceList.length > 0) {
-			const resourceNames = resourceList.map(r => r.Name).join(', ');
+			const resourceNames = resourceList.map((r) => r.Name).join(', ');
 			dbLogger.debug(`SOAP FindResources for "${searchTerm}" returned: ${resourceNames}`);
 		}
 
@@ -710,8 +712,12 @@ export async function enhancedResourceSearch(
 
 		for (const foundResource of foundResources) {
 			// Debug: log the actual foundResource object to see what we're working with
-			dbLogger.debug(`Processing found resource:`, { foundResource, name: foundResource.Name, type: typeof foundResource.Name });
-			
+			dbLogger.debug(`Processing found resource:`, {
+				foundResource,
+				name: foundResource.Name,
+				type: typeof foundResource.Name
+			});
+
 			// Check if we already have this resource
 			const existingResources = searchResources(foundResource.Name);
 			const exactMatch = existingResources.find((r) => r.name === foundResource.Name);
@@ -725,12 +731,16 @@ export async function enhancedResourceSearch(
 					// Check if the resource was actually created by searching for it again
 					const verifyResources = searchResources(foundResource.Name);
 					const verifyMatch = verifyResources.find((r) => r.name === foundResource.Name);
-					
+
 					if (verifyMatch) {
 						createdCount++;
-						dbLogger.info(`Successfully created resource from SOAP search: ${foundResource.Name} (ID: ${verifyMatch.id})`);
+						dbLogger.info(
+							`Successfully created resource from SOAP search: ${foundResource.Name} (ID: ${verifyMatch.id})`
+						);
 					} else {
-						dbLogger.warn(`SOAP data retrieved for ${foundResource.Name} but resource creation failed`);
+						dbLogger.warn(
+							`SOAP data retrieved for ${foundResource.Name} but resource creation failed`
+						);
 					}
 				} else {
 					dbLogger.warn(`Failed to get detailed info for resource: ${foundResource.Name}`);

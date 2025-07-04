@@ -63,7 +63,10 @@ export type GetResourceResponse = Resource;
 // Schematics API responses
 export type GetSchematicsResponse = {
 	schematics: Schematic[];
-	total?: number;
+	total: number;
+	page: number;
+	limit: number;
+	totalPages: number;
 	filters?: {
 		category?: string;
 		searchTerm?: string;
