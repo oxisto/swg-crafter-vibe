@@ -147,44 +147,6 @@
 	}
 
 	/**
-	 * Assign a resource to a loadout slot from the resource selection modal
-	 */
-	async function assignResourceFromModal(resource: Resource) {
-		if (!currentLoadout || !selectedResourceSlot) return;
-
-		loading = true;
-		error = null;
-
-		try {
-			const response = await fetch(`/api/schematics/${schematic.id}/loadouts`, {
-				method: 'PUT',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					loadoutName: currentLoadout,
-					action: 'assign',
-					resourceSlotName: selectedResourceSlot,
-					resourceId: resource.id,
-					resourceName: resource.name
-				})
-			});
-
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.message || 'Failed to assign resource');
-			}
-
-			// Reload loadout resources and close modal
-			await loadLoadoutResources();
-			selectedResourceSlot = null;
-			showResourceAssignModal = false;
-		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to assign resource';
-		} finally {
-			loading = false;
-		}
-	}
-
-	/**
 	 * Delete a loadout
 	 */
 	async function deleteLoadout(loadoutName: string) {
@@ -228,6 +190,22 @@
 	}
 
 	/**
+	 * Get the resource class constraint for a specific resource slot
+	 */
+	function getResourceClassForSlot(resourceSlotName: string): string {
+		// Find the resource requirement in the schematic
+		const resourceReq = schematic.resources.find((r) => r.name === resourceSlotName);
+		if (resourceReq && resourceReq.classes && resourceReq.classes.length > 0) {
+			// Return the first (most specific) class requirement
+			const firstClass = resourceReq.classes[0];
+			return typeof firstClass === 'string'
+				? firstClass
+				: firstClass.code || firstClass.displayName || '';
+		}
+		return ''; // No constraint if not found
+	}
+
+	/**
 	 * Handle resource selection from the modal
 	 */
 	async function handleResourceSelect(resource: Resource) {
@@ -254,9 +232,10 @@
 				throw new Error(errorData.message || 'Failed to assign resource');
 			}
 
-			// Reload loadout resources
+			// Reload loadout resources and close modal
 			await loadLoadoutResources();
 			selectedResourceSlot = null;
+			showResourceAssignModal = false;
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to assign resource';
 		} finally {
@@ -461,6 +440,8 @@
 <!-- Resource Assignment Modal -->
 <ResourceSelectionModal
 	bind:open={showResourceAssignModal}
-	title="Assign Resource"
-	onSelect={assignResourceFromModal}
+	title={selectedResourceSlot ? `Assign Resource for ${selectedResourceSlot}` : 'Assign Resource'}
+	onSelect={handleResourceSelect}
+	constrainToClass={selectedResourceSlot ? getResourceClassForSlot(selectedResourceSlot) : ''}
+	showSpawnStatus={true}
 />

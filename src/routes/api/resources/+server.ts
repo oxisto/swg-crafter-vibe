@@ -1,6 +1,10 @@
 /**
  * Resources API endpoints for retrieving SWG resource data
- * Includes transparent SOAP integration for better search results
+ * Includes traexport const GET: RequestHandler = async ({ url }): Promise<Response> => {
+	try {
+		const classId = url.searchParams.get('class') || undefined;
+		const searchTerm = url.searchParams.get('search') || undefined;
+		const spawnStatus = url.searchParams.get('status') || undefined;nt SOAP integration for better search results
  */
 import { getAllResources, getAllResourceInventory, getResourceInfoByName } from '$lib/data';
 import { logger } from '$lib/logger.js';
@@ -82,6 +86,8 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		const classId = url.searchParams.get('class') || undefined;
 		const searchTerm = url.searchParams.get('search') || undefined;
 		const spawnStatus = url.searchParams.get('status') || undefined;
+		const allowedClassesParam = url.searchParams.get('allowedClasses') || undefined;
+		const allowedClasses = allowedClassesParam ? allowedClassesParam.split(',') : undefined;
 
 		// Pagination parameters
 		const page = parseInt(url.searchParams.get('page') || '1');

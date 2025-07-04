@@ -17,7 +17,7 @@
 		onSelect,
 		onClose,
 		title = 'Select Resource',
-		resourceClasses = [],
+		constrainToClass = '',
 		showSpawnStatus = true,
 		selectedResourceId = null,
 		class: className = ''
@@ -26,7 +26,7 @@
 		onSelect: (resource: Resource) => void;
 		onClose?: () => void;
 		title?: string;
-		resourceClasses?: string[];
+		constrainToClass?: string; // Constrain selection to this resource class (swgcraft_id)
 		showSpawnStatus?: boolean;
 		selectedResourceId?: number | null;
 		class?: string;
@@ -55,13 +55,19 @@
 		if (!open) {
 			// Reset filters when closing
 			searchTerm = '';
-			resourceClass = '';
+			// Only reset resourceClass if no constraint is active
+			if (!constrainToClass) {
+				resourceClass = '';
+			}
 			spawnStatus = 'all';
 			currentPage = 1;
 
 			if (onClose) {
 				onClose();
 			}
+		} else if (open && constrainToClass) {
+			// Set the resource class filter to the constrained class when modal opens
+			resourceClass = constrainToClass;
 		}
 	});
 
@@ -190,6 +196,7 @@
 			onApply={applyFilters}
 			onClear={clearFilters}
 			{showSpawnStatus}
+			disabled={!!constrainToClass}
 		/>
 
 		<!-- Error display -->
