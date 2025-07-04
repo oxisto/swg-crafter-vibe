@@ -1,7 +1,8 @@
 /**
  * Resources API endpoints for retrieving SWG resource data
+ * Includes transparent SOAP integration for better search results
  */
-import { getAllResources, getAllResourceInventory } from '$lib/data';
+import { getAllResources, getAllResourceInventory, getResourceInfoByName } from '$lib/data';
 import { logger } from '$lib/logger.js';
 import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
 import type { GetResourcesResponse } from '$lib/types/api.js';
@@ -10,9 +11,68 @@ import type { RequestHandler } from './$types.js';
 
 const resourcesLogger = logger.child({ component: 'api', endpoint: 'resources' });
 
+// Simple in-memory cache for SOAP search queries to avoid repeated requests
+interface SOAPSearchCacheEntry {
+	searchTerm: string;
+	timestamp: number;
+	attempted: boolean;
+}
+
+const soapSearchCache = new Map<string, SOAPSearchCacheEntry>();
+const SOAP_SEARCH_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+
+function shouldPerformSOAPSearch(searchTerm: string): boolean {
+	if (!searchTerm || searchTerm.length < 3) return false;
+
+	const cacheKey = searchTerm.toLowerCase();
+	const cachedEntry = soapSearchCache.get(cacheKey);
+
+	// If we recently attempted this search, don't try again
+	if (cachedEntry && Date.now() - cachedEntry.timestamp < SOAP_SEARCH_CACHE_DURATION) {
+		return false;
+	}
+
+	return true;
+}
+
+async function performSOAPSearch(searchTerm: string): Promise<void> {
+	const cacheKey = searchTerm.toLowerCase();
+
+	try {
+		resourcesLogger.info(`Performing SOAP search for: ${searchTerm}`);
+
+		// This will automatically create the resource in the database if found
+		const soapResource = await getResourceInfoByName(searchTerm);
+
+		// Cache the attempt to avoid repeated requests
+		soapSearchCache.set(cacheKey, {
+			searchTerm,
+			timestamp: Date.now(),
+			attempted: true
+		});
+
+		if (soapResource) {
+			resourcesLogger.info(`SOAP search found and added resource: ${soapResource.Name}`);
+		} else {
+			resourcesLogger.debug(`SOAP search found no results for: ${searchTerm}`);
+		}
+	} catch (error) {
+		const errorMsg = (error as Error).message;
+		resourcesLogger.warn(`SOAP search failed for "${searchTerm}": ${errorMsg}`);
+
+		// Cache the failure to avoid repeated requests
+		soapSearchCache.set(cacheKey, {
+			searchTerm,
+			timestamp: Date.now(),
+			attempted: true
+		});
+	}
+}
+
 /**
  * GET /api/resources
  * Returns available resources with optional filtering and pagination
+ * Includes transparent SOAP integration for better search results
  */
 export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 	try {
@@ -25,6 +85,13 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		const limit = parseInt(url.searchParams.get('limit') || '50');
 		const offset = (page - 1) * limit;
 
+		// SOAP fallback search for better results - happens BEFORE filtering
+		// This ensures new resources get into the database before we query
+		if (searchTerm && shouldPerformSOAPSearch(searchTerm)) {
+			await performSOAPSearch(searchTerm);
+		}
+
+		// Get all resources from database (including any newly added from SOAP)
 		let resources = getAllResources();
 
 		// Apply spawn status filter first (most selective)
@@ -61,13 +128,13 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		// Apply pagination
 		const paginatedResources = resources.slice(offset, offset + limit);
 
-		// Only get inventory for the paginated resources (much more efficient)
+		// Get inventory for the paginated resources
 		const inventory = getAllResourceInventory();
 		const inventoryMap = new Map(
 			inventory.map((item: ResourceInventoryItem) => [item.resourceId, item])
 		);
 
-		// Enrich only the paginated resources with inventory data
+		// Enrich the paginated resources with inventory data
 		const resourcesWithInventory = paginatedResources.map((resource) => ({
 			...resource,
 			inventory: inventoryMap.get(resource.id) || null
@@ -91,10 +158,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 				page,
 				limit,
 				totalPages: response.totalPages,
-				filtersApplied: !!(className || searchTerm || spawnStatus),
-				className: !!className,
-				searchTerm: !!searchTerm,
-				spawnStatus: !!spawnStatus
+				filtersApplied: !!(className || searchTerm || spawnStatus)
 			},
 			resourcesLogger
 		);

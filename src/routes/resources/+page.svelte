@@ -315,7 +315,7 @@
 				<div>
 					<a
 						href="/resources/{resource.id}"
-						class="text-base font-medium text-white hover:text-blue-400 transition-colors"
+						class="text-base font-medium text-white transition-colors hover:text-blue-400"
 					>
 						{resource.name}
 					</a>

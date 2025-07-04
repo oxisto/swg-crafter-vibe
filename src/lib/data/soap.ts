@@ -58,6 +58,11 @@ function needsSOAPUpdate(lastUpdated: string | null): boolean {
  * @param resourceId - The resource ID
  * @param soapData - The SOAP resource information
  */
+/**
+ * Update an existing resource with SOAP data
+ * @param resourceId - The local database ID of the resource
+ * @param soapData - The SOAP resource information
+ */
 function updateResourceWithSOAPData(resourceId: number, soapData: SOAPResourceInfo): void {
 	const db = getDatabase();
 
@@ -95,6 +100,78 @@ function updateResourceWithSOAPData(resourceId: number, soapData: SOAPResourceIn
 
 	updateStmt.run(JSON.stringify(attributes), nowISO, nowISO, resourceId);
 	dbLogger.debug(`Updated resource ${resourceId} via SOAP (OQ: ${soapData.OQ || 0})`);
+}
+
+/**
+ * Create a new resource from SOAP data
+ * @param soapData - The SOAP resource information
+ * @returns The ID of the newly created resource, or null if creation failed
+ */
+function createResourceFromSOAPData(soapData: SOAPResourceInfo): number | null {
+	const db = getDatabase();
+
+	// Validate SOAP data
+	const hasBasicInfo = soapData.ID > 0 && soapData.Name && soapData.Name.trim().length > 0;
+
+	if (!hasBasicInfo) {
+		dbLogger.debug(`Invalid SOAP data for resource creation, skipping`);
+		return null;
+	}
+
+	// Create resource attributes from SOAP data
+	const attributes = {
+		er: soapData.ER || 0,
+		cr: soapData.CR || 0,
+		cd: soapData.CD || 0,
+		dr: soapData.DR || 0,
+		fl: soapData.FL || 0,
+		hr: soapData.HR || 0,
+		ma: soapData.MA || 0,
+		pe: soapData.PE || 0,
+		oq: soapData.OQ || 0,
+		sr: soapData.SR || 0,
+		ut: soapData.UT || 0
+	};
+
+	// Use ISO timestamp for consistency
+	const nowISO = new Date().toISOString();
+	const enterDate = soapData.AddedStamp
+		? new Date(soapData.AddedStamp * 1000).toISOString()
+		: nowISO;
+
+	try {
+		const insertStmt = db.prepare(`
+			INSERT INTO resources (
+				id, name, type, class_name, class_path, attributes, 
+				planet_distribution, enter_date, despawn_date, 
+				is_currently_spawned, soap_last_updated, stats
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		`);
+
+		const result = insertStmt.run(
+			soapData.ID, // id (use SOAP ID)
+			soapData.Name, // name
+			'Unknown', // type (SOAP doesn't provide this)
+			'Unknown', // class_name (would need class lookup)
+			JSON.stringify([]), // class_path (empty array)
+			JSON.stringify(attributes), // attributes
+			JSON.stringify({}), // planet_distribution (empty)
+			enterDate, // enter_date
+			null, // despawn_date (null for active)
+			1, // is_currently_spawned (assume true)
+			nowISO, // soap_last_updated
+			JSON.stringify(attributes) // stats (copy of attributes)
+		);
+
+		dbLogger.info(
+			`Created new resource from SOAP: ${soapData.Name} (ID: ${soapData.ID}, OQ: ${soapData.OQ || 0})`
+		);
+		return soapData.ID;
+	} catch (error) {
+		// Likely a duplicate ID, which is fine
+		dbLogger.debug(`Resource ${soapData.Name} (ID: ${soapData.ID}) already exists in database`);
+		return null;
+	}
 }
 
 /**
@@ -271,15 +348,19 @@ export async function getResourceInfoByName(
 			const exactMatch = matchingResources.find((r) => r.name === resourceName);
 
 			if (exactMatch) {
-				// Update the resource in our database with SOAP data
+				// Update the existing resource in our database with SOAP data
 				updateResourceWithSOAPData(exactMatch.id, resourceInfo);
 				dbLogger.debug(
-					`SOAP update successful for resource: ${resourceName} (ID: ${exactMatch.id})`
+					`SOAP update successful for existing resource: ${resourceName} (ID: ${exactMatch.id})`
 				);
 			} else {
-				dbLogger.warn(
-					`Could not find resource with name "${resourceName}" in database for SOAP update`
-				);
+				// Resource doesn't exist locally, create it from SOAP data
+				const newResourceId = createResourceFromSOAPData(resourceInfo);
+				if (newResourceId) {
+					dbLogger.info(`Created new resource from SOAP: ${resourceName} (ID: ${newResourceId})`);
+				} else {
+					dbLogger.warn(`Failed to create new resource from SOAP data: ${resourceName}`);
+				}
 			}
 		}
 
@@ -358,6 +439,9 @@ export async function updateResourceSOAPData(resourceId: number): Promise<{
 
 		// Don't update despawned resources
 		if (!resource.isCurrentlySpawned) {
+			dbLogger.debug(
+				`Skipping SOAP update for despawned resource: ${resource.name} (ID: ${resourceId})`
+			);
 			return { success: true, updated: false, reason: 'Resource is despawned' };
 		}
 

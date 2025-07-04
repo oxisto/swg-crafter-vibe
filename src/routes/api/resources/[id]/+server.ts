@@ -1,81 +1,81 @@
 /**
  * Resource API endpoint for retrieving a specific resource by ID
- * Supports optional SOAP data enrichment for detailed resource attributes
+ * Includes transparent SOAP data enrichment for active resources only
  */
 import * as db from '$lib/data';
 import { HttpStatus, logAndError, logAndSuccess } from '$lib/api/utils.js';
+import { logger } from '$lib/logger.js';
+import type { GetResourceResponse } from '$lib/types/api.js';
 import type { RequestHandler } from './$types';
+
+const resourceLogger = logger.child({ component: 'api', endpoint: 'resources/[id]' });
 
 /**
  * GET /api/resources/[id]
- * Returns a specific resource by ID with automatic SOAP data enrichment
- * Performs database updates directly when SOAP data is fetched
+ * Returns a specific resource by ID with transparent SOAP data enrichment
+ * Only attempts SOAP updates for currently spawned resources
  * Query parameters:
- * - force=true: Force refresh SOAP data (bypasses cache)
+ * - force=true: Force refresh SOAP data (bypasses cache and despawn check)
  */
-export const GET: RequestHandler = async ({ params, url, locals }) => {
+export const GET: RequestHandler = async ({ params, url }) => {
 	const rawId = params.id;
 	const forceUpdate = url.searchParams.get('force') === 'true';
 
 	if (!rawId) {
-		return logAndError('Resource ID is required', {}, locals.logger, HttpStatus.BAD_REQUEST);
+		return logAndError('Resource ID is required', {}, resourceLogger, HttpStatus.BAD_REQUEST);
 	}
 
 	// Parse ID as integer
 	const id = parseInt(rawId, 10);
 	if (isNaN(id) || id <= 0) {
-		return logAndError('Invalid resource ID', {}, locals.logger, HttpStatus.BAD_REQUEST);
+		return logAndError('Invalid resource ID', {}, resourceLogger, HttpStatus.BAD_REQUEST);
 	}
 
 	const resource = db.getResourceById(id);
 
 	if (!resource) {
-		return logAndError('Resource not found', {}, locals.logger, HttpStatus.NOT_FOUND);
+		return logAndError('Resource not found', {}, resourceLogger, HttpStatus.NOT_FOUND);
 	}
 
-	let soapResult = null;
+	// Only attempt SOAP data enrichment for spawned resources (unless forced)
+	const shouldUpdateSOAP = forceUpdate || resource.isCurrentlySpawned;
 
-	// Always attempt SOAP data enrichment with smart caching
-	try {
-		if (forceUpdate) {
-			// Force update bypasses all caching logic
-			const soapData = await db.getResourceInfoById(id);
-			soapResult = {
-				data: soapData,
-				updated: !!soapData,
-				reason: soapData ? 'Force updated from SOAP' : 'Force update failed',
-				timestamp: new Date().toISOString()
-			};
-		} else {
-			// Use the smart update logic from updateResourceSOAPData
-			const updateResult = await db.updateResourceSOAPData(id);
-			soapResult = {
-				data: updateResult.resourceInfo || null,
-				updated: updateResult.updated,
-				reason: updateResult.reason || 'Unknown',
-				timestamp: new Date().toISOString()
-			};
+	if (shouldUpdateSOAP) {
+		try {
+			if (forceUpdate) {
+				// Force update bypasses all caching and despawn logic
+				resourceLogger.info(`Force updating SOAP data for resource ${id}`);
+				await db.getResourceInfoById(id);
+			} else {
+				// Use the smart update logic (respects caching and despawn status)
+				await db.updateResourceSOAPData(id);
+			}
+		} catch (error) {
+			resourceLogger.warn(`SOAP update failed for resource ${id}`, { error: error as Error });
+			// Continue with existing data - SOAP failure shouldn't break the response
 		}
-	} catch (error) {
-		locals.logger?.error('SOAP API request failed', { error: error as Error, resourceId: id });
-		soapResult = {
-			data: null,
-			updated: false,
-			reason: 'SOAP request failed',
-			timestamp: new Date().toISOString()
-		};
 	}
 
 	// Get the potentially updated resource data
-	const updatedResource = soapResult.updated ? db.getResourceById(id) : resource;
+	const finalResource = db.getResourceById(id) || resource;
+
+	// Get inventory for this resource
+	const inventory = db.getResourceInventoryByResourceId(id);
+
+	const response: GetResourceResponse = {
+		...finalResource,
+		inventory: inventory || null
+	};
 
 	return logAndSuccess(
-		{
-			resource: updatedResource,
-			soap: soapResult
-		},
+		response,
 		'Resource retrieved successfully',
-		{},
-		locals.logger
+		{
+			resourceId: id,
+			soapUpdateAttempted: shouldUpdateSOAP,
+			isSpawned: resource.isCurrentlySpawned,
+			forced: forceUpdate
+		},
+		resourceLogger
 	);
 };
