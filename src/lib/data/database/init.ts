@@ -17,6 +17,7 @@ import {
 import { createMailsTables } from './mails.js';
 import { createSalesTable } from './sales.js';
 import { createLoadoutsTable } from './loadouts.js';
+import { createSchematicResourceLoadoutsTable } from './schematic-resource-loadouts.js';
 
 /**
  * Initializes the SQLite database and creates necessary tables.
@@ -38,6 +39,7 @@ export function initDatabase() {
 	createMailsTables();
 	createSalesTable();
 	createLoadoutsTable();
+	createSchematicResourceLoadoutsTable(db);
 	// Add resource classes table for the comprehensive resource tree data
 	createResourceClassesTable();
 

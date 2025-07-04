@@ -4,16 +4,14 @@
 	import { invalidateAll } from '$app/navigation';
 	import type { PageData } from './$types';
 	import type { Resource, ResourceInventoryAmount } from '$lib/types';
-	import { getPlanetInfo } from '$lib/types';
 	import PageLayout from '$lib/components/PageLayout.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
-	import Card from '$lib/components/Card.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Input from '$lib/components/Input.svelte';
-	import DataTable from '$lib/components/DataTable.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import Loading from '$lib/components/Loading.svelte';
-	import FilterSection from '$lib/components/FilterSection.svelte';
+	import ResourceFilters from '$lib/components/ResourceFilters.svelte';
+	import ResourceTable from '$lib/components/ResourceTable.svelte';
 	import { RESOURCE_INVENTORY_AMOUNTS } from '$lib/types/resource-inventory.js';
 
 	let { data }: { data: PageData } = $props();
@@ -30,50 +28,30 @@
 	let inventoryNotes = $state('');
 	let isUpdating = $state(false);
 
-	const resourceClasses = [
-		'Aluminum',
-		'Copper',
-		'Iron',
-		'Steel',
-		'Crystalline Gemstone',
-		'Amorphous Gemstone',
-		'Extrusive Ore',
-		'Intrusive Ore',
-		'Carbonate Ore',
-		'Siliclastic Ore',
-		'Sedimentary Ore',
-		'Igneous Ore',
-		'Inert Gas',
-		'Reactive Gas',
-		'Liquid Petro Fuel',
-		'Solid Petro Fuel',
-		'Liquid Petrochem Fuel',
-		'Solid Petrochem Fuel'
-	];
-
-	// Format date for display
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleString();
-	}
-
-	// Apply filters
+	// Handle filter changes
 	function applyFilters() {
 		const url = new URL($page.url);
 
-		if (searchTerm) {
-			url.searchParams.set('search', searchTerm);
+		const filters = {
+			searchTerm: searchTerm,
+			className: className,
+			spawnStatus: spawnStatus
+		};
+
+		if (filters.searchTerm) {
+			url.searchParams.set('search', filters.searchTerm);
 		} else {
 			url.searchParams.delete('search');
 		}
 
-		if (className) {
-			url.searchParams.set('class', className);
+		if (filters.className) {
+			url.searchParams.set('class', filters.className);
 		} else {
 			url.searchParams.delete('class');
 		}
 
-		if (spawnStatus && spawnStatus !== 'all') {
-			url.searchParams.set('status', spawnStatus);
+		if (filters.spawnStatus && filters.spawnStatus !== 'all') {
+			url.searchParams.set('status', filters.spawnStatus);
 		} else {
 			url.searchParams.delete('status');
 		}
@@ -181,31 +159,7 @@
 		}
 	}
 
-	// Get inventory status class
-	function getInventoryStatusClass(resource: Resource): string {
-		if (!resource.inventory) return 'text-slate-500';
-
-		switch (resource.inventory.amount) {
-			case 'very_low':
-				return 'text-red-400';
-			case 'low':
-				return 'text-orange-400';
-			case 'medium':
-				return 'text-yellow-400';
-			case 'high':
-				return 'text-green-400';
-			default:
-				return 'text-slate-500';
-		}
-	}
-
-	// Get inventory display text
-	function getInventoryDisplayText(resource: Resource): string {
-		if (!resource.inventory) return 'None';
-		return resource.inventory.amount.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-	}
-
-	// Get stat value safely
+	// Get stat value safely (used in modal)
 	function getStatValue(resource: Resource, stat: string): string {
 		if (!resource.attributes) return '-';
 
@@ -213,7 +167,7 @@
 		return value ? value.toString() : '-';
 	}
 
-	// Get stat color class based on value quality
+	// Get stat color class based on value quality (used in modal)
 	function getStatColorClass(resource: Resource, stat: string): string {
 		if (!resource.attributes) return 'text-slate-400';
 
@@ -242,129 +196,36 @@
 	/>
 
 	<!-- Filters -->
-	<FilterSection onApply={applyFilters} onClear={clearFilters}>
-		<div>
-			<Input id="search" label="Search" bind:value={searchTerm} placeholder="Search resources..." />
-		</div>
+	<ResourceFilters
+		bind:searchTerm
+		bind:className
+		bind:spawnStatus
+		onApply={applyFilters}
+		onClear={clearFilters}
+	/>
 
-		<div>
-			<label for="class" class="mb-2 block text-sm font-medium text-slate-300">
-				Resource Class
-			</label>
-			<select
-				id="class"
-				bind:value={className}
-				class="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
-			>
-				<option value="">All Classes</option>
-				{#each resourceClasses as resourceClass}
-					<option value={resourceClass}>{resourceClass}</option>
-				{/each}
-			</select>
-		</div>
-
-		<div>
-			<label for="status" class="mb-2 block text-sm font-medium text-slate-300">
-				Spawn Status
-			</label>
-			<select
-				id="status"
-				bind:value={spawnStatus}
-				class="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
-			>
-				<option value="all">All Resources</option>
-				<option value="active">Currently Spawned</option>
-				<option value="despawned">Despawned</option>
-			</select>
-		</div>
-	</FilterSection>
-
-	<!-- Resources List -->
-	<DataTable
-		mode="table"
-		title="Resources"
+	<!-- Resources Table -->
+	<ResourceTable
+		resources={data.resources}
 		total={data.total}
-		items={data.resources}
+		pagination={data.pagination}
+		onPageChange={goToPage}
+		onResourceAction={openInventoryModal}
 		emptyMessage="No resources found"
 		emptySubMessage={data.filters.searchTerm ||
 		data.filters.className ||
 		(data.filters.spawnStatus && data.filters.spawnStatus !== 'all')
 			? 'Try adjusting your filters to see more resources.'
 			: 'No resource data available.'}
-		pagination={data.pagination}
-		onPageChange={goToPage}
-		columns={[
-			{ key: 'name', label: 'Name' },
-			{ key: 'oq', label: 'OQ' },
-			{ key: 'cr', label: 'CR' },
-			{ key: 'cd', label: 'CD' },
-			{ key: 'dr', label: 'DR' },
-			{ key: 'fl', label: 'FL' },
-			{ key: 'hr', label: 'HR' },
-			{ key: 'ma', label: 'MA' },
-			{ key: 'pe', label: 'PE' },
-			{ key: 'sr', label: 'SR' },
-			{ key: 'ut', label: 'UT' },
-			{ key: 'planets', label: 'Planets' },
-			{ key: 'status', label: 'Status' },
-			{ key: 'inventory', label: 'Inventory' }
-		]}
-	>
-		{#snippet renderCell(resource: Resource, column: { key: string; label: string }, i: number)}
-			{#if column.key === 'name'}
-				<div>
-					<a
-						href="/resources/{resource.id}"
-						class="text-base font-medium text-white transition-colors hover:text-blue-400"
-					>
-						{resource.name}
-					</a>
-					<div class="text-xs text-slate-500">{resource.type}</div>
-				</div>
-			{:else if ['oq', 'cr', 'cd', 'dr', 'fl', 'hr', 'ma', 'pe', 'sr', 'ut'].includes(column.key)}
-				<span class="font-mono text-sm {getStatColorClass(resource, column.key)}">
-					{getStatValue(resource, column.key)}
-				</span>
-			{:else if column.key === 'planets'}
-				<div class="flex flex-wrap justify-end gap-1">
-					{#if resource.isCurrentlySpawned}
-						{#each Object.keys(resource.planetDistribution) as planet}
-							{@const planetInfo = getPlanetInfo(planet)}
-							<span
-								class="inline-flex h-6 w-6 cursor-default items-center justify-center rounded-full font-mono text-xs font-bold {planetInfo.color} {planetInfo.bg} border border-current/20"
-								title={planetInfo.name}
-							>
-								{planetInfo.letter}
-							</span>
-						{/each}
-					{:else}
-						<span class="text-xs text-slate-500">-</span>
-					{/if}
-				</div>
-			{:else if column.key === 'status'}
-				<div class="flex items-center gap-2">
-					<div
-						class="h-2 w-2 rounded-full {resource.isCurrentlySpawned
-							? 'bg-green-400'
-							: 'bg-red-400'}"
-						title={resource.isCurrentlySpawned ? 'Currently spawned' : 'Despawned'}
-					></div>
-					<span class="text-sm {resource.isCurrentlySpawned ? 'text-green-400' : 'text-red-400'}">
-						{resource.isCurrentlySpawned ? 'Active' : 'Despawned'}
-					</span>
-				</div>
-			{:else if column.key === 'inventory'}
-				<button
-					onclick={() => openInventoryModal(resource)}
-					class="cursor-pointer text-sm {getInventoryStatusClass(
-						resource
-					)} hover:underline focus:underline focus:outline-none"
-				>
-					{getInventoryDisplayText(resource)}
-				</button>
-			{/if}
-		{/snippet}
-	</DataTable>
+		showColumns={{
+			name: true,
+			stats: true,
+			planets: true,
+			status: true,
+			inventory: true,
+			action: false
+		}}
+	/>
 </PageLayout>
 
 <!-- Inventory Management Modal -->

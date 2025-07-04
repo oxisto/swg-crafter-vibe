@@ -147,7 +147,7 @@
 		{/if}
 
 		<!-- Pagination for table mode -->
-		{#if pagination && pagination.totalPages > 1}
+		{#if showPagination && pagination && pagination.totalPages > 1}
 			<div class="flex items-center justify-between border-t border-slate-700 px-6 py-4">
 				<div class="text-sm text-slate-400">
 					Showing {(pagination.page - 1) * pagination.limit + 1} to
@@ -211,7 +211,7 @@
 			</div>
 
 			<!-- Pagination for card mode -->
-			{#if pagination && pagination.totalPages > 1}
+			{#if showPagination && pagination && pagination.totalPages > 1}
 				<div class="flex items-center justify-between border-t border-slate-700 px-4 py-3">
 					<div class="text-sm text-slate-400">
 						Showing {(pagination.page - 1) * pagination.limit + 1} to

@@ -104,6 +104,18 @@ export {
 	getLoadoutsByShipType
 } from './loadouts.js';
 
+// Schematic Resource Loadouts
+export {
+	getSchematicLoadouts,
+	getSchematicLoadoutResources,
+	createSchematicLoadout,
+	assignResourceToLoadout,
+	deleteSchematicLoadout,
+	renameSchematicLoadout,
+	type SchematicResourceLoadout,
+	type SchematicLoadoutSummary
+} from './schematic-resource-loadouts.js';
+
 // Chassis
 export { getAllChassis, getChassisById, updateChassisQuantity } from './chassis.js';
 

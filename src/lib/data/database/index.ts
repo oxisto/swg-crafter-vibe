@@ -22,3 +22,4 @@ export {
 export { createMailsTables } from './mails.js';
 export { createSalesTable } from './sales.js';
 export { createLoadoutsTable } from './loadouts.js';
+export { createSchematicResourceLoadoutsTable } from './schematic-resource-loadouts.js';

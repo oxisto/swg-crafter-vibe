@@ -35,12 +35,12 @@
 		{#if onApply || onClear}
 			<div class="flex items-end gap-2">
 				{#if onApply}
-					<Button onclick={onApply} variant="primary" disabled={loading} className="flex-1">
+					<Button onclick={() => { console.log('Apply button clicked'); onApply(); }} variant="primary" disabled={loading} className="flex-1">
 						{applyText}
 					</Button>
 				{/if}
 				{#if onClear}
-					<Button onclick={onClear} variant="secondary" disabled={loading} className="flex-1">
+					<Button onclick={() => { console.log('Clear button clicked'); onClear(); }} variant="secondary" disabled={loading} className="flex-1">
 						{clearText}
 					</Button>
 				{/if}

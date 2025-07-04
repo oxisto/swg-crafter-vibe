@@ -11,6 +11,10 @@ import type { Resource, ResourceInventoryItem, ResourceInventoryAmount } from '.
 import type { Schematic } from './schematics.js';
 import type { ShipLoadout, Chassis } from './ships.js';
 import type { MailData, MailImport, Sale } from './sales.js';
+import type {
+	SchematicResourceLoadout,
+	SchematicLoadoutSummary
+} from '../data/database/schematic-resource-loadouts.js';
 
 // Enhanced inventory items with additional display information
 export interface InventoryItemResponse extends InventoryItem {
@@ -95,6 +99,13 @@ export type ImportMailsResponse = {
 	total: number;
 	batchId: string;
 };
+
+// Schematic Resource Loadouts API responses
+export type GetSchematicLoadoutsResponse = SchematicLoadoutSummary[];
+export type GetSchematicLoadoutResourcesResponse = SchematicResourceLoadout[];
+export type CreateSchematicLoadoutResponse = { success: boolean; message: string };
+export type UpdateSchematicLoadoutResponse = { success: boolean; message: string };
+export type DeleteSchematicLoadoutResponse = { success: boolean; message: string };
 
 // Chat API responses
 export interface ChatMessage {
