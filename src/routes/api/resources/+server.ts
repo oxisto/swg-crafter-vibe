@@ -35,14 +35,15 @@ function shouldPerformSOAPSearch(searchTerm: string): boolean {
 	return true;
 }
 
-async function performSOAPSearch(searchTerm: string): Promise<void> {
+async function performEnhancedSOAPSearch(searchTerm: string): Promise<void> {
 	const cacheKey = searchTerm.toLowerCase();
 
 	try {
-		resourcesLogger.info(`Performing SOAP search for: ${searchTerm}`);
+		resourcesLogger.info(`Performing enhanced SOAP search for: ${searchTerm}`);
 
-		// This will automatically create the resource in the database if found
-		const soapResource = await getResourceInfoByName(searchTerm);
+		// Use the new enhanced search that finds multiple matches
+		const { enhancedResourceSearch } = await import('$lib/data/soap.js');
+		const result = await enhancedResourceSearch(searchTerm);
 
 		// Cache the attempt to avoid repeated requests
 		soapSearchCache.set(cacheKey, {
@@ -51,14 +52,16 @@ async function performSOAPSearch(searchTerm: string): Promise<void> {
 			attempted: true
 		});
 
-		if (soapResource) {
-			resourcesLogger.info(`SOAP search found and added resource: ${soapResource.Name}`);
+		if (result.created > 0 || result.found > 0) {
+			resourcesLogger.info(
+				`Enhanced SOAP search for "${searchTerm}": found ${result.found} matches, created ${result.created} new resources`
+			);
 		} else {
-			resourcesLogger.debug(`SOAP search found no results for: ${searchTerm}`);
+			resourcesLogger.debug(`Enhanced SOAP search found no results for: ${searchTerm}`);
 		}
 	} catch (error) {
 		const errorMsg = (error as Error).message;
-		resourcesLogger.warn(`SOAP search failed for "${searchTerm}": ${errorMsg}`);
+		resourcesLogger.warn(`Enhanced SOAP search failed for "${searchTerm}": ${errorMsg}`);
 
 		// Cache the failure to avoid repeated requests
 		soapSearchCache.set(cacheKey, {
@@ -85,10 +88,10 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		const limit = parseInt(url.searchParams.get('limit') || '50');
 		const offset = (page - 1) * limit;
 
-		// SOAP fallback search for better results - happens BEFORE filtering
+		// Enhanced SOAP search for better results - happens BEFORE filtering
 		// This ensures new resources get into the database before we query
 		if (searchTerm && shouldPerformSOAPSearch(searchTerm)) {
-			await performSOAPSearch(searchTerm);
+			await performEnhancedSOAPSearch(searchTerm);
 		}
 
 		// Get all resources from database (including any newly added from SOAP)

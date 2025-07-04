@@ -31,10 +31,12 @@ interface ResourceClassLookup {
 function getResourceClassBySoapId(soapClassId: number): ResourceClassLookup | null {
 	try {
 		const db = getDatabase();
-		const result = db.prepare('SELECT swgcraft_id, name, parent_id FROM resource_classes WHERE swgID = ?').get(soapClassId) as ResourceClassLookup | undefined;
+		const result = db
+			.prepare('SELECT swgcraft_id, name, parent_id FROM resource_classes WHERE swgID = ?')
+			.get(soapClassId) as ResourceClassLookup | undefined;
 		return result || null;
 	} catch (error) {
-		dbLogger.warn(`Failed to lookup resource class for SOAP class ID ${soapClassId}:`, error);
+		dbLogger.warn(`Failed to lookup resource class for SOAP class ID ${soapClassId}:`, { error: error as Error });
 		return null;
 	}
 }
@@ -51,17 +53,19 @@ function getResourceClassPath(swgcraftId: string): string[] {
 		let currentId = swgcraftId;
 
 		while (currentId) {
-			const record = db.prepare('SELECT name, parent_id FROM resource_classes WHERE swgcraft_id = ?').get(currentId) as { name: string; parent_id: string | null } | undefined;
-			
+			const record = db
+				.prepare('SELECT name, parent_id FROM resource_classes WHERE swgcraft_id = ?')
+				.get(currentId) as { name: string; parent_id: string | null } | undefined;
+
 			if (!record) break;
-			
+
 			path.unshift(record.name);
 			currentId = record.parent_id || '';
 		}
 
 		return path;
 	} catch (error) {
-		dbLogger.warn(`Failed to get class path for ${swgcraftId}:`, error);
+		dbLogger.warn(`Failed to get class path for ${swgcraftId}:`, { error: error as Error });
 		return [];
 	}
 }
@@ -174,7 +178,7 @@ function createResourceFromSOAPData(soapData: SOAPResourceInfo): number | null {
 	const resourceClass = getResourceClassBySoapId(soapData.Class);
 	const className = resourceClass?.name || 'Unknown';
 	const classPath = resourceClass ? getResourceClassPath(resourceClass.swgcraft_id) : [];
-	
+
 	// For type, use the most specific class name (last in path) or the class name itself
 	const type = classPath.length > 0 ? classPath[classPath.length - 1] : className;
 
@@ -201,10 +205,10 @@ function createResourceFromSOAPData(soapData: SOAPResourceInfo): number | null {
 
 	// Determine spawn status more intelligently
 	// Resources older than 6 months are likely despawned
-	const sixMonthsAgo = Date.now() - (6 * 30 * 24 * 60 * 60 * 1000);
+	const sixMonthsAgo = Date.now() - 6 * 30 * 24 * 60 * 60 * 1000;
 	const addedTime = soapData.AddedStamp ? soapData.AddedStamp * 1000 : Date.now();
 	const isLikelySpawned = addedTime > sixMonthsAgo;
-	
+
 	// Set despawn date if we think it's not currently spawned
 	const despawnDate = isLikelySpawned ? null : enterDate;
 
@@ -244,6 +248,33 @@ function createResourceFromSOAPData(soapData: SOAPResourceInfo): number | null {
 }
 
 /**
+ * Helper function to extract string values from XML elements
+ * Handles various XML parsing scenarios including text nodes and nil values
+ */
+function extractStringValue(element: any): string {
+	if (!element) return '';
+	if (element._xsi?.nil || element['_xsi:nil']) return '';
+	let value = '';
+	if (typeof element === 'string') value = element;
+	else if (element.text !== undefined) value = String(element.text);
+	else value = String(element);
+	
+	// Handle malformed XML like "Behabet</n>" by removing trailing incomplete tags
+	return value.replace(/<\/n>?$/, '');
+}
+
+/**
+ * Helper function to extract numeric values from XML elements
+ */
+function extractValue(element: any): number {
+	if (!element) return 0;
+	if (element._xsi?.nil || element['_xsi:nil']) return 0;
+	if (typeof element === 'number') return element;
+	if (element.text !== undefined) return parseInt(element.text) || 0;
+	return parseInt(element) || 0;
+}
+
+/**
  * Parse SOAP XML response to extract ResourceInfo using proper XML parsing
  */
 function parseSOAPResourceInfo(xmlText: string): SOAPResourceInfo | null {
@@ -280,23 +311,6 @@ function parseSOAPResourceInfo(xmlText: string): SOAPResourceInfo | null {
 
 		const returnElement = resourceInfoResponse.return;
 		if (!returnElement) return null;
-
-		// Helper function to extract values, handling both text nodes and nil values
-		const extractValue = (element: any): number => {
-			if (!element) return 0;
-			if (element._xsi?.nil || element['_xsi:nil']) return 0;
-			if (typeof element === 'number') return element;
-			if (element.text !== undefined) return parseInt(element.text) || 0;
-			return parseInt(element) || 0;
-		};
-
-		const extractStringValue = (element: any): string => {
-			if (!element) return '';
-			if (element._xsi?.nil || element['_xsi:nil']) return '';
-			if (typeof element === 'string') return element;
-			if (element.text !== undefined) return String(element.text);
-			return String(element);
-		};
 
 		// Extract ResourceInfo fields from the return element
 		const resourceInfo: SOAPResourceInfo = {
@@ -365,6 +379,79 @@ function parseSOAPResourceInfo(xmlText: string): SOAPResourceInfo | null {
 			});
 			return null;
 		}
+	}
+}
+
+/**
+ * Simple resource info from FindResources SOAP API
+ */
+export interface SimpleResourceInfo {
+	Name: string;
+}
+
+/**
+ * Parse SOAP XML response for FindResources to extract resource names
+ */
+function parseSOAPResourceList(xmlText: string): SimpleResourceInfo[] {
+	try {
+		// Use the XMLParser for parsing SOAP responses
+		const parser = new XMLParser({
+			ignoreAttributes: false,
+			attributeNamePrefix: '_',
+			textNodeName: 'text',
+			parseAttributeValue: true,
+			parseTagValue: true
+		});
+
+		const parsedXml = parser.parse(xmlText);
+
+		// Navigate through the SOAP response structure
+		const soapEnvelope = parsedXml['soap:Envelope'] || parsedXml['SOAP-ENV:Envelope'];
+		if (!soapEnvelope) return [];
+
+		const soapBody = soapEnvelope['soap:Body'] || soapEnvelope['SOAP-ENV:Body'];
+		if (!soapBody) return [];
+
+		// Look for the FindResources response element
+		let findResourcesResponse = null;
+		for (const key of Object.keys(soapBody)) {
+			if (key.includes('FindResources') && key.includes('Response')) {
+				findResourcesResponse = soapBody[key];
+				break;
+			}
+		}
+
+		if (!findResourcesResponse) return [];
+
+		const returnElement = findResourcesResponse.return;
+		if (!returnElement) return [];
+
+		// Handle both single item and array cases
+		const items = Array.isArray(returnElement.item) ? returnElement.item : [returnElement.item];
+
+		const resources: SimpleResourceInfo[] = [];
+		for (const item of items) {
+			if (item && item.Name) {
+				// Extract the name, handling both string and object formats
+				let name = extractStringValue(item.Name);
+				
+				// Debug: log the structure of the name to understand parsing issues
+				dbLogger.debug(`Parsing resource name from FindResources:`, { 
+					rawName: item.Name, 
+					extractedName: name, 
+					nameType: typeof item.Name 
+				});
+				
+				if (name && name.trim().length > 0) {
+					resources.push({ Name: name });
+				}
+			}
+		}
+
+		return resources;
+	} catch (error) {
+		dbLogger.error('Failed to parse SOAP FindResources response', { error: error as Error });
+		return [];
 	}
 }
 
@@ -534,5 +621,135 @@ export async function updateResourceSOAPData(resourceId: number): Promise<{
 	} catch (error) {
 		dbLogger.error('Failed to update resource SOAP data', { error: error as Error, resourceId });
 		return { success: false, updated: false, reason: 'Update failed' };
+	}
+}
+
+/**
+ * Find resources by partial name match using SOAP API
+ * @param searchTerm - The partial resource name to search for
+ * @param serverId - The server ID (defaults to 162 for Restoration III)
+ * @returns Promise that resolves to array of matching resource names
+ */
+export async function findResourcesByName(
+	searchTerm: string,
+	serverId: number = DEFAULT_SERVER_ID
+): Promise<SimpleResourceInfo[]> {
+	try {
+		const soapBody = `<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:swgaide">
+  <soap:Body>
+    <tns:FindResources>
+      <tns:name>
+        <tns:name>${searchTerm}</tns:name>
+        <tns:server>${serverId}</tns:server>
+      </tns:name>
+    </tns:FindResources>
+  </soap:Body>
+</soap:Envelope>`;
+
+		const response = await fetch(SOAP_SERVER_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'text/xml; charset=utf-8',
+				SOAPAction: 'urn:swgaide#FindResources'
+			},
+			body: soapBody
+		});
+
+		if (!response.ok) {
+			throw new Error(`SOAP FindResources request failed: ${response.statusText}`);
+		}
+
+		const xmlText = await response.text();
+		dbLogger.debug(`SOAP FindResources XML Response for "${searchTerm}":`, { xmlText });
+
+		const resourceList = parseSOAPResourceList(xmlText);
+		dbLogger.debug(`Found ${resourceList.length} resources matching "${searchTerm}"`);
+		
+		// Debug: log the actual resource names found
+		if (resourceList.length > 0) {
+			const resourceNames = resourceList.map(r => r.Name).join(', ');
+			dbLogger.debug(`SOAP FindResources for "${searchTerm}" returned: ${resourceNames}`);
+		}
+
+		return resourceList;
+	} catch (error) {
+		dbLogger.error(`SOAP FindResources failed for "${searchTerm}": ${(error as Error).message}`);
+		return [];
+	}
+}
+
+/**
+ * Enhanced resource search using FindResources + GetResourceInfo approach
+ * First finds matching resource names, then fetches detailed info for resources not in our database
+ * @param searchTerm - The partial resource name to search for
+ * @param serverId - The server ID (defaults to 162 for Restoration III)
+ * @returns Promise that resolves to number of new resources created
+ */
+export async function enhancedResourceSearch(
+	searchTerm: string,
+	serverId: number = DEFAULT_SERVER_ID
+): Promise<{ created: number; found: number }> {
+	try {
+		// First, find all resources matching the search term
+		const foundResources = await findResourcesByName(searchTerm, serverId);
+
+		if (foundResources.length === 0) {
+			dbLogger.debug(`No resources found in SOAP for search term: "${searchTerm}"`);
+			return { created: 0, found: 0 };
+		}
+
+		dbLogger.info(
+			`Found ${foundResources.length} potential matches for "${searchTerm}" in SOAP API`
+		);
+
+		// Check which resources we don't have in our database yet
+		const { searchResources } = await import('./resources.js');
+		let createdCount = 0;
+
+		for (const foundResource of foundResources) {
+			// Debug: log the actual foundResource object to see what we're working with
+			dbLogger.debug(`Processing found resource:`, { foundResource, name: foundResource.Name, type: typeof foundResource.Name });
+			
+			// Check if we already have this resource
+			const existingResources = searchResources(foundResource.Name);
+			const exactMatch = existingResources.find((r) => r.name === foundResource.Name);
+
+			if (!exactMatch) {
+				// We don't have this resource, fetch detailed info and create it
+				dbLogger.debug(`Fetching detailed info for new resource: ${foundResource.Name}`);
+
+				const detailedInfo = await getResourceInfoByName(foundResource.Name, serverId);
+				if (detailedInfo) {
+					// Check if the resource was actually created by searching for it again
+					const verifyResources = searchResources(foundResource.Name);
+					const verifyMatch = verifyResources.find((r) => r.name === foundResource.Name);
+					
+					if (verifyMatch) {
+						createdCount++;
+						dbLogger.info(`Successfully created resource from SOAP search: ${foundResource.Name} (ID: ${verifyMatch.id})`);
+					} else {
+						dbLogger.warn(`SOAP data retrieved for ${foundResource.Name} but resource creation failed`);
+					}
+				} else {
+					dbLogger.warn(`Failed to get detailed info for resource: ${foundResource.Name}`);
+				}
+			} else {
+				dbLogger.debug(
+					`Resource already exists in database: ${foundResource.Name} (ID: ${exactMatch.id})`
+				);
+			}
+		}
+
+		dbLogger.info(
+			`Enhanced search for "${searchTerm}" created ${createdCount} new resources out of ${foundResources.length} found`
+		);
+		return { created: createdCount, found: foundResources.length };
+	} catch (error) {
+		dbLogger.error(
+			`Enhanced resource search failed for "${searchTerm}": ${(error as Error).message}`
+		);
+		return { created: 0, found: 0 };
 	}
 }

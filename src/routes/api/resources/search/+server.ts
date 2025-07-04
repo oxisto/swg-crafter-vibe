@@ -18,7 +18,7 @@ interface SOAPSearchCacheEntry {
 }
 
 const soapSearchCache = new Map<string, SOAPSearchCacheEntry>();
-const SOAP_SEARCH_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+const SOAP_SEARCH_CACHE_DURATION = 1 * 60 * 1000; // 1 minute for testing
 
 function shouldPerformSOAPSearch(searchTerm: string, localResultCount: number): boolean {
 	// Only do SOAP search if we have few local results and term is long enough
@@ -35,14 +35,15 @@ function shouldPerformSOAPSearch(searchTerm: string, localResultCount: number): 
 	return true;
 }
 
-async function performSOAPSearch(searchTerm: string): Promise<void> {
+async function performEnhancedSOAPSearch(searchTerm: string): Promise<void> {
 	const cacheKey = searchTerm.toLowerCase();
 
 	try {
-		searchLogger.info(`Performing SOAP search for: ${searchTerm}`);
+		searchLogger.info(`Performing enhanced SOAP search for: ${searchTerm}`);
 
-		// This will automatically create the resource in the database if found
-		const soapResource = await getResourceInfoByName(searchTerm);
+		// Use the new enhanced search that finds multiple matches
+		const { enhancedResourceSearch } = await import('$lib/data/soap.js');
+		const result = await enhancedResourceSearch(searchTerm);
 
 		// Cache the attempt to avoid repeated requests
 		soapSearchCache.set(cacheKey, {
@@ -51,14 +52,16 @@ async function performSOAPSearch(searchTerm: string): Promise<void> {
 			attempted: true
 		});
 
-		if (soapResource) {
-			searchLogger.info(`SOAP search found and added resource: ${soapResource.Name}`);
+		if (result.created > 0 || result.found > 0) {
+			searchLogger.info(
+				`Enhanced SOAP search for "${searchTerm}": found ${result.found} matches, created ${result.created} new resources`
+			);
 		} else {
-			searchLogger.debug(`SOAP search found no results for: ${searchTerm}`);
+			searchLogger.debug(`Enhanced SOAP search found no results for: ${searchTerm}`);
 		}
 	} catch (error) {
 		const errorMsg = (error as Error).message;
-		searchLogger.warn(`SOAP search failed for "${searchTerm}": ${errorMsg}`);
+		searchLogger.warn(`Enhanced SOAP search failed for "${searchTerm}": ${errorMsg}`);
 
 		// Cache the failure to avoid repeated requests
 		soapSearchCache.set(cacheKey, {
@@ -93,7 +96,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 
 		// If we have few results and should try SOAP, do it
 		if (shouldPerformSOAPSearch(searchTerm, localResultCount)) {
-			await performSOAPSearch(searchTerm);
+			await performEnhancedSOAPSearch(searchTerm);
 
 			// Re-search after potentially adding new resources from SOAP
 			resources = searchResources(searchTerm);
