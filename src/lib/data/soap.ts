@@ -15,6 +15,58 @@ const SOAP_UPDATE_INTERVAL_HOURS = 1; // Update SOAP data every hour
 const DEFAULT_SERVER_ID = 162; // SWG Restoration III
 
 /**
+ * Resource class information from database lookup
+ */
+interface ResourceClassLookup {
+	swgcraft_id: string;
+	name: string;
+	parent_id: string | null;
+}
+
+/**
+ * Look up resource class information by SOAP class ID (swgID)
+ * @param soapClassId - The SOAP class ID (Class field from SOAP response)
+ * @returns Resource class info or null if not found
+ */
+function getResourceClassBySoapId(soapClassId: number): ResourceClassLookup | null {
+	try {
+		const db = getDatabase();
+		const result = db.prepare('SELECT swgcraft_id, name, parent_id FROM resource_classes WHERE swgID = ?').get(soapClassId) as ResourceClassLookup | undefined;
+		return result || null;
+	} catch (error) {
+		dbLogger.warn(`Failed to lookup resource class for SOAP class ID ${soapClassId}:`, error);
+		return null;
+	}
+}
+
+/**
+ * Get the full class path for a resource class
+ * @param swgcraftId - The SWGCraft ID for the resource class
+ * @returns Array of class names from root to leaf
+ */
+function getResourceClassPath(swgcraftId: string): string[] {
+	try {
+		const db = getDatabase();
+		const path: string[] = [];
+		let currentId = swgcraftId;
+
+		while (currentId) {
+			const record = db.prepare('SELECT name, parent_id FROM resource_classes WHERE swgcraft_id = ?').get(currentId) as { name: string; parent_id: string | null } | undefined;
+			
+			if (!record) break;
+			
+			path.unshift(record.name);
+			currentId = record.parent_id || '';
+		}
+
+		return path;
+	} catch (error) {
+		dbLogger.warn(`Failed to get class path for ${swgcraftId}:`, error);
+		return [];
+	}
+}
+
+/**
  * SOAP API ResourceInfo type based on WSDL definition
  */
 export interface SOAPResourceInfo {
@@ -118,6 +170,14 @@ function createResourceFromSOAPData(soapData: SOAPResourceInfo): number | null {
 		return null;
 	}
 
+	// Look up resource class information from SOAP class ID
+	const resourceClass = getResourceClassBySoapId(soapData.Class);
+	const className = resourceClass?.name || 'Unknown';
+	const classPath = resourceClass ? getResourceClassPath(resourceClass.swgcraft_id) : [];
+	
+	// For type, use the most specific class name (last in path) or the class name itself
+	const type = classPath.length > 0 ? classPath[classPath.length - 1] : className;
+
 	// Create resource attributes from SOAP data
 	const attributes = {
 		er: soapData.ER || 0,
@@ -139,6 +199,15 @@ function createResourceFromSOAPData(soapData: SOAPResourceInfo): number | null {
 		? new Date(soapData.AddedStamp * 1000).toISOString()
 		: nowISO;
 
+	// Determine spawn status more intelligently
+	// Resources older than 6 months are likely despawned
+	const sixMonthsAgo = Date.now() - (6 * 30 * 24 * 60 * 60 * 1000);
+	const addedTime = soapData.AddedStamp ? soapData.AddedStamp * 1000 : Date.now();
+	const isLikelySpawned = addedTime > sixMonthsAgo;
+	
+	// Set despawn date if we think it's not currently spawned
+	const despawnDate = isLikelySpawned ? null : enterDate;
+
 	try {
 		const insertStmt = db.prepare(`
 			INSERT INTO resources (
@@ -151,20 +220,20 @@ function createResourceFromSOAPData(soapData: SOAPResourceInfo): number | null {
 		const result = insertStmt.run(
 			soapData.ID, // id (use SOAP ID)
 			soapData.Name, // name
-			'Unknown', // type (SOAP doesn't provide this)
-			'Unknown', // class_name (would need class lookup)
-			JSON.stringify([]), // class_path (empty array)
+			type, // type (use most specific class name)
+			className, // class_name (use proper class name from lookup)
+			JSON.stringify(classPath), // class_path (full path array)
 			JSON.stringify(attributes), // attributes
-			JSON.stringify({}), // planet_distribution (empty)
+			JSON.stringify({}), // planet_distribution (empty, will be populated later)
 			enterDate, // enter_date
-			null, // despawn_date (null for active)
-			1, // is_currently_spawned (assume true)
+			despawnDate, // despawn_date (set if likely despawned)
+			isLikelySpawned ? 1 : 0, // is_currently_spawned (based on age)
 			nowISO, // soap_last_updated
 			JSON.stringify(attributes) // stats (copy of attributes)
 		);
 
 		dbLogger.info(
-			`Created new resource from SOAP: ${soapData.Name} (ID: ${soapData.ID}, OQ: ${soapData.OQ || 0})`
+			`Created new resource from SOAP: ${soapData.Name} (ID: ${soapData.ID}, Class: ${className}, OQ: ${soapData.OQ || 0}, Spawned: ${isLikelySpawned ? 'Active' : 'Despawned'})`
 		);
 		return soapData.ID;
 	} catch (error) {
