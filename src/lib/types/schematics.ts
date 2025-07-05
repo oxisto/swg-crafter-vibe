@@ -5,19 +5,6 @@
 
 import type { PartCategory } from './inventory.js';
 
-/** Schematic data structure from SWGAide XML exports */
-export interface Schematic {
-	id: string;
-	name: string;
-	category: string;
-	profession: string;
-	complexity: number;
-	datapad: number;
-	is_favorite?: boolean;
-	components: SchematicComponent[];
-	resources: SchematicResource[];
-}
-
 /** Component required for a schematic (sub-components that must be crafted or obtained) */
 export interface SchematicComponent {
 	name: string;
@@ -31,6 +18,38 @@ export interface SchematicResource {
 	amount: number;
 	units: string;
 	classes: (string | { code: string; displayName: string })[];
+}
+
+/** Experimentation property for a schematic */
+export interface ExperimentationProperty {
+	desc: string; // Description like "Engine Speed", "Mass/Armor/Hitpoints", etc.
+	cd?: number; // Conductivity percentage
+	oq?: number; // Overall Quality percentage
+	ut?: number; // Unit Toughness percentage
+	sr?: number; // Shock Resistance percentage
+	pe?: number; // Potential Energy percentage
+	hr?: number; // Heat Resistance percentage
+	ma?: number; // Malleability percentage
+}
+
+/** Experimentation group for a schematic */
+export interface ExperimentationGroup {
+	desc: string; // Group description like "Experimental Speed", "Experimental Mass/Armor/Hitpoints"
+	properties: ExperimentationProperty[];
+}
+
+/** Schematic data structure from SWGAide XML exports */
+export interface Schematic {
+	id: string;
+	name: string;
+	category: string;
+	profession: string;
+	complexity: number;
+	datapad: number;
+	is_favorite?: boolean;
+	components: SchematicComponent[];
+	resources: SchematicResource[];
+	experimentation?: ExperimentationGroup[]; // Added experimentation properties
 }
 
 /** Mapping of inventory categories to their corresponding schematic category IDs */

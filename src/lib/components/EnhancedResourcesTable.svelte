@@ -10,11 +10,20 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import SimpleTable from '$lib/components/SimpleTable.svelte';
 	import ResourceSelectionModal from '$lib/components/ResourceSelectionModal.svelte';
-	import type { Schematic, SchematicResource, Resource } from '$lib/types';
 	import type {
+		Schematic,
+		SchematicResource,
+		Resource,
+		ResourceCaps,
 		SchematicResourceLoadout,
 		SchematicLoadoutSummary
-	} from '$lib/data/database/schematic-resource-loadouts.js';
+	} from '$lib/types';
+	import {
+		applyResourceCaps,
+		getResourceClassCode,
+		getResourceClassCaps,
+		normalizeResourceStats
+	} from '$lib/utils';
 
 	let { schematic, class: className = '' } = $props<{
 		schematic: Schematic;
@@ -33,6 +42,69 @@
 	let showResourceAssignModal = $state(false);
 	let newLoadoutName = $state('');
 	let selectedResourceSlot = $state<string | null>(null);
+
+	// Experimentation calculator states
+	let selectedExperimentationProperty = $state<string | null>(null);
+	let showExperimentationCalculator = $state(false);
+	let assignedResources = $state<Record<string, Resource>>({});
+	let experimentationResult = $state<{ current: number; max: number; percentage: number } | null>(
+		null
+	);
+	let calculatingExperimentation = $state(false);
+	let experimentationBreakdown = $state<{
+		resources: Array<{
+			name: string;
+			resourceName: string;
+			classCode: string;
+			stats: Array<{
+				stat: string;
+				value: number;
+				cap: number;
+				normalized: number;
+				weight: number;
+				contribution: number;
+			}>;
+			totalContribution: number;
+			amount: number;
+		}>;
+		statContributions: Map<
+			string,
+			Array<{
+				resourceName: string;
+				resourceSlotName: string;
+				value: number;
+				cap: number;
+				normalized: number;
+				quantity: number;
+				totalQuantity: number;
+				weight: number;
+				contribution: number;
+			}>
+		>;
+		grandTotal: number;
+		buffedTotal: number;
+	} | null>(null);
+
+	// Reactively calculate experimentation value when property changes
+	$effect(() => {
+		if (browser && selectedExperimentationProperty) {
+			calculatingExperimentation = true;
+			calculateExperimentationValue(selectedExperimentationProperty)
+				.then((result) => {
+					experimentationResult = result;
+					calculatingExperimentation = false;
+				})
+				.catch((error) => {
+					console.error('Error calculating experimentation value:', error);
+					experimentationResult = { current: 0, max: 100, percentage: 0 };
+					experimentationBreakdown = null;
+					calculatingExperimentation = false;
+				});
+		} else {
+			experimentationResult = null;
+			experimentationBreakdown = null;
+		}
+	});
 
 	// Enhanced table columns that include loadout assignment
 	const enhancedResourceColumns = [
@@ -206,6 +278,284 @@
 	}
 
 	/**
+	 * Fetch resource data for assigned resources in the current loadout
+	 */
+	async function loadAssignedResourcesData() {
+		if (!browser || loadoutResources.length === 0) {
+			assignedResources = {};
+			return;
+		}
+
+		try {
+			const resourceIds = loadoutResources
+				.filter((lr) => lr.assigned_resource_id)
+				.map((lr) => lr.assigned_resource_id);
+
+			if (resourceIds.length === 0) {
+				assignedResources = {};
+				return;
+			}
+
+			// Fetch resource data for all assigned resources
+			const resourcePromises = resourceIds.map(async (resourceId) => {
+				const response = await fetch(`/api/resources/${resourceId}`);
+				if (response.ok) {
+					return await response.json();
+				}
+				return null;
+			});
+
+			const resources = await Promise.all(resourcePromises);
+			const resourceMap: Record<string, Resource> = {};
+
+			// Map resources by their corresponding slot names
+			loadoutResources.forEach((lr, index) => {
+				if (lr.assigned_resource_id && resources[index]) {
+					resourceMap[lr.resource_slot_name] = resources[index];
+				}
+			});
+
+			assignedResources = resourceMap;
+		} catch (err) {
+			console.error('Failed to load assigned resource data:', err);
+			assignedResources = {};
+		}
+	}
+
+	/**
+	 * Calculate experimentation value based on selected property and assigned resources
+	 * Uses normalized resource stats (stat/cap) for accurate SWG calculations
+	 */
+	async function calculateExperimentationValue(propertyDesc: string): Promise<{
+		current: number;
+		max: number;
+		percentage: number;
+	}> {
+		if (!schematic.experimentation || !selectedExperimentationProperty) {
+			experimentationBreakdown = null;
+			return { current: 0, max: 100, percentage: 0 };
+		}
+
+		// Find the experimentation group and property
+		const expGroup = schematic.experimentation.find((group) =>
+			group.properties.some((prop) => prop.desc === propertyDesc)
+		);
+
+		if (!expGroup) {
+			experimentationBreakdown = null;
+			return { current: 0, max: 100, percentage: 0 };
+		}
+
+		const expProperty = expGroup.properties.find((prop) => prop.desc === propertyDesc);
+		if (!expProperty) {
+			experimentationBreakdown = null;
+			return { current: 0, max: 100, percentage: 0 };
+		}
+
+		// Calculate total resource quantity for weighted calculations
+		const totalResourceQuantity = schematic.resources.reduce((sum, res) => sum + res.amount, 0);
+
+		// Collect all resource contributions by stat
+		const statContributionsMap = new Map<
+			string,
+			Array<{
+				resourceName: string;
+				resourceSlotName: string;
+				value: number;
+				cap: number;
+				normalized: number;
+				quantity: number;
+				totalQuantity: number;
+				weight: number;
+				contribution: number;
+			}>
+		>();
+
+		const resourceBreakdowns = [];
+
+		// Process each resource slot
+		for (const schematicResource of schematic.resources) {
+			const assignedResource = assignedResources[schematicResource.name];
+			if (!assignedResource || !assignedResource.attributes) continue;
+
+			// Get the schematic's required resource class for this slot
+			const requiredClassCode = getResourceClassCode(schematicResource.classes);
+			if (!requiredClassCode) continue;
+
+			// Get the stat caps for the required class
+			const classCaps = await getResourceClassCaps(requiredClassCode);
+			if (!classCaps || Object.keys(classCaps).length === 0) continue;
+
+			// Build attributes record
+			const attributesRecord: Record<string, number> = {
+				...(assignedResource.attributes.cr !== undefined && { cr: assignedResource.attributes.cr }),
+				...(assignedResource.attributes.cd !== undefined && { cd: assignedResource.attributes.cd }),
+				...(assignedResource.attributes.dr !== undefined && { dr: assignedResource.attributes.dr }),
+				...(assignedResource.attributes.fl !== undefined && { fl: assignedResource.attributes.fl }),
+				...(assignedResource.attributes.hr !== undefined && { hr: assignedResource.attributes.hr }),
+				...(assignedResource.attributes.ma !== undefined && { ma: assignedResource.attributes.ma }),
+				...(assignedResource.attributes.pe !== undefined && { pe: assignedResource.attributes.pe }),
+				...(assignedResource.attributes.oq !== undefined && { oq: assignedResource.attributes.oq }),
+				...(assignedResource.attributes.sr !== undefined && { sr: assignedResource.attributes.sr }),
+				...(assignedResource.attributes.ut !== undefined && { ut: assignedResource.attributes.ut }),
+				...(assignedResource.attributes.er !== undefined && { er: assignedResource.attributes.er })
+			};
+
+			const statContributions = [];
+			let resourceTotalContribution = 0;
+
+			// Check each stat that could contribute to this experimentation property
+			const statWeights = [
+				{ stat: 'cd', weight: expProperty.cd },
+				{ stat: 'oq', weight: expProperty.oq },
+				{ stat: 'ut', weight: expProperty.ut },
+				{ stat: 'sr', weight: expProperty.sr },
+				{ stat: 'pe', weight: expProperty.pe },
+				{ stat: 'hr', weight: expProperty.hr },
+				{ stat: 'ma', weight: expProperty.ma },
+				{ stat: 'cr', weight: expProperty.cr },
+				{ stat: 'dr', weight: expProperty.dr },
+				{ stat: 'fl', weight: expProperty.fl },
+				{ stat: 'er', weight: expProperty.er }
+			];
+
+			for (const { stat, weight } of statWeights) {
+				if (
+					weight &&
+					weight > 0 &&
+					attributesRecord[stat] !== undefined &&
+					attributesRecord[stat] > 0
+				) {
+					const statValue = attributesRecord[stat];
+					const cap = classCaps[stat as keyof ResourceCaps] || 1;
+					const normalized = statValue / cap;
+
+					// SWG experimentation formula: (resource_stat/cap) * (quantity/total_quantity_for_this_stat) * weight * 1000
+					// First, we need to calculate the total quantity of resources that have this specific stat (stat > 0)
+					let totalQuantityForThisStat = 0;
+					for (const otherSchematicResource of schematic.resources) {
+						const otherAssignedResource = assignedResources[otherSchematicResource.name];
+						if (
+							otherAssignedResource &&
+							otherAssignedResource.attributes &&
+							otherAssignedResource.attributes[stat] !== undefined &&
+							otherAssignedResource.attributes[stat] > 0
+						) {
+							totalQuantityForThisStat += otherSchematicResource.amount;
+						}
+					}
+
+					const quantityRatio = schematicResource.amount / totalQuantityForThisStat;
+					// Convert percentage display value (e.g., 33) to real percentage (e.g., 0.33)
+					const realWeight = weight / 100;
+					const contribution = normalized * quantityRatio * realWeight * 1000;
+
+					const statContribution = {
+						stat: stat.toUpperCase(),
+						value: statValue,
+						cap: cap,
+						normalized: normalized,
+						weight: weight,
+						contribution: contribution
+					};
+
+					statContributions.push(statContribution);
+					resourceTotalContribution += contribution;
+
+					// Also collect for stat-wise breakdown
+					if (!statContributionsMap.has(stat.toUpperCase())) {
+						statContributionsMap.set(stat.toUpperCase(), []);
+					}
+
+					statContributionsMap.get(stat.toUpperCase())!.push({
+						resourceName: assignedResource.name,
+						resourceSlotName: schematicResource.name,
+						value: statValue,
+						cap: cap,
+						normalized: normalized,
+						quantity: schematicResource.amount,
+						totalQuantity: totalQuantityForThisStat,
+						weight: weight,
+						contribution: contribution
+					});
+				}
+			}
+
+			if (statContributions.length > 0) {
+				resourceBreakdowns.push({
+					name: schematicResource.name,
+					resourceName: assignedResource.name,
+					classCode: requiredClassCode,
+					stats: statContributions,
+					totalContribution: resourceTotalContribution,
+					amount: schematicResource.amount
+				});
+			}
+		}
+
+		// Calculate total from all contributions
+		let grandTotal = 0;
+		resourceBreakdowns.forEach((resource) => {
+			grandTotal += resource.totalContribution;
+		});
+
+		if (resourceBreakdowns.length === 0) {
+			experimentationBreakdown = null;
+			return { current: 0, max: 100, percentage: 0 };
+		}
+
+		// Apply 4% buff for quality (representing entertainer buff + bracelet)
+		const buffedTotal = Math.min(1000, grandTotal * 1.04);
+
+		// Store the detailed breakdown including stat-wise contributions
+		experimentationBreakdown = {
+			resources: resourceBreakdowns,
+			statContributions: statContributionsMap,
+			grandTotal: grandTotal,
+			buffedTotal: buffedTotal
+		};
+
+		// SWG uses 1000 as the theoretical maximum for experimentation points
+		// The percentage is typically calculated based on this maximum
+		const percentage = Math.min(100, (buffedTotal / 1000) * 100);
+
+		return {
+			current: Math.round(buffedTotal),
+			max: 1000,
+			percentage: Math.round(percentage * 100) / 100
+		};
+	}
+
+	/**
+	 * Get available experimentation properties for the property selector
+	 */
+	const availableExperimentationProperties = $derived(() => {
+		if (!schematic.experimentation) return [];
+
+		const properties: string[] = [];
+		schematic.experimentation.forEach((group) => {
+			group.properties.forEach((prop) => {
+				if (!properties.includes(prop.desc)) {
+					properties.push(prop.desc);
+				}
+			});
+		});
+
+		return properties;
+	});
+
+	/**
+	 * Check if experimentation calculator should be shown
+	 */
+	const canShowExperimentationCalculator = $derived(() => {
+		return (
+			currentLoadout &&
+			schematic.experimentation &&
+			schematic.experimentation.length > 0 &&
+			loadoutResources.some((lr) => lr.assigned_resource_id)
+		);
+	});
+	/**
 	 * Handle resource selection from the modal
 	 */
 	async function handleResourceSelect(resource: Resource) {
@@ -253,6 +603,37 @@
 	$effect(() => {
 		if (browser && currentLoadout) {
 			loadLoadoutResources();
+		}
+	});
+
+	// Load assigned resource data when loadout resources change
+	$effect(() => {
+		if (browser && loadoutResources.length > 0) {
+			loadAssignedResourcesData();
+		}
+	});
+
+	$effect(() => {
+		if (browser && currentLoadout) {
+			loadAssignedResourcesData();
+		}
+	});
+
+	$effect(() => {
+		if (browser && selectedExperimentationProperty) {
+			calculatingExperimentation = true;
+			calculateExperimentationValue(selectedExperimentationProperty)
+				.then((result) => {
+					experimentationResult = result;
+					calculatingExperimentation = false;
+				})
+				.catch((error) => {
+					console.error('Error calculating experimentation value:', error);
+					experimentationResult = { current: 0, max: 100, percentage: 0 };
+					calculatingExperimentation = false;
+				});
+		} else {
+			experimentationResult = null;
 		}
 	});
 </script>
@@ -387,6 +768,291 @@
 			{/snippet}
 		</SimpleTable>
 	</div>
+
+	<!-- Experimentation Calculator -->
+	{#if canShowExperimentationCalculator()}
+		<div class="rounded-lg border border-blue-600 bg-slate-800">
+			<div class="border-b border-slate-600 px-4 py-3">
+				<div class="flex items-center justify-between">
+					<h5 class="text-lg font-medium text-white">🧪 Experimentation Calculator</h5>
+					<Button
+						variant="secondary"
+						size="sm"
+						onclick={() => (showExperimentationCalculator = !showExperimentationCalculator)}
+					>
+						{showExperimentationCalculator ? 'Hide' : 'Show'}
+					</Button>
+				</div>
+			</div>
+
+			{#if showExperimentationCalculator}
+				<div class="space-y-4 p-4">
+					<!-- Property Selector -->
+					<div>
+						<label
+							for="experimentation-property-select"
+							class="mb-2 block text-sm font-medium text-slate-300"
+						>
+							Select Experimentation Property
+						</label>
+						<select
+							id="experimentation-property-select"
+							bind:value={selectedExperimentationProperty}
+							class="w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-white focus:border-blue-500 focus:outline-none"
+						>
+							<option value={null}>-- Choose a property to analyze --</option>
+							{#each availableExperimentationProperties() as property}
+								<option value={property}>{property}</option>
+							{/each}
+						</select>
+					</div>
+
+					<!-- Calculation Results -->
+					{#if selectedExperimentationProperty}
+						{#if calculatingExperimentation}
+							<div class="rounded-lg border border-slate-600 bg-slate-700/50 p-4">
+								<div class="text-center text-slate-400">Calculating...</div>
+							</div>
+						{:else if experimentationResult}
+							<div class="rounded-lg border border-slate-600 bg-slate-700/50 p-4">
+								<h6 class="mb-3 text-base font-medium text-white">
+									{selectedExperimentationProperty}
+								</h6>
+
+								<div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+									<div class="text-center">
+										<div class="text-2xl font-bold text-blue-400">
+											{experimentationResult.current}
+										</div>
+										<div class="text-sm text-slate-400">Current Value</div>
+									</div>
+									<div class="text-center">
+										<div class="text-2xl font-bold text-green-400">{experimentationResult.max}</div>
+										<div class="text-sm text-slate-400">Maximum Possible</div>
+									</div>
+									<div class="text-center">
+										<div
+											class="text-2xl font-bold {experimentationResult.percentage >= 90
+												? 'text-green-400'
+												: experimentationResult.percentage >= 75
+													? 'text-yellow-400'
+													: 'text-red-400'}"
+										>
+											{experimentationResult.percentage}%
+										</div>
+										<div class="text-sm text-slate-400">Effectiveness</div>
+									</div>
+								</div>
+
+								<!-- Progress Bar -->
+								<div class="mb-4">
+									<div class="mb-1 flex items-center justify-between">
+										<span class="text-sm text-slate-300">Resource Quality Impact</span>
+										<span class="text-sm text-slate-400">{experimentationResult.percentage}%</span>
+									</div>
+									<div class="h-2 w-full rounded-full bg-slate-600">
+										<div
+											class="h-2 rounded-full transition-all duration-300 {experimentationResult.percentage >=
+											90
+												? 'bg-green-500'
+												: experimentationResult.percentage >= 75
+													? 'bg-yellow-500'
+													: 'bg-red-500'}"
+											style="width: {Math.min(100, experimentationResult.percentage)}%"
+										></div>
+									</div>
+								</div>
+
+								<!-- Quality Recommendations -->
+								<div class="text-sm text-slate-300">
+									{#if experimentationResult.percentage >= 96}
+										<div class="flex items-center text-green-400">
+											<span class="mr-2">✅</span>
+											Excellent! Your resources are providing maximum experimentation potential.
+										</div>
+									{:else if experimentationResult.percentage >= 90}
+										<div class="flex items-center text-green-400">
+											<span class="mr-2">✅</span>
+											Great resource quality! Very close to maximum potential.
+										</div>
+									{:else if experimentationResult.percentage >= 75}
+										<div class="flex items-center text-yellow-400">
+											<span class="mr-2">⚠️</span>
+											Good resources, but higher quality could improve this property significantly.
+										</div>
+									{:else if experimentationResult.percentage >= 50}
+										<div class="flex items-center text-orange-400">
+											<span class="mr-2">⚠️</span>
+											Consider finding better resources for this property. Current quality is limiting
+											your potential.
+										</div>
+									{:else}
+										<div class="flex items-center text-red-400">
+											<span class="mr-2">❌</span>
+											Poor resource quality is severely limiting this property. Seek higher quality resources.
+										</div>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Detailed Calculation Breakdown - SWG Style -->
+							{#if experimentationBreakdown}
+								<div class="rounded-lg border border-slate-600 bg-slate-800/50 p-4">
+									<h6 class="mb-4 text-base font-medium text-white">
+										{selectedExperimentationProperty}
+									</h6>
+
+									<!-- Show breakdown by stat (like in reference) -->
+									{#each Array.from(experimentationBreakdown.statContributions.entries()) as [statName, contributions]}
+										<div class="mb-3 font-mono">
+											<div
+												class="flex items-center justify-between rounded bg-slate-700/50 px-3 py-2"
+											>
+												<div class="flex items-center space-x-2">
+													<span class="w-8 font-bold text-blue-300">{statName}</span>
+													<span class="text-slate-400">{contributions[0]?.weight}%:</span>
+												</div>
+												<div class="flex items-center space-x-2 text-sm">
+													{#each contributions as contrib, index}
+														{#if index > 0}
+															<span class="text-slate-500">+</span>
+														{/if}
+														<span class="text-green-400">{contrib.contribution.toFixed(2)}</span>
+													{/each}
+													<span class="text-slate-500">=</span>
+													<span class="font-bold text-orange-400">
+														{contributions.reduce((sum, c) => sum + c.contribution, 0).toFixed(2)}
+													</span>
+												</div>
+											</div>
+
+											<!-- Show individual resource contributions for this stat -->
+											<div class="mt-1 ml-4 space-y-1 text-xs text-slate-400">
+												{#each contributions as contrib}
+													<div class="flex items-center justify-between">
+														<span>{contrib.resourceSlotName} ({contrib.resourceName})</span>
+														<span>
+															{contrib.value}/{contrib.cap} × {contrib.quantity}/{contrib.totalQuantity}
+															× {contrib.weight} = {contrib.contribution.toFixed(4)}
+														</span>
+													</div>
+												{/each}
+											</div>
+										</div>
+									{/each}
+
+									<!-- Final calculation -->
+									<div class="mt-4 border-t border-slate-600 pt-3 font-mono">
+										<div class="flex items-center justify-between text-lg">
+											<span class="font-bold text-white">Result =</span>
+											<div class="flex items-center space-x-2">
+												{#each Array.from(experimentationBreakdown.statContributions.entries()) as [statName, contributions], index}
+													{#if index > 0}
+														<span class="text-slate-500">+</span>
+													{/if}
+													<span class="text-green-400">
+														{contributions.reduce((sum, c) => sum + c.contribution, 0).toFixed(2)}
+													</span>
+												{/each}
+												<span class="text-slate-500">=</span>
+												<span class="font-bold text-orange-400"
+													>{experimentationBreakdown.buffedTotal.toFixed(4)}</span
+												>
+											</div>
+										</div>
+									</div>
+
+									<!-- Debug Information -->
+									<div class="mt-4 rounded bg-slate-900/50 p-3 text-xs text-slate-500">
+										<div class="mb-2 font-bold">Debug - Formula Used:</div>
+										<div class="font-mono">
+											contribution = (resource_stat / resource_cap) × (resource_quantity /
+											total_quantity_for_stat) × stat_weight × 1000
+										</div>
+										<div class="mt-2">
+											<span class="font-bold">Note:</span> Total quantity is calculated per stat (only
+											resources with that stat count)
+										</div>
+										<div class="mt-1">
+											<span class="font-bold">Grand Total:</span>
+											{experimentationBreakdown.grandTotal.toFixed(6)}
+										</div>
+										<div>
+											<span class="font-bold">With 4% Buff:</span>
+											{experimentationBreakdown.buffedTotal.toFixed(6)}
+										</div>
+									</div>
+								</div>
+							{/if}
+
+							<!-- Resource Breakdown -->
+							<div class="rounded-lg border border-slate-600 bg-slate-700/30 p-4">
+								<h6 class="mb-3 text-sm font-medium text-slate-300">Resource Contributions</h6>
+								<div class="space-y-2">
+									{#each schematic.resources as schematicResource}
+										{@const assignedResource = assignedResources[schematicResource.name]}
+										<div class="flex items-center justify-between text-sm">
+											<span class="text-slate-300">{schematicResource.name}</span>
+											{#if assignedResource}
+												<div class="text-right">
+													<div class="text-green-400">{assignedResource.name}</div>
+													{#if assignedResource.attributes}
+														<div class="text-xs text-slate-400">
+															{#if selectedExperimentationProperty}
+																{@const expGroup = schematic.experimentation?.find((group) =>
+																	group.properties.some(
+																		(prop) => prop.desc === selectedExperimentationProperty
+																	)
+																)}
+																{#if expGroup}
+																	{@const expProperty = expGroup.properties.find(
+																		(prop) => prop.desc === selectedExperimentationProperty
+																	)}
+																	{#if expProperty}
+																		{@const relevantProps = []}
+																		{#if expProperty.cd && assignedResource.attributes.cd > 0}
+																			{relevantProps.push(`CD: ${assignedResource.attributes.cd}`)}
+																		{/if}
+																		{#if expProperty.oq && assignedResource.attributes.oq > 0}
+																			{relevantProps.push(`OQ: ${assignedResource.attributes.oq}`)}
+																		{/if}
+																		{#if expProperty.ut && assignedResource.attributes.ut > 0}
+																			{relevantProps.push(`UT: ${assignedResource.attributes.ut}`)}
+																		{/if}
+																		{#if expProperty.sr && assignedResource.attributes.sr > 0}
+																			{relevantProps.push(`SR: ${assignedResource.attributes.sr}`)}
+																		{/if}
+																		{#if expProperty.pe && assignedResource.attributes.pe > 0}
+																			{relevantProps.push(`PE: ${assignedResource.attributes.pe}`)}
+																		{/if}
+																		{#if expProperty.hr && assignedResource.attributes.hr > 0}
+																			{relevantProps.push(`HR: ${assignedResource.attributes.hr}`)}
+																		{/if}
+																		{#if expProperty.ma && assignedResource.attributes.ma > 0}
+																			{relevantProps.push(`MA: ${assignedResource.attributes.ma}`)}
+																		{/if}
+																		{relevantProps.join(' | ')}
+																	{/if}
+																{/if}
+															{/if}
+														</div>
+													{:else}
+														<div class="text-xs text-orange-400">No attributes data</div>
+													{/if}
+												</div>
+											{:else}
+												<span class="text-red-400">Not assigned</span>
+											{/if}
+										</div>
+									{/each}
+								</div>
+							</div>
+						{/if}
+					{/if}
+				</div>
+			{/if}
+		</div>
+	{/if}
 
 	<!-- Empty state for loadouts -->
 	{#if loadouts.length === 0 && !loading}

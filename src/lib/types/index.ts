@@ -31,6 +31,7 @@ export { SCHEMATIC_CATEGORY_MAP, SCHEMATIC_ID_MAP } from './schematics.js';
 export type {
 	Resource,
 	ResourceAttributes,
+	ResourceCaps,
 	ResourceStats,
 	Planet,
 	PlanetInfo
@@ -45,6 +46,9 @@ export { SHIP_CHASSIS, SHIP_LOADOUTS, calculateLoadoutsValue, getLoadoutKey } fr
 
 // Re-export sales types
 export type { MailData, Sale, MailImport, MailBatch, MailStats, SalesAnalytics } from './sales.js';
+
+// Re-export loadout types
+export type { SchematicResourceLoadout, SchematicLoadoutSummary } from './loadouts.js';
 
 // Re-export API response types
 export type {
@@ -81,4 +85,5 @@ export * from './schematics.js';
 export * from './resources.js';
 export * from './ships.js';
 export * from './sales.js';
+export * from './loadouts.js';
 export * from './api.js';

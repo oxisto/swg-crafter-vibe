@@ -4,26 +4,10 @@
 
 import type { Database } from 'better-sqlite3';
 import { dbLogger } from './connection.js';
+import type { SchematicResourceLoadout, SchematicLoadoutSummary } from '$lib/types/loadouts.js';
 
-export interface SchematicResourceLoadout {
-	id: number;
-	schematic_id: string;
-	loadout_name: string;
-	resource_slot_name: string; // The name of the required resource from the schematic
-	assigned_resource_id: number | null; // ID of the assigned concrete resource
-	assigned_resource_name: string | null; // Name of the assigned resource (cached)
-	created_at: string;
-	updated_at: string;
-}
-
-export interface SchematicLoadoutSummary {
-	schematic_id: string;
-	loadout_name: string;
-	total_slots: number;
-	assigned_slots: number;
-	created_at: string;
-	updated_at: string;
-}
+// Re-export types for backward compatibility
+export type { SchematicResourceLoadout, SchematicLoadoutSummary };
 
 /**
  * Create the tables for schematic resource loadouts

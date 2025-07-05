@@ -35,6 +35,21 @@ export interface ResourceAttributes {
 	er?: number;
 }
 
+/** Resource stat caps for different resource classes */
+export interface ResourceCaps {
+	cr?: number;
+	cd?: number;
+	dr?: number;
+	fl?: number;
+	hr?: number;
+	ma?: number;
+	pe?: number;
+	oq?: number;
+	sr?: number;
+	ut?: number;
+	er?: number;
+}
+
 /** Statistics about resource quality and distribution */
 export interface ResourceStats {
 	overallQuality: number;
