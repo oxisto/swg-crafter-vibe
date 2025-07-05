@@ -116,7 +116,7 @@ interface ResourceTypeNode {
 	resource_type?: ResourceTypeNode | ResourceTypeNode[];
 }
 
-const XML_FILE_PATH = join(process.cwd(), 'src/lib/data/resourcetree2.xml');
+const XML_FILE_PATH = join(process.cwd(), 'src/lib/data/resourcetree2-resto3.xml');
 
 /**
  * Check if the XML file has been modified since last import

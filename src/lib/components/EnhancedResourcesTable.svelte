@@ -476,6 +476,7 @@
 						quantity: schematicResource.amount,
 						totalQuantity: totalQuantityForThisStat,
 						weight: weight,
+						realWeight: realWeight,
 						contribution: contribution
 					});
 				}
@@ -933,7 +934,7 @@
 														<span>{contrib.resourceSlotName} ({contrib.resourceName})</span>
 														<span>
 															{contrib.value}/{contrib.cap} × {contrib.quantity}/{contrib.totalQuantity}
-															× {contrib.weight} = {contrib.contribution.toFixed(4)}
+															× {(contrib.weight / 100).toFixed(4)} × 1000 = {contrib.contribution.toFixed(4)}
 														</span>
 													</div>
 												{/each}
@@ -944,7 +945,7 @@
 									<!-- Final calculation -->
 									<div class="mt-4 border-t border-slate-600 pt-3 font-mono">
 										<div class="flex items-center justify-between text-lg">
-											<span class="font-bold text-white">Result =</span>
+											<span class="font-bold text-white">Base Total =</span>
 											<div class="flex items-center space-x-2">
 												{#each Array.from(experimentationBreakdown.statContributions.entries()) as [statName, contributions], index}
 													{#if index > 0}
@@ -954,6 +955,18 @@
 														{contributions.reduce((sum, c) => sum + c.contribution, 0).toFixed(2)}
 													</span>
 												{/each}
+												<span class="text-slate-500">=</span>
+												<span class="font-bold text-yellow-400"
+													>{experimentationBreakdown.grandTotal.toFixed(4)}</span
+												>
+											</div>
+										</div>
+										<div class="mt-2 flex items-center justify-between text-lg">
+											<span class="font-bold text-white">With 4% Buff =</span>
+											<div class="flex items-center space-x-2">
+												<span class="text-yellow-400">{experimentationBreakdown.grandTotal.toFixed(4)}</span>
+												<span class="text-slate-500">×</span>
+												<span class="text-blue-400">1.04</span>
 												<span class="text-slate-500">=</span>
 												<span class="font-bold text-orange-400"
 													>{experimentationBreakdown.buffedTotal.toFixed(4)}</span

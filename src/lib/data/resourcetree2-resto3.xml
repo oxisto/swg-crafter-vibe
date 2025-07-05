@@ -1,0 +1,964 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Disclaimer and comment at the bottom of this file -->
+<!-- Last update date on the form YYYY-MM-DD -->
+<resource_tree_data description="All Resources"   last_updated="2009-04-29">
+    <resource_type swgcraft_id="egy" swgID="1" description="Energy" oq_min="200" oq_max="1000" pe_min="1" pe_max="1000">
+        <resource_type swgcraft_id="regy" swgID="813" description="Renewable Energy" oq_min="200" oq_max="1000" pe_min="1" pe_max="1000">
+            <resource_type swgcraft_id="nregy" swgID="814" description="Non Site-Restricted Renewable Energy" oq_min="200" oq_max="500" pe_min="1" pe_max="600">
+                <resource_type swgcraft_id="seg" swgID="51" description="Solar Energy" oq_min="200" oq_max="500" pe_min="200" pe_max="600">
+                    <resource_type swgcraft_id="wseg" swgID="816" description="Weak Solar Renewable Energy" recycled="yes" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                    <resource_type swgcraft_id="coseg" swgID="97" description="Corellian Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="dnseg" swgID="98" description="Dantooine Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="daseg" swgID="99" description="Dathomirian Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="enseg" swgID="100" description="Endorian Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="loseg" swgID="101" description="Lokian Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="naseg" swgID="102" description="Nabooian Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="roseg" swgID="103" description="Rori Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="tuseg" swgID="104" description="Talusian Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="taseg" swgID="105" description="Tatooinian Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="yaseg" swgID="106" description="Yavinian Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                    <resource_type swgcraft_id="kaseg" swgID="737" description="Kashyyykian Solar Renewable Energy" oq_min="500" oq_max="500" pe_min="200" pe_max="600"/>
+                </resource_type>
+                <resource_type swgcraft_id="weg" swgID="52" description="Wind Energy" oq_min="200" oq_max="500" pe_min="1" pe_max="400">
+                    <resource_type swgcraft_id="wweg" swgID="817" description="Weak Wind Renewable Energy" recycled="yes" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                    <resource_type swgcraft_id="coweg" swgID="107" description="Corellian Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="dnweg" swgID="108" description="Dantooine Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="daweg" swgID="109" description="Dathomirian Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="enweg" swgID="110" description="Endorian Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="loweg" swgID="111" description="Lokian Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="naweg" swgID="112" description="Nabooian Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="roweg" swgID="113" description="Rori Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="tuweg" swgID="114" description="Talusian Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="taweg" swgID="115" description="Tatooinian Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="yaweg" swgID="116" description="Yavinian Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                    <resource_type swgcraft_id="kaweg" swgID="749" description="Kashyyykian Wind Renewable Energy" oq_min="500" oq_max="500" pe_min="1" pe_max="400"/>
+                </resource_type>
+            </resource_type>
+            <resource_type swgcraft_id="sregy" swgID="815" description="Site-Restricted Renewable Energy" oq_min="200" oq_max="1000" pe_min="1" pe_max="1000">
+                <resource_type swgcraft_id="geg" swgID="774" description="Geothermal Energy" oq_min="200" oq_max="1000" pe_min="200" pe_max="1000">
+                    <resource_type swgcraft_id="wgeg" swgID="818" description="Weak Geothermal Renewable Energy" recycled="yes" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                    <resource_type swgcraft_id="cogeg" swgID="775" description="Corellian Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="dngeg" swgID="776" description="Dantooine Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="dageg" swgID="777" description="Dathomirian Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="engeg" swgID="778" description="Endorian Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="logeg" swgID="780" description="Lokian Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="nageg" swgID="781" description="Nabooian Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="rogeg" swgID="782" description="Rori Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="tugeg" swgID="783" description="Talusian Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="tageg" swgID="784" description="Tatooinian Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="yageg" swgID="785" description="Yavinian Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                    <resource_type swgcraft_id="kageg" swgID="779" description="Kashyyykian Geothermal Renewable Energy" oq_min="500" oq_max="1000" pe_min="200" pe_max="1000"/>
+                </resource_type>
+            </resource_type>
+        </resource_type>
+    </resource_type>
+    <resource_type swgcraft_id="org" swgID="3" description="Organic" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+        <resource_type swgcraft_id="crs" swgID="10" description="Creature Resources" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+            <resource_type swgcraft_id="cfd" swgID="35" description="Creature Food" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                <resource_type swgcraft_id="mlk" swgID="84" description="Milk" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                    <resource_type swgcraft_id="hmlk" swgID="808" description="Homogenized Milk" recycled="yes" dr_min="200" dr_max="200" fl_min="200" fl_max="200" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                    <resource_type swgcraft_id="dmk" swgID="182" description="Domesticated Milk" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                        <resource_type swgcraft_id="codmk" swgID="379" description="Corellian Domesticated Milk" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="dndmk" swgID="380" description="Dantooine Domesticated Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="dadmk" swgID="381" description="Dathomirian Domesticated Milk" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="endmk" swgID="382" description="Endorian Domesticated Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="lodmk" swgID="383" description="Lokian Domesticated Milk" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="nadmk" swgID="384" description="Nabooian Domesticated Milk" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="rodmk" swgID="385" description="Rori Domesticated Milk" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="tudmk" swgID="386" description="Talusian Domesticated Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="tadmk" swgID="387" description="Tatooinian Domesticated Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="yadmk" swgID="388" description="Yavinian Domesticated Milk" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="kadmk" swgID="724" description="Kashyyykian Domesticated Milk" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="mudmk" swgID="613" description="Mustafarian Domesticated Milk" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="wmk" swgID="183" description="Wild Milk" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700">
+                        <resource_type swgcraft_id="cowmk" swgID="389" description="Corellian Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="dnwmk" swgID="390" description="Dantooine Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="dawmk" swgID="391" description="Dathomirian Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="enwmk" swgID="392" description="Endorian Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="lowmk" swgID="393" description="Lokian Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="nawmk" swgID="394" description="Nabooian Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="rowmk" swgID="395" description="Rori Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="tuwmk" swgID="396" description="Talusian Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="tawmk" swgID="397" description="Tatooinian Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="yawmk" swgID="398" description="Yavinian Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="kawmk" swgID="745" description="Kashyyykian Wild Milk" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="muwmk" swgID="631" description="Mustafarian Wild Milk" harvested="no" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                    </resource_type>
+                </resource_type>
+                <resource_type swgcraft_id="met" swgID="83" description="Meat" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                    <resource_type swgcraft_id="pmet" swgID="806" description="Processed Meat" recycled="yes" dr_min="200" dr_max="200" fl_min="200" fl_max="200" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                    <resource_type swgcraft_id="dmt" swgID="175" description="Domesticated Meat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700">
+                        <resource_type swgcraft_id="codmt" swgID="327" description="Corellian Domesticated Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="dndmt" swgID="328" description="Dantooine Domesticated Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="dadmt" swgID="329" description="Dathomirian Domesticated Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="endmt" swgID="330" description="Endorian Domesticated Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="lodmt" swgID="331" description="Lokian Domesticated Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="nadmt" swgID="332" description="Nabooian Domesticated Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="rodmt" swgID="333" description="Rori Domesticated Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="tudmt" swgID="334" description="Talusian Domesticated Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="tadmt" swgID="335" description="Tatooinian Domesticated Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="yadmt" swgID="336" description="Yavinian Domesticated Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="kadmt" swgID="723" description="Kashyyykian Domesticated Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="mudmt" swgID="612" description="Mustafarian Domesticated Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="wmt" swgID="181" description="Wild Meat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                        <resource_type swgcraft_id="cowmt" swgID="369" description="Corellian Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="dnwmt" swgID="370" description="Dantooine Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="dawmt" swgID="371" description="Dathomirian Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="enwmt" swgID="372" description="Endorian Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="lowmt" swgID="373" description="Lokian Wild Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="nawmt" swgID="374" description="Nabooian Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="rowmt" swgID="375" description="Rori Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="tuwmt" swgID="376" description="Talusian Wild Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="tawmt" swgID="377" description="Tatooinian Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="yawmt" swgID="378" description="Yavinian Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="kawmt" swgID="744" description="Kashyyykian Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="muwmt" swgID="630" description="Mustafarian Wild Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="hmt" swgID="177" description="Herbivore Meat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700">
+                        <resource_type swgcraft_id="cohmt" swgID="337" description="Corellian Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="dnhmt" swgID="338" description="Dantooine Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="dahmt" swgID="339" description="Dathomirian Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="enhmt" swgID="340" description="Endorian Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="lohmt" swgID="341" description="Lokian Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="nahmt" swgID="342" description="Nabooian Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="rohmt" swgID="343" description="Rori Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="tuhmt" swgID="344" description="Talusian Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="tahmt" swgID="345" description="Tatooinian Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="yahmt" swgID="346" description="Yavinian Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="kahmt" swgID="732" description="Kashyyykian Herbivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        <resource_type swgcraft_id="muhmt" swgID="617" description="Mustafarian Herbivore Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="cmt" swgID="174" description="Carnivore Meat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                        <resource_type swgcraft_id="cocmt" swgID="317" description="Corellian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="dncmt" swgID="318" description="Dantooine Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="dacmt" swgID="319" description="Dathomirian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="encmt" swgID="320" description="Endorian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="locmt" swgID="321" description="Lokian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="nacmt" swgID="322" description="Nabooian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="rocmt" swgID="323" description="Rori Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="tucmt" swgID="324" description="Talusian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="tacmt" swgID="325" description="Tatooinian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="yacmt" swgID="326" description="Yavinian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="kacmt" swgID="719" description="Kashyyykian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="mucmt" swgID="610" description="Mustafarian Carnivore Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="rmt" swgID="179" description="Reptilian Meat" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                        <resource_type swgcraft_id="cormt" swgID="357" description="Corellian Reptilian Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="dnrmt" swgID="358" description="Dantooine Reptilian Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="darmt" swgID="359" description="Dathomirian Reptilian Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="enrmt" swgID="360" description="Endorian Reptilian Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="lormt" swgID="361" description="Lokian Reptilian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="narmt" swgID="362" description="Nabooian Reptilian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="rormt" swgID="363" description="Rori Reptilian Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="turmt" swgID="364" description="Talusian Reptilian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="tarmt" swgID="365" description="Tatooinian Reptilian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="yarmt" swgID="366" description="Yavinian Reptilian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="karmt" swgID="735" description="Kashyyykian Reptilian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="murmt" swgID="604" description="Mustafarian Reptilian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="amt" swgID="173" description="Avian Meat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                        <resource_type swgcraft_id="coamt" swgID="307" description="Corellian Avian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="dnamt" swgID="308" description="Dantooine Avian Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="daamt" swgID="309" description="Dathomirian Avian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="enamt" swgID="310" description="Endorian Avian Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="loamt" swgID="311" description="Lokian Avian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="naamt" swgID="312" description="Nabooian Avian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="roamt" swgID="313" description="Rori Avian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="tuamt" swgID="314" description="Talusian Avian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="taamt" swgID="315" description="Tatooinian Avian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="yaamt" swgID="316" description="Yavinian Avian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="kaamt" swgID="716" description="Kashyyykian Avian Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="muamt" swgID="608" description="Mustafarian Avian Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="egg" swgID="811" description="Egg" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                        <resource_type swgcraft_id="coegg" swgID="39" description="Corellian Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="dnegg" swgID="40" description="Dantooine Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="daegg" swgID="41" description="Dathomirian Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="enegg" swgID="42" description="Endorian Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="loegg" swgID="43" description="Lokian Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="naegg" swgID="44" description="Nabooian Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="roegg" swgID="45" description="Rori Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="tuegg" swgID="46" description="Talusian Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="taegg" swgID="47" description="Tatooinian Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="yaegg" swgID="48" description="Yavinian Egg" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="kaegg" swgID="663" description="Kashyyykian Egg" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        <resource_type swgcraft_id="muegg" swgID="614" description="Mustafarian Egg" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="imt" swgID="178" description="Insect Meat" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                        <resource_type swgcraft_id="coimt" swgID="347" description="Corellian Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="dnimt" swgID="348" description="Dantooine Insect Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="daimt" swgID="349" description="Dathomirian Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="enimt" swgID="350" description="Endorian Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="loimt" swgID="351" description="Lokian Insect Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="naimt" swgID="352" description="Nabooian Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="roimt" swgID="353" description="Rori Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="tuimt" swgID="354" description="Talusian Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="taimt" swgID="355" description="Tatooinian Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="yaimt" swgID="356" description="Yavinian Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="kaimt" swgID="733" description="Kashyyykian Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        <resource_type swgcraft_id="muimt" swgID="618" description="Mustafarian Insect Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="sfd" swgID="180" description="Seafood" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                        <resource_type swgcraft_id="psfd" swgID="807" description="Processed Seafood" recycled="yes" dr_min="200" dr_max="200" fl_min="200" fl_max="200" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                        <resource_type swgcraft_id="fmt" swgID="176" description="Fish" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                            <resource_type swgcraft_id="cofmt" swgID="664" description="Corellian Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dnfmt" swgID="665" description="Dantooine Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dafmt" swgID="666" description="Dathomirian Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="enfmt" swgID="667" description="Endorian Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="lofmt" swgID="669" description="Lokian Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="nafmt" swgID="671" description="Nabooian Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="rofmt" swgID="672" description="Rori Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tufmt" swgID="673" description="Talusian Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tafmt" swgID="674" description="Tatooinian Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="yafmt" swgID="675" description="Yavinian Fish Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="kafmt" swgID="668" description="Kashyyykian Fish Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="mufmt" swgID="670" description="Mustafarian Fish Meat" harvested="no" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="tmt" swgID="367" description="Crustacean" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                            <resource_type swgcraft_id="cotmt" swgID="651" description="Corellian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dntmt" swgID="652" description="Dantooine Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="datmt" swgID="653" description="Dathomirian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="entmt" swgID="654" description="Endorian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="lotmt" swgID="656" description="Lokian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="natmt" swgID="658" description="Nabooian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="rotmt" swgID="659" description="Rori Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tutmt" swgID="660" description="Talusian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tatmt" swgID="661" description="Tatooinian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="yatmt" swgID="662" description="Yavinian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="katmt" swgID="655" description="Kashyyykian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="mutmt" swgID="657" description="Mustafarian Crustacean Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="mmt" swgID="368" description="Mollusk" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                            <resource_type swgcraft_id="commt" swgID="686" description="Corellian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dnmmt" swgID="687" description="Dantooine Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dammt" swgID="688" description="Dathomirian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="enmmt" swgID="689" description="Endorian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="lommt" swgID="691" description="Lokian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="nammt" swgID="693" description="Nabooian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="rommt" swgID="694" description="Rori Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tummt" swgID="695" description="Talusian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tammt" swgID="696" description="Tatooinian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="yammt" swgID="697" description="Yavinian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="kammt" swgID="690" description="Kashyyykian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="mummt" swgID="692" description="Mustafarian Mollusk Meat" harvested="yes" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        </resource_type>
+                    </resource_type>
+                </resource_type>
+            </resource_type>
+            <resource_type swgcraft_id="cst" swgID="11" description="Creature Structural" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                <resource_type swgcraft_id="bne" swgID="37" description="Bone" dr_min="1" dr_max="1000" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="1000" ut_min="1" ut_max="1000">
+                    <resource_type swgcraft_id="gbne" swgID="809" description="Ground Bones" recycled="yes" dr_min="200" dr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                    <resource_type swgcraft_id="coabn" swgID="224" description="Corellian Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="dnabn" swgID="225" description="Dantooine Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="daabn" swgID="226" description="Dathomirian Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="enabn" swgID="227" description="Endorian Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="loabn" swgID="228" description="Lokian Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="naabn" swgID="229" description="Nabooian Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="roabn" swgID="230" description="Rori Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="tuabn" swgID="231" description="Talusian Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="taabn" swgID="232" description="Tatooinian Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="yaabn" swgID="233" description="Yavinian Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="kaabn" swgID="714" description="Kashyyykian Animal Bones" harvested="yes" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="muabn" swgID="607" description="Mustafarian Animal Bones" harvested="no" dr_min="300" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="vbn" swgID="91" description="Avian Bone" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500">
+                        <resource_type swgcraft_id="covbn" swgID="234" description="Corellian Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="dnvbn" swgID="235" description="Dantooine Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="davbn" swgID="236" description="Dathomirian Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="envbn" swgID="237" description="Endorian Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="lovbn" swgID="238" description="Lokian Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="navbn" swgID="239" description="Nabooian Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="rovbn" swgID="240" description="Rori Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="tuvbn" swgID="241" description="Talusian Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="tavbn" swgID="242" description="Tatooinian Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="yavbn" swgID="243" description="Yavinian Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="kavbn" swgID="715" description="Kashyyykian Avian Bones" harvested="yes" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                        <resource_type swgcraft_id="muvbn" swgID="751" description="Mustafarian Avian Bones" harvested="no" dr_min="1" dr_max="700" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="100" sr_max="500" ut_min="1" ut_max="500"/>
+                    </resource_type>
+                </resource_type>
+                <resource_type swgcraft_id="hrn" swgID="38" description="Horn" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="200" sr_max="700" ut_min="1" ut_max="500">
+                    <resource_type swgcraft_id="ghrn" swgID="830" description="Ground Horn" recycled="yes" dr_min="200" dr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                    <resource_type swgcraft_id="cohrn" swgID="676" description="Corellian Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="dnhrn" swgID="92" description="Dantooine Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="dahrn" swgID="677" description="Dathomirian Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="enhrn" swgID="678" description="Endorian Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="lohrn" swgID="680" description="Lokian Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="nahrn" swgID="682" description="Nabooian Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="rohrn" swgID="683" description="Rori Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="tuhrn" swgID="93" description="Talusian Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="tahrn" swgID="684" description="Tatooinian Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="yahrn" swgID="685" description="Yavinian Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="kahrn" swgID="679" description="Kashyyykian Horn" harvested="yes" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                    <resource_type swgcraft_id="muhrn" swgID="681" description="Mustafarian Horn" harvested="no" dr_min="200" dr_max="1000" ma_min="1" ma_max="500" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="500"/>
+                </resource_type>
+                <resource_type swgcraft_id="hid" swgID="36" description="Hide" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                    <resource_type swgcraft_id="shid" swgID="810" description="Synthesized Hides" recycled="yes" dr_min="200" dr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                    <resource_type swgcraft_id="whd" swgID="89" description="Wooly Hide" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                        <resource_type swgcraft_id="cowhd" swgID="214" description="Corellian Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="dnwhd" swgID="215" description="Dantooine Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="dawhd" swgID="216" description="Dathomirian Wooly Hide" harvested="no" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="enwhd" swgID="217" description="Endorian Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="lowhd" swgID="218" description="Lokian Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="nawhd" swgID="219" description="Nabooian Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="rowhd" swgID="220" description="Rori Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="tuwhd" swgID="221" description="Talusian Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="tawhd" swgID="222" description="Tatooinian Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="yawhd" swgID="223" description="Yavinian Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="kawhd" swgID="750" description="Kashyyykian Wooly Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="muwhd" swgID="632" description="Mustafarian Wooly Hide" harvested="no" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="bhd" swgID="85" description="Bristley Hide" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                        <resource_type swgcraft_id="cobhd" swgID="184" description="Corellian Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="dnbhd" swgID="185" description="Dantooine Bristley Hide" harvested="no" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="dabhd" swgID="186" description="Dathomirian Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="enbhd" swgID="187" description="Endorian Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="lobhd" swgID="188" description="Lokian Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="nabhd" swgID="189" description="Nabooian Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="robhd" swgID="190" description="Rori Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="tubhd" swgID="191" description="Talusian Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="tabhd" swgID="192" description="Tatooinian Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="yabhd" swgID="193" description="Yavinian Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="kabhd" swgID="718" description="Kashyyykian Bristley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="mubhd" swgID="609" description="Mustafarian Bristley Hide" harvested="no" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="lhd" swgID="87" description="Leathery Hide" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                        <resource_type swgcraft_id="colhd" swgID="194" description="Corellian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="dnlhd" swgID="195" description="Dantooine Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="dalhd" swgID="196" description="Dathomirian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="enlhd" swgID="197" description="Endorian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="lolhd" swgID="198" description="Lokian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="nalhd" swgID="199" description="Nabooian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="rolhd" swgID="200" description="Rori Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="tulhd" swgID="201" description="Talusian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="talhd" swgID="202" description="Tatooinian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="yalhd" swgID="203" description="Yavinian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="kalhd" swgID="734" description="Kashyyykian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="mulhd" swgID="621" description="Mustafarian Leathery Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="shd" swgID="88" description="Scaley Hide" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                        <resource_type swgcraft_id="coshd" swgID="204" description="Corellian Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="dnshd" swgID="205" description="Dantooine Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="dashd" swgID="206" description="Dathomirian Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="enshd" swgID="207" description="Endorian Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="loshd" swgID="208" description="Lokian Scaley Hide" harvested="no" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="nashd" swgID="209" description="Nabooian Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="roshd" swgID="210" description="Rori Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="tushd" swgID="211" description="Talusian Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="tashd" swgID="212" description="Tatooinian Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="yashd" swgID="213" description="Yavinian Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="kashd" swgID="736" description="Kashyyykian Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="mushd" swgID="603" description="Mustafarian Scaley Hide" harvested="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                    </resource_type>
+                </resource_type>
+            </resource_type>
+        </resource_type>
+        <resource_type swgcraft_id="frs" swgID="13" description="Flora Resources" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" ma_min="200" ma_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000" sr_min="1" sr_max="700" ut_min="1" ut_max="800">
+            <resource_type swgcraft_id="flf" swgID="49" description="Flora Food" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                <resource_type swgcraft_id="cer" swgID="94" description="Cereal" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                    <resource_type swgcraft_id="pcer" swgID="805" description="Processed Cereal" recycled="yes" dr_min="200" dr_max="200" fl_min="200" fl_max="200" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                    <resource_type swgcraft_id="crn" swgID="244" description="Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                        <resource_type swgcraft_id="dcn" swgID="399" description="Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                            <resource_type swgcraft_id="codcn" swgID="416" description="Corellian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="dndcn" swgID="417" description="Dantooine Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="dadcn" swgID="418" description="Dathomirian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="endcn" swgID="419" description="Endorian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="lodcn" swgID="420" description="Lokian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="nadcn" swgID="421" description="Nabooian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="rodcn" swgID="422" description="Rori Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="tudcn" swgID="423" description="Talusian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="tadcn" swgID="424" description="Tatooinian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="yadcn" swgID="425" description="Yavinian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="kadcn" swgID="722" description="Kashyyykian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="mudcn" swgID="755" description="Mustafarian Domesticated Corn" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="wcn" swgID="400" description="Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700">
+                            <resource_type swgcraft_id="cowcn" swgID="426" description="Corellian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="dnwcn" swgID="427" description="Dantooine Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="dawcn" swgID="428" description="Dathomirian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="enwcn" swgID="429" description="Endorian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="lowcn" swgID="430" description="Lokian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="nawcn" swgID="431" description="Nabooian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="rowcn" swgID="432" description="Rori Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="tuwcn" swgID="433" description="Talusian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="tawcn" swgID="434" description="Tatooinian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="yawcn" swgID="435" description="Yavinian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="kawcn" swgID="743" description="Kashyyykian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="muwcn" swgID="798" description="Mustafarian Wild Corn" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        </resource_type>
+                    </resource_type>
+                    <resource_type swgcraft_id="ric" swgID="246" description="Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                        <resource_type swgcraft_id="drc" swgID="403" description="Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                            <resource_type swgcraft_id="codrc" swgID="456" description="Corellian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="dndrc" swgID="457" description="Dantooine Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="dadrc" swgID="458" description="Dathomirian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="endrc" swgID="459" description="Endorian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="lodrc" swgID="460" description="Lokian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="nadrc" swgID="461" description="Nabooian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="rodrc" swgID="462" description="Rori Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="tudrc" swgID="463" description="Talusian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="tadrc" swgID="464" description="Tatooinian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="yadrc" swgID="465" description="Yavinian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="kadrc" swgID="726" description="Kashyyykian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="mudrc" swgID="789" description="Mustafarian Domesticated Rice" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="wrc" swgID="404" description="Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700">
+                            <resource_type swgcraft_id="cowrc" swgID="466" description="Corellian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="dnwrc" swgID="467" description="Dantooine Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="dawrc" swgID="468" description="Dathomirian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="enwrc" swgID="469" description="Endorian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="lowrc" swgID="470" description="Lokian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="nawrc" swgID="471" description="Nabooian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="rowrc" swgID="472" description="Rori Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="tuwrc" swgID="473" description="Talusian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="tawrc" swgID="474" description="Tatooinian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="yawrc" swgID="475" description="Yavinian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="kawrc" swgID="747" description="Kashyyykian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="muwrc" swgID="793" description="Mustafarian Wild Rice" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        </resource_type>
+                    </resource_type>
+                    <resource_type swgcraft_id="oat" swgID="245" description="Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                        <resource_type swgcraft_id="dot" swgID="401" description="Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                            <resource_type swgcraft_id="codot" swgID="436" description="Corellian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="dndot" swgID="437" description="Dantooine Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="dadot" swgID="438" description="Dathomirian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="endot" swgID="439" description="Endorian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="lodot" swgID="440" description="Lokian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="nadot" swgID="441" description="Nabooian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="rodot" swgID="442" description="Rori Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="tudot" swgID="443" description="Talusian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="tadot" swgID="444" description="Tatooinian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="yadot" swgID="445" description="Yavinian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="kadot" swgID="725" description="Kashyyykian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="mudot" swgID="788" description="Mustafarian Domesticated Oats" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="wot" swgID="402" description="Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700">
+                            <resource_type swgcraft_id="cowot" swgID="446" description="Corellian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="dnwot" swgID="447" description="Dantooine Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="dawot" swgID="448" description="Dathomirian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="enwot" swgID="449" description="Endorian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="lowot" swgID="450" description="Lokian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="nawot" swgID="451" description="Nabooian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="rowot" swgID="452" description="Rori Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="tuwot" swgID="453" description="Talusian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="tawot" swgID="454" description="Tatooinian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="yawot" swgID="455" description="Yavinian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="kawot" swgID="746" description="Kashyyykian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="muwot" swgID="791" description="Mustafarian Wild Oats" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        </resource_type>
+                    </resource_type>
+                    <resource_type swgcraft_id="wht" swgID="247" description="Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                        <resource_type swgcraft_id="dwt" swgID="405" description="Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                            <resource_type swgcraft_id="codwt" swgID="476" description="Corellian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="dndwt" swgID="477" description="Dantooine Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="dadwt" swgID="478" description="Dathomirian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="endwt" swgID="479" description="Endorian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="lodwt" swgID="480" description="Lokian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="nadwt" swgID="481" description="Nabooian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="rodwt" swgID="482" description="Rori Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="tudwt" swgID="483" description="Talusian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="tadwt" swgID="484" description="Tatooinian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="yadwt" swgID="485" description="Yavinian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="kadwt" swgID="727" description="Kashyyykian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                            <resource_type swgcraft_id="mudwt" swgID="796" description="Mustafarian Domesticated Wheat" dr_min="1" dr_max="1000" fl_min="1" fl_max="700" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="wwt" swgID="406" description="Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700">
+                            <resource_type swgcraft_id="cowwt" swgID="486" description="Corellian Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="dnwwt" swgID="487" description="Dantooine Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="dawwt" swgID="488" description="Dathomir Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="enwwt" swgID="489" description="Endorian Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="lowwt" swgID="490" description="Lokian Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="nawwt" swgID="491" description="Nabooian Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="rowwt" swgID="492" description="Rori Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="tuwwt" swgID="493" description="Talusian Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="tawwt" swgID="494" description="Tatooinian Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="yawwt" swgID="495" description="Yavinian Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="kawwt" swgID="748" description="Kashyyykian Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="muwwt" swgID="794" description="Mustafarian Wild Wheat" dr_min="1" dr_max="1000" fl_min="300" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        </resource_type>
+                    </resource_type>
+                </resource_type>
+                <resource_type swgcraft_id="sds" swgID="95" description="Seeds" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                    <resource_type swgcraft_id="veg" swgID="249" description="Vegetables" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                        <resource_type swgcraft_id="mveg" swgID="804" description="Mixed Vegetables" recycled="yes" dr_min="200" dr_max="200" fl_min="200" fl_max="200" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                        <resource_type swgcraft_id="grn" swgID="412" description="Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                            <resource_type swgcraft_id="cogrn" swgID="546" description="Corellian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dngrn" swgID="547" description="Dantooine Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dagrn" swgID="548" description="Dathomirian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="engrn" swgID="549" description="Endorian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="logrn" swgID="550" description="Lokian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="nagrn" swgID="551" description="Nabooian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="rogrn" swgID="552" description="Rori Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tugrn" swgID="553" description="Talusian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tagrn" swgID="554" description="Tatooinian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="yagrn" swgID="555" description="Yavinian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="kagrn" swgID="740" description="Kashyyykian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="mugrn" swgID="790" description="Mustafarian Vegetable Greens" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="bns" swgID="410" description="Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                            <resource_type swgcraft_id="cobns" swgID="526" description="Corellian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dnbns" swgID="527" description="Dantooine Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dabns" swgID="528" description="Dathomirian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="enbns" swgID="529" description="Endorian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="lobns" swgID="530" description="Lokian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="nabns" swgID="531" description="Nabooian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="robns" swgID="532" description="Rori Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tubns" swgID="533" description="Talusian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tabns" swgID="534" description="Tatooinian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="yabns" swgID="535" description="Yavinian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="kabns" swgID="738" description="Kashyyykian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="mubns" swgID="792" description="Mustafarian Vegetable Beans" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="tub" swgID="413" description="Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                            <resource_type swgcraft_id="cotub" swgID="556" description="Corellian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dntub" swgID="557" description="Dantooine Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="datub" swgID="558" description="Dathomirian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="entub" swgID="559" description="Endorian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="lotub" swgID="560" description="Lokian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="natub" swgID="561" description="Nabooian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="rotub" swgID="562" description="Rori Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tutub" swgID="563" description="Talusian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tatub" swgID="564" description="Tatooinian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="yatub" swgID="565" description="Yavinian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="katub" swgID="741" description="Kashyyykian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="mutub" swgID="800" description="Mustafarian Vegetable Tubers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="fgs" swgID="411" description="Fungi" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                            <resource_type swgcraft_id="cofgs" swgID="536" description="Corellian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dnfgs" swgID="537" description="Dantooine Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dafgs" swgID="538" description="Dathomirian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="enfgs" swgID="539" description="Endorian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="lofgs" swgID="540" description="Lokian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="nafgs" swgID="541" description="Nabooian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="rofgs" swgID="542" description="Rori Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tufgs" swgID="543" description="Talusian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tafgs" swgID="544" description="Tatooinian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="yafgs" swgID="545" description="Yavinian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="kafgs" swgID="739" description="Kashyyykian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="mufgs" swgID="795" description="Mustafarian Vegetable Fungus" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        </resource_type>
+                    </resource_type>
+                    <resource_type swgcraft_id="frt" swgID="248" description="Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                        <resource_type swgcraft_id="mfrt" swgID="803" description="Mixed Fruits" recycled="yes" dr_min="200" dr_max="200" fl_min="200" fl_max="200" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                        <resource_type swgcraft_id="fts" swgID="409" description="Fruits" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                            <resource_type swgcraft_id="cofts" swgID="516" description="Corellian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dnfts" swgID="517" description="Dantooine Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dafts" swgID="518" description="Dathomirian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="enfts" swgID="519" description="Endorian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="lofts" swgID="520" description="Lokian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="nafts" swgID="521" description="Nabooian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="rofts" swgID="522" description="Rori Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tufts" swgID="523" description="Talusian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tafts" swgID="524" description="Tatooinian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="yafts" swgID="525" description="Yavinian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="kafts" swgID="731" description="Kashyyykian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="mufts" swgID="797" description="Mustafarian Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="ber" swgID="407" description="Berries" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                            <resource_type swgcraft_id="cober" swgID="496" description="Corellia Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="dnber" swgID="497" description="Dantooine Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="daber" swgID="498" description="Dathomirian Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="enber" swgID="499" description="Endorian Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="lober" swgID="500" description="Lokian Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="naber" swgID="501" description="Nabooian Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="rober" swgID="502" description="Rori Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="tuber" swgID="503" description="Talusian Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="taber" swgID="504" description="Tatooinian Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="yaber" swgID="505" description="Yavinian Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="kaber" swgID="717" description="Kashyyykian Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                            <resource_type swgcraft_id="muber" swgID="752" description="Mustafarian Berry Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                        </resource_type>
+                        <resource_type swgcraft_id="flr" swgID="408" description="Flowers" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700">
+                            <resource_type swgcraft_id="coflr" swgID="506" description="Corellia Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="dnflr" swgID="507" description="Dantooine Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="daflr" swgID="508" description="Dathomirian Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="enflr" swgID="509" description="Endorian Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="loflr" swgID="510" description="Lokian Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="naflr" swgID="511" description="Nabooian Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="roflr" swgID="512" description="Rori Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="tuflr" swgID="513" description="Talusian Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="taflr" swgID="514" description="Tatooinian Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="yaflr" swgID="515" description="Yavinian Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="kaflr" swgID="730" description="Kashyyykian Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                            <resource_type swgcraft_id="muflr" swgID="799" description="Mustafarian Flower Fruit" dr_min="1" dr_max="1000" fl_min="1" fl_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="700"/>
+                        </resource_type>
+                    </resource_type>
+                </resource_type>
+            </resource_type>
+            <resource_type swgcraft_id="fls" swgID="50" description="Flora Structural" dr_min="1" dr_max="800" ma_min="200" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="700" ut_min="1" ut_max="800">
+                <resource_type swgcraft_id="wod" swgID="96" description="Wood" dr_min="1" dr_max="800" ma_min="200" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="700" ut_min="1" ut_max="800">
+                    <resource_type swgcraft_id="bwod" swgID="787" description="Blended Wood" recycled="yes" dr_min="200" dr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                    <resource_type swgcraft_id="hwd" swgID="250" description="Hard Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800">
+                        <resource_type swgcraft_id="codwd" swgID="567" description="Corellian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="dndwd" swgID="568" description="Dantooine Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="dadwd" swgID="569" description="Dathomirian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="endwd" swgID="570" description="Endorian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="lodwd" swgID="571" description="Lokian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="nadwd" swgID="572" description="Nabooian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="rodwd" swgID="573" description="Rori Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="tudwd" swgID="574" description="Talusian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="tadwd" swgID="575" description="Tatooinian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="yadwd" swgID="576" description="Yavinian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="kadwd" swgID="721" description="Kashyyykian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                        <resource_type swgcraft_id="mudwd" swgID="754" description="Mustafarian Deciduous Wood" dr_min="1" dr_max="800" ma_min="400" ma_max="800" oq_min="1" oq_max="1000" sr_min="300" sr_max="700" ut_min="1" ut_max="800"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="swd" swgID="251" description="Soft Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300">
+                        <resource_type swgcraft_id="cocwd" swgID="579" description="Corellian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="dncwd" swgID="580" description="Dantooine Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="dacwd" swgID="581" description="Dathomirian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="encwd" swgID="582" description="Endorian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="locwd" swgID="583" description="Lokian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="nacwd" swgID="584" description="Nabooian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="rocwd" swgID="585" description="Rori Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="tucwd" swgID="586" description="Talusian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="tacwd" swgID="587" description="Tatooinian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="yacwd" swgID="588" description="Yavinian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="kacwd" swgID="720" description="Kashyyykian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="mucwd" swgID="753" description="Mustafarian Conifer Wood" dr_min="1" dr_max="600" ma_min="600" ma_max="1000" oq_min="1" oq_max="1000" sr_min="100" sr_max="400" ut_min="1" ut_max="300"/>
+                        <resource_type swgcraft_id="ewd" swgID="578" description="Evergreen Soft Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300">
+                            <resource_type swgcraft_id="coewd" swgID="589" description="Corellia Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="dnewd" swgID="590" description="Dantooine Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="daewd" swgID="591" description="Dathomirian Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="enewd" swgID="592" description="Endorian Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="loewd" swgID="593" description="Lokian Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="naewd" swgID="594" description="Nabooian Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="roewd" swgID="595" description="Rori Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="tuewd" swgID="596" description="Talusian Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="taewd" swgID="597" description="Tatooinian Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="yaewd" swgID="598" description="Yavinian Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="kaewd" swgID="728" description="Kashyyykian Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                            <resource_type swgcraft_id="muewd" swgID="801" description="Mustafarian Evergreen Wood" dr_min="1" dr_max="500" ma_min="800" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="400" ut_min="1" ut_max="300"/>
+                        </resource_type>
+                    </resource_type>
+                </resource_type>
+            </resource_type>
+        </resource_type>
+    </resource_type>
+    <resource_type swgcraft_id="ino" swgID="2" description="Inorganic" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" er_min="1" er_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+        <resource_type swgcraft_id="chm" swgID="6" description="Chemical" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+            <resource_type swgcraft_id="cchm" swgID="819" description="Chemical Compound" recycled="yes" dr_min="200" dr_max="200" oq_min="200" oq_max="200"/>
+            <resource_type swgcraft_id="pet" swgID="17" description="Liquid Petrochem Fuel" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                <resource_type swgcraft_id="upf" swgID="67" description="Unknown Liquid Petrochem Fuel" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                <resource_type swgcraft_id="kpf" swgID="66" description="Known Liquid Petrochem Fuel" dr_min="1" dr_max="600" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                    <resource_type swgcraft_id="c1kpf" swgID="117" description="Class 1 Liquid Petro Fuel" dr_min="1" dr_max="600" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                    <resource_type swgcraft_id="c2kpf" swgID="118" description="Class 2 Liquid Petro Fuel" dr_min="1" dr_max="600" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                    <resource_type swgcraft_id="c3kpf" swgID="119" description="Class 3 Liquid Petro Fuel" dr_min="1" dr_max="600" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                    <resource_type swgcraft_id="c4kpf" swgID="120" description="Class 4 Liquid Petro Fuel" dr_min="1" dr_max="600" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                    <resource_type swgcraft_id="c5kpf" swgID="757" description="Class 5 Liquid Petro Fuel" dr_min="1" dr_max="600" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                    <resource_type swgcraft_id="c6kpf" swgID="121" description="Class 6 Liquid Petro Fuel" dr_min="1" dr_max="600" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                    <resource_type swgcraft_id="c7kpf" swgID="122" description="Class 7 Liquid Petro Fuel" dr_min="1" dr_max="600" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                    <resource_type swgcraft_id="mukpf" swgID="602" description="Mustafarian Liquid Petro Fuel" dr_min="1" dr_max="600" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                </resource_type>
+            </resource_type>
+            <resource_type swgcraft_id="inp" swgID="16" description="Inert Petrochemical" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                <resource_type swgcraft_id="lub" swgID="64" description="Lubricating Oil" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000"/>
+                <resource_type swgcraft_id="pol" swgID="65" description="Polymer" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+            </resource_type>
+            <resource_type swgcraft_id="fib" swgID="15" description="Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                <resource_type swgcraft_id="cofib" swgID="53" description="Corellia Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="dnfib" swgID="54" description="Dantooine Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="dafib" swgID="55" description="Dathomirian Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="enfib" swgID="56" description="Endorian Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="lofib" swgID="58" description="Lokian Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="nafib" swgID="59" description="Nabooian Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="rofib" swgID="60" description="Rori Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="tufib" swgID="61" description="Talusian Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="tafib" swgID="62" description="Tatooinian Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="grfib" swgID="57" description="Gravitonic Fiberplast" JTL="yes" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="yafib" swgID="63" description="Yavinian Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="kafib" swgID="729" description="Kashyyykian Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="mufib" swgID="616" description="Mustafarian Fiberplast" dr_min="1" dr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+            </resource_type>
+        </resource_type>
+        <resource_type swgcraft_id="wtr" swgID="9" description="Water" dr_min="1" dr_max="1000" oq_min="200" oq_max="1000">
+            <resource_type swgcraft_id="swtr" swgID="802" description="Water Solution" recycled="yes" dr_min="200" dr_max="200" oq_min="200" oq_max="200"/>
+            <resource_type swgcraft_id="cowtr" swgID="25" description="Corellian Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="dnwtr" swgID="26" description="Dantooine Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="dawtr" swgID="27" description="Dathomir Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="enwtr" swgID="28" description="Endorian Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="lowtr" swgID="29" description="Lokian Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="nawtr" swgID="30" description="Nabooian Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="rowtr" swgID="31" description="Rori Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="tuwtr" swgID="32" description="Talusian Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="tawtr" swgID="33" description="Tatooinian Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="yawtr" swgID="34" description="Yavinian Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="kawtr" swgID="742" description="Kashyyykian Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+            <resource_type swgcraft_id="muwtr" swgID="629" description="Mustafarian Water Vapor" dr_min="1" dr_max="1000" oq_min="600" oq_max="1000"/>
+        </resource_type>
+        <resource_type swgcraft_id="min" swgID="8" description="Mineral" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" er_min="1" er_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+            <resource_type swgcraft_id="spc" swgID="24" description="Solid Petrochem Fuel" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                <resource_type swgcraft_id="dspc" swgID="828" description="Degraded Solid Petrochem Fuel" recycled="yes" dr_min="200" dr_max="200" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                <resource_type swgcraft_id="usp" swgID="82" description="Unknown Solid Petrochem Fuel" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                <resource_type swgcraft_id="ksp" swgID="81" description="Known Solid Petrochem Fuel" dr_min="1" dr_max="800" oq_min="1" oq_max="1000" pe_min="300" pe_max="1000">
+                    <resource_type swgcraft_id="c1ksp" swgID="634" description="Class 1 Solid Petro Fuel" dr_min="1" dr_max="149" oq_min="1" oq_max="1000" pe_min="300" pe_max="430"/>
+                    <resource_type swgcraft_id="c2ksp" swgID="635" description="Class 2 Solid Petro Fuel" dr_min="81" dr_max="264" oq_min="1" oq_max="1000" pe_min="370" pe_max="530"/>
+                    <resource_type swgcraft_id="c3ksp" swgID="171" description="Class 3 Solid Petro Fuel" dr_min="195" dr_max="378" oq_min="1" oq_max="1000" pe_min="470" pe_max="630"/>
+                    <resource_type swgcraft_id="c4ksp" swgID="636" description="Class 4 Solid Petro Fuel" dr_min="309" dr_max="492" oq_min="1" oq_max="1000" pe_min="570" pe_max="730"/>
+                    <resource_type swgcraft_id="c5ksp" swgID="172" description="Class 5 Solid Petro Fuel" dr_min="423" dr_max="606" oq_min="1" oq_max="1000" pe_min="670" pe_max="830"/>
+                    <resource_type swgcraft_id="c6ksp" swgID="637" description="Class 6 Solid Petro Fuel" dr_min="537" dr_max="720" oq_min="1" oq_max="1000" pe_min="770" pe_max="930"/>
+                    <resource_type swgcraft_id="c7ksp" swgID="638" description="Class 7 Solid Petro Fuel" dr_min="652" dr_max="800" oq_min="1" oq_max="1000" pe_min="870" pe_max="1000"/>
+                    <resource_type swgcraft_id="muksp" swgID="605" description="Mustafarian Solid Petro Fuel" dr_min="750" dr_max="800" oq_min="500" oq_max="1000" pe_min="870" pe_max="1000"/>
+                </resource_type>
+            </resource_type>
+            <resource_type swgcraft_id="rad" swgID="23" description="Radioactive" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                <resource_type swgcraft_id="crad" swgID="827" description="Combined Radioactive Isotopes" recycled="yes" dr_min="200" dr_max="200" oq_min="200" oq_max="200" pe_min="200" pe_max="200"/>
+                <resource_type swgcraft_id="urd" swgID="80" description="Unknown Radioactive" dr_min="1" dr_max="800" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                <resource_type swgcraft_id="krd" swgID="79" description="Known Radioactive" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000">
+                    <resource_type swgcraft_id="c1krd" swgID="166" description="Class 1 Radioactive" dr_min="400" dr_max="474" oq_min="1" oq_max="1000" pe_min="500" pe_max="593"/>
+                    <resource_type swgcraft_id="c2krd" swgID="167" description="Class 2 Radioactive" dr_min="440" dr_max="531" oq_min="1" oq_max="1000" pe_min="550" pe_max="664"/>
+                    <resource_type swgcraft_id="c3krd" swgID="639" description="Class 3 Radioactive" dr_min="497" dr_max="589" oq_min="1" oq_max="1000" pe_min="621" pe_max="736"/>
+                    <resource_type swgcraft_id="c4krd" swgID="168" description="Class 4 Radioactive" dr_min="554" dr_max="646" oq_min="1" oq_max="1000" pe_min="693" pe_max="807"/>
+                    <resource_type swgcraft_id="c5krd" swgID="169" description="Class 5 Radioactive" dr_min="611" dr_max="703" oq_min="1" oq_max="1000" pe_min="764" pe_max="879"/>
+                    <resource_type swgcraft_id="c6krd" swgID="640" description="Class 6 Radioactive" dr_min="669" dr_max="760" oq_min="1" oq_max="1000" pe_min="836" pe_max="950"/>
+                    <resource_type swgcraft_id="c7krd" swgID="641" description="Class 7 Radioactive" dr_min="726" dr_max="800" oq_min="1" oq_max="1000" pe_min="907" pe_max="1000"/>
+                    <resource_type swgcraft_id="mukrd" swgID="622" description="Mustafarian Radioactive" dr_min="900" dr_max="1000" oq_min="500" oq_max="1000" pe_min="907" pe_max="1000"/>
+                    <resource_type swgcraft_id="hpkrd" swgID="170" description="High Grade Polymetric Radioactive" JTL="yes" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000" pe_min="1" pe_max="1000"/>
+                </resource_type>
+            </resource_type>
+            <resource_type swgcraft_id="mtl" swgID="22" description="Metal" cd_min="1" cd_max="1000" cr_min="1" cr_max="800" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                <resource_type swgcraft_id="fer" swgID="77" description="Ferrous Metal" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="6010000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                    <resource_type swgcraft_id="sfer" swgID="824" description="Smelted Ferrous Metal" recycled="yes" cd_min="200" cd_max="200" cr_min="200" cr_max="200" dr_min="200" dr_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                    <resource_type swgcraft_id="unfer" swgID="162" description="Unknown Ferrous Metal" cd_min="1" cd_max="650" cr_min="1" cr_max="800" dr_min="300" dr_max="1000" hr_min="300" hr_max="1000" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="400" ut_max="1000"/>
+                    <resource_type swgcraft_id="stl" swgID="161" description="Steel" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                        <resource_type swgcraft_id="sstl" swgID="288" description="Smelted Steel" recycled="yes" cd_min="200" cd_max="200" cr_min="200" cr_max="200" dr_min="200" dr_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                        <resource_type swgcraft_id="rhstl" swgID="287" description="Rhodium Steel" cd_min="1" cd_max="85" cr_min="1" cr_max="105" dr_min="500" dr_max="565" hr_min="600" hr_max="652" ma_min="1" ma_max="53" oq_min="1" oq_max="1000" sr_min="500" sr_max="565" ut_min="400" ut_max="478"/>
+                        <resource_type swgcraft_id="kistl" swgID="284" description="Kiirium Steel" cd_min="46" cd_max="150" cr_min="57" cr_max="185" dr_min="535" dr_max="615" hr_min="628" hr_max="692" ma_min="29" ma_max="93" oq_min="1" oq_max="1000" sr_min="535" sr_max="615" ut_min="442" ut_max="538"/>
+                        <resource_type swgcraft_id="custl" swgID="280" description="Cubirian Steel" cd_min="111" cd_max="215" cr_min="137" cr_max="265" dr_min="585" dr_max="665" hr_min="668" hr_max="732" ma_min="69" ma_max="133" oq_min="1" oq_max="1000" sr_min="585" sr_max="665" ut_min="502" ut_max="598"/>
+                        <resource_type swgcraft_id="thstl" swgID="599" description="Thoranium Steel" cd_min="176" cd_max="280" cr_min="217" cr_max="345" dr_min="635" dr_max="715" hr_min="708" hr_max="772" ma_min="109" ma_max="173" oq_min="1" oq_max="1000" sr_min="635" sr_max="715" ut_min="562" ut_max="658"/>
+                        <resource_type swgcraft_id="nestl" swgID="285" description="Neutronium Steel" cd_min="241" cd_max="345" cr_min="297" cr_max="424" dr_min="685" dr_max="765" hr_min="748" hr_max="812" ma_min="149" ma_max="212" oq_min="1" oq_max="1000" sr_min="685" sr_max="765" ut_min="622" ut_max="718"/>
+                        <resource_type swgcraft_id="dustl" swgID="283" description="Duranium Steel" cd_min="306" cd_max="410" cr_min="377" cr_max="504" dr_min="735" dr_max="815" hr_min="788" hr_max="852" ma_min="189" ma_max="252" oq_min="1" oq_max="1000" sr_min="735" sr_max="815" ut_min="682" ut_max="778"/>
+                        <resource_type swgcraft_id="dtstl" swgID="281" description="Ditanium Steel" cd_min="371" cd_max="475" cr_min="456" cr_max="584" dr_min="785" dr_max="865" hr_min="828" hr_max="892" ma_min="228" ma_max="292" oq_min="1" oq_max="1000" sr_min="785" sr_max="865" ut_min="742" ut_max="838"/>
+                        <resource_type swgcraft_id="qustl" swgID="286" description="Quadranium Steel" cd_min="436" cd_max="540" cr_min="536" cr_max="664" dr_min="835" dr_max="915" hr_min="868" hr_max="932" ma_min="268" ma_max="332" oq_min="1" oq_max="1000" sr_min="835" sr_max="915" ut_min="802" ut_max="898"/>
+                        <resource_type swgcraft_id="cbstl" swgID="278" description="Carbonite Steel" cd_min="501" cd_max="605" cr_min="616" cr_max="744" dr_min="885" dr_max="965" hr_min="908" hr_max="972" ma_min="308" ma_max="372" oq_min="1" oq_max="1000" sr_min="885" sr_max="965" ut_min="862" ut_max="958"/>
+                        <resource_type swgcraft_id="hastl" swgID="707" description="Hardened Arveshium Steel" JTL="yes" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="bistl" swgID="279" description="Crystallized Bicorbantium Steel" JTL="yes" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="dlstl" swgID="282" description="Duralloy Steel" cd_min="566" cd_max="650" cr_min="696" cr_max="800" dr_min="935" dr_max="1000" hr_min="948" hr_max="1000" ma_min="348" ma_max="400" oq_min="1" oq_max="1000" sr_min="935" sr_max="1000" ut_min="922" ut_max="1000"/>
+                        <resource_type swgcraft_id="mustl" swgID="624" description="Mustafarian Steel" cd_min="600" cd_max="650" cr_min="750" cr_max="800" dr_min="935" dr_max="1000" hr_min="948" hr_max="1000" ma_min="350" ma_max="400" oq_min="500" oq_max="1000" sr_min="935" sr_max="1000" ut_min="922" ut_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="irn" swgID="160" description="Iron" cd_min="1" cd_max="500" cr_min="1" cr_max="800" dr_min="200" dr_max="1000" hr_min="200" hr_max="1000" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="200" sr_max="1000" ut_min="200" ut_max="1000">
+                        <resource_type swgcraft_id="sirn" swgID="277" description="Smelted Iron" recycled="yes" cd_min="200" cd_max="200" cr_min="200" cr_max="200" dr_min="200" dr_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                        <resource_type swgcraft_id="plirn" swgID="275" description="Plumbum Iron" cd_min="1" cd_max="82" cr_min="1" cr_max="131" dr_min="300" dr_max="414" hr_min="500" hr_max="581" ma_min="1" ma_max="98" oq_min="1" oq_max="1000" sr_min="400" sr_max="498" ut_min="400" ut_max="498"/>
+                        <resource_type swgcraft_id="poirn" swgID="276" description="Polonium Iron" cd_min="45" cd_max="144" cr_min="71" cr_max="231" dr_min="361" dr_max="501" hr_min="544" hr_max="644" ma_min="53" ma_max="173" oq_min="1" oq_max="1000" sr_min="453" sr_max="573" ut_min="453" ut_max="573"/>
+                        <resource_type swgcraft_id="axirn" swgID="269" description="Axidite Iron" cd_min="107" cd_max="207" cr_min="171" cr_max="331" dr_min="559" dr_max="589" hr_min="606" hr_max="706" ma_min="128" ma_max="248" oq_min="1" oq_max="1000" sr_min="528" sr_max="648" ut_min="528" ut_max="648"/>
+                        <resource_type swgcraft_id="brirn" swgID="270" description="Bronzium Iron" cd_min="169" cd_max="269" cr_min="271" cr_max="430" dr_min="536" dr_max="676" hr_min="669" hr_max="769" ma_min="203" ma_max="323" oq_min="1" oq_max="1000" sr_min="603" sr_max="723" ut_min="603" ut_max="723"/>
+                        <resource_type swgcraft_id="coirn" swgID="271" description="Colat Iron" cd_min="232" cd_max="332" cr_min="371" cr_max="530" dr_min="624" dr_max="764" hr_min="731" hr_max="831" ma_min="278" ma_max="398" oq_min="1" oq_max="1000" sr_min="678" sr_max="798" ut_min="678" ut_max="798"/>
+                        <resource_type swgcraft_id="dvirn" swgID="272" description="Dolovite Iron" cd_min="294" cd_max="394" cr_min="470" cr_max="630" dr_min="711" dr_max="851" hr_min="794" hr_max="894" ma_min="353" ma_max="473" oq_min="1" oq_max="1000" sr_min="753" sr_max="873" ut_min="753" ut_max="873"/>
+                        <resource_type swgcraft_id="doirn" swgID="273" description="Doonium Iron" cd_min="357" cd_max="456" cr_min="570" cr_max="730" dr_min="799" dr_max="939" hr_min="856" hr_max="956" ma_min="428" ma_max="548" oq_min="1" oq_max="1000" sr_min="828" sr_max="948" ut_min="828" ut_max="948"/>
+                        <resource_type swgcraft_id="kairn" swgID="274" description="Kammris Iron" cd_min="419" cd_max="500" cr_min="670" cr_max="800" dr_min="886" dr_max="1000" hr_min="919" hr_max="1000" ma_min="503" ma_max="600" oq_min="1" oq_max="1000" sr_min="903" sr_max="1000" ut_min="903" ut_max="1000"/>
+                        <resource_type swgcraft_id="muirn" swgID="620" description="Mustafarian Iron" cd_min="450" cd_max="500" cr_min="750" cr_max="800" dr_min="886" dr_max="1000" hr_min="919" hr_max="1000" ma_min="550" ma_max="600" oq_min="500" oq_max="1000" sr_min="903" sr_max="1000" ut_min="903" ut_max="1000"/>
+                    </resource_type>
+                </resource_type>
+                <resource_type swgcraft_id="nfr" swgID="78" description="Non-Ferrous Metal" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="800" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="900" ut_min="1" ut_max="1000">
+                    <resource_type swgcraft_id="snfr" swgID="826" description="Smelted Non-Ferrous Metal" recycled="yes" cd_min="200" cd_max="200" cr_min="200" cr_max="200" dr_min="200" dr_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                    <resource_type swgcraft_id="unnfr" swgID="165" description="Unknown Non-Ferrous Metal" cd_min="300" cd_max="1000" cr_min="1" cr_max="800" dr_min="1" dr_max="700" hr_min="200" hr_max="800" ma_min="300" ma_max="1000" oq_min="1" oq_max="1000" sr_min="300" sr_max="900" ut_min="300" ut_max="1000"/>
+                    <resource_type swgcraft_id="alu" swgID="163" description="Aluminum" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                        <resource_type swgcraft_id="salu" swgID="825" description="Smelted Aluminum" recycled="yes" cd_min="200" cd_max="200" cr_min="200" cr_max="200" dr_min="200" dr_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                        <resource_type swgcraft_id="tialu" swgID="295" description="Titanium Aluminum" cd_min="300" cd_max="408" cr_min="1" cr_max="174" dr_min="1" dr_max="174" hr_min="200" hr_max="330" ma_min="300" ma_max="452" oq_min="1" oq_max="1000" sr_min="300" sr_max="430" ut_min="300" ut_max="430"/>
+                        <resource_type swgcraft_id="agalu" swgID="289" description="Agrinium Aluminum" cd_min="358" cd_max="492" cr_min="94" cr_max="307" dr_min="94" dr_max="307" hr_min="270" hr_max="430" ma_min="382" ma_max="568" oq_min="1" oq_max="1000" sr_min="370" sr_max="530" ut_min="370" ut_max="530"/>
+                        <resource_type swgcraft_id="chalu" swgID="290" description="Chromium Aluminum" cd_min="442" cd_max="575" cr_min="227" cr_max="440" dr_min="227" dr_max="440" hr_min="370" hr_max="530" ma_min="498" ma_max="685" oq_min="1" oq_max="1000" sr_min="470" sr_max="630" ut_min="470" ut_max="630"/>
+                        <resource_type swgcraft_id="dualu" swgID="291" description="Duralumin Aluminum" cd_min="525" cd_max="658" cr_min="361" cr_max="574" dr_min="361" dr_max="574" hr_min="470" hr_max="630" ma_min="615" ma_max="802" oq_min="1" oq_max="1000" sr_min="570" sr_max="730" ut_min="570" ut_max="730"/>
+                        <resource_type swgcraft_id="lsalu" swgID="292" description="Link-Steel Aluminum" cd_min="608" cd_max="742" cr_min="494" cr_max="707" dr_min="494" dr_max="707" hr_min="570" hr_max="730" ma_min="732" ma_max="918" oq_min="1" oq_max="1000" sr_min="670" sr_max="830" ut_min="670" ut_max="830"/>
+                        <resource_type swgcraft_id="pealu" swgID="293" description="Perovskitic Aluminum" JTL="yes" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="phalu" swgID="294" description="Phrik Aluminum" cd_min="692" cd_max="800" cr_min="627" cr_max="800" dr_min="627" dr_max="800" hr_min="670" hr_max="800" ma_min="848" ma_max="1000" oq_min="1" oq_max="1000" sr_min="770" sr_max="900" ut_min="770" ut_max="900"/>
+                        <resource_type swgcraft_id="mualu" swgID="606" description="Mustafarian Aluminum" cd_min="750" cd_max="800" cr_min="750" cr_max="800" dr_min="800" dr_max="800" hr_min="750" hr_max="800" ma_min="848" ma_max="1000" oq_min="500" oq_max="1000" sr_min="800" sr_max="900" ut_min="800" ut_max="900"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="cpr" swgID="164" description="Copper" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="800">
+                        <resource_type swgcraft_id="scpr" swgID="305" description="Smelted Copper" recycled="yes" cd_min="200" cd_max="200" cr_min="200" cr_max="200" dr_min="200" dr_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                        <resource_type swgcraft_id="decpr" swgID="299" description="Desh Copper" cd_min="500" cd_max="572" cr_min="1" cr_max="116" dr_min="1" dr_max="102" hr_min="200" hr_max="265" ma_min="500" ma_max="572" oq_min="1" oq_max="1000" sr_min="300" sr_max="372" ut_min="300" ut_max="372"/>
+                        <resource_type swgcraft_id="thcpr" swgID="306" description="Thallium Copper" cd_min="539" cd_max="628" cr_min="63" cr_max="205" dr_min="55" dr_max="180" hr_min="235" hr_max="315" ma_min="539" ma_max="628" oq_min="1" oq_max="1000" sr_min="339" sr_max="428" ut_min="339" ut_max="428"/>
+                        <resource_type swgcraft_id="becpr" swgID="296" description="Beyrllius Copper" cd_min="594" cd_max="683" cr_min="152" cr_max="294" dr_min="133" dr_max="257" hr_min="285" hr_max="365" ma_min="594" ma_max="683" oq_min="1" oq_max="1000" sr_min="394" sr_max="483" ut_min="394" ut_max="483"/>
+                        <resource_type swgcraft_id="cocpr" swgID="297" description="Codoan Copper" cd_min="650" cd_max="739" cr_min="241" cr_max="383" dr_min="211" dr_max="335" hr_min="335" hr_max="415" ma_min="650" ma_max="739" oq_min="1" oq_max="1000" sr_min="450" sr_max="539" ut_min="450" ut_max="539"/>
+                        <resource_type swgcraft_id="dicpr" swgID="300" description="Diatium Copper" cd_min="706" cd_max="794" cr_min="329" cr_max="472" dr_min="288" dr_max="413" hr_min="385" hr_max="465" ma_min="706" ma_max="794" oq_min="1" oq_max="1000" sr_min="506" sr_max="594" ut_min="506" ut_max="594"/>
+                        <resource_type swgcraft_id="kecpr" swgID="301" description="Kelsh Copper" cd_min="761" cd_max="850" cr_min="418" cr_max="560" dr_min="366" dr_max="490" hr_min="435" hr_max="515" ma_min="761" ma_max="850" oq_min="1" oq_max="1000" sr_min="561" sr_max="650" ut_min="561" ut_max="650"/>
+                        <resource_type swgcraft_id="mycpr" swgID="302" description="Mythra Copper" cd_min="817" cd_max="906" cr_min="507" cr_max="649" dr_min="444" dr_max="568" hr_min="485" hr_max="565" ma_min="817" ma_max="906" oq_min="1" oq_max="1000" sr_min="617" sr_max="706" ut_min="617" ut_max="706"/>
+                        <resource_type swgcraft_id="plcpr" swgID="303" description="Platinite Copper" cd_min="872" cd_max="961" cr_min="596" cr_max="738" dr_min="521" dr_max="646" hr_min="535" hr_max="615" ma_min="872" ma_max="961" oq_min="1" oq_max="1000" sr_min="672" sr_max="761" ut_min="672" ut_max="761"/>
+                        <resource_type swgcraft_id="pocpr" swgID="304" description="Polysteel Copper" cd_min="928" cd_max="1000" cr_min="685" cr_max="800" dr_min="599" dr_max="700" hr_min="585" hr_max="650" ma_min="928" ma_max="1000" oq_min="1" oq_max="1000" sr_min="728" sr_max="800" ut_min="728" ut_max="800"/>
+                        <resource_type swgcraft_id="cbcpr" swgID="298" description="Conductive Borcarbitic Copper" JTL="yes" cd_min="1" cd_max="1000" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="mucpr" swgID="611" description="Mustafarian Copper" cd_min="500" cd_max="1000" cr_min="750" cr_max="800" dr_min="650" dr_max="700" hr_min="600" hr_max="650" ma_min="500" ma_max="1000" oq_min="500" oq_max="1000" sr_min="750" sr_max="800" ut_min="750" ut_max="800"/>
+                    </resource_type>
+                </resource_type>
+            </resource_type>
+            <resource_type swgcraft_id="lgo" swgID="21" description="Low-Grade Ore" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                <resource_type swgcraft_id="ign" swgID="75" description="Igneous Ore" cr_min="200" cr_max="1000" dr_min="200" dr_max="1000" hr_min="200" hr_max="1000" ma_min="1" ma_max="800" oq_min="1" oq_max="1000" sr_min="200" sr_max="1000" ut_min="200" ut_max="1000">
+                    <resource_type swgcraft_id="lign" swgID="821" description="Low Grade Ore (Igneous)" recycled="yes" cr_min="200" cr_max="200" dr_min="200" dr_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                    <resource_type swgcraft_id="ugn" swgID="157" description="Unknown Igneous Ore" cr_min="200" cr_max="1000" dr_min="300" dr_max="1000" hr_min="400" hr_max="1000" ma_min="1" ma_max="800" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="400" ut_max="1000"/>
+                    <resource_type swgcraft_id="ext" swgID="155" description="Extrusive Ore" cr_min="200" cr_max="1000" dr_min="300" dr_max="1000" hr_min="400" hr_max="1000" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="400" sr_max="1000" ut_min="400" ut_max="1000">
+                        <resource_type swgcraft_id="beext" swgID="756" description="Bene Extrusive Ore" cr_min="200" cr_max="304" dr_min="300" dr_max="391" hr_min="400" hr_max="478" ma_min="1" ma_max="79" oq_min="1" oq_max="1000" sr_min="400" sr_max="478" ut_min="400" ut_max="478"/>
+                        <resource_type swgcraft_id="chext" swgID="252" description="Chronamite Extrusive Ore" cr_min="256" cr_max="384" dr_min="349" dr_max="461" hr_min="442" hr_max="538" ma_min="43" ma_max="139" oq_min="1" oq_max="1000" sr_min="442" sr_max="538" ut_min="442" ut_max="538"/>
+                        <resource_type swgcraft_id="ilext" swgID="708" description="Ilimium Extrusive Ore" cr_min="336" cr_max="464" dr_min="419" dr_max="531" hr_min="502" hr_max="598" ma_min="103" ma_max="199" oq_min="1" oq_max="1000" sr_min="502" sr_max="598" ut_min="502" ut_max="598"/>
+                        <resource_type swgcraft_id="kaext" swgID="709" description="Kalonterium Extrusive Ore" cr_min="416" cr_max="544" dr_min="489" dr_max="601" hr_min="562" hr_max="658" ma_min="163" ma_max="259" oq_min="1" oq_max="1000" sr_min="562" sr_max="658" ut_min="562" ut_max="658"/>
+                        <resource_type swgcraft_id="keext" swgID="253" description="Keschel Extrusive Ore" cr_min="496" cr_max="624" dr_min="559" dr_max="671" hr_min="622" hr_max="718" ma_min="223" ma_max="318" oq_min="1" oq_max="1000" sr_min="622" sr_max="718" ut_min="622" ut_max="718"/>
+                        <resource_type swgcraft_id="liext" swgID="254" description="Lidium Extrusive Ore" cr_min="576" cr_max="704" dr_min="629" dr_max="741" hr_min="682" hr_max="778" ma_min="283" ma_max="378" oq_min="1" oq_max="1000" sr_min="682" sr_max="778" ut_min="682" ut_max="778"/>
+                        <resource_type swgcraft_id="maext" swgID="255" description="Maranium Extrusive Ore" cr_min="656" cr_max="784" dr_min="699" dr_max="811" hr_min="742" hr_max="838" ma_min="342" ma_max="438" oq_min="1" oq_max="1000" sr_min="742" sr_max="838" ut_min="742" ut_max="838"/>
+                        <resource_type swgcraft_id="phext" swgID="256" description="Pholokite Extrusive Ore" cr_min="736" cr_max="864" dr_min="769" dr_max="881" hr_min="802" hr_max="898" ma_min="402" ma_max="498" oq_min="1" oq_max="1000" sr_min="802" sr_max="898" ut_min="802" ut_max="898"/>
+                        <resource_type swgcraft_id="quext" swgID="257" description="Quadrenium Extrusive Ore" cr_min="816" cr_max="944" dr_min="839" dr_max="951" hr_min="862" hr_max="958" ma_min="462" ma_max="558" oq_min="1" oq_max="1000" sr_min="862" sr_max="958" ut_min="862" ut_max="958"/>
+                        <resource_type swgcraft_id="viext" swgID="710" description="Vintrium Extrusive Ore" cr_min="896" cr_max="1000" dr_min="909" dr_max="1000" hr_min="922" hr_max="1000" ma_min="522" ma_max="600" oq_min="1" oq_max="1000" sr_min="922" sr_max="1000" ut_min="922" ut_max="1000"/>
+                        <resource_type swgcraft_id="muext" swgID="615" description="Mustafarian Extrusive Ore" cr_min="896" cr_max="1000" dr_min="909" dr_max="1000" hr_min="922" hr_max="1000" ma_min="550" ma_max="600" oq_min="500" oq_max="1000" sr_min="922" sr_max="1000" ut_min="922" ut_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="int" swgID="156" description="Intrusive Ore" cr_min="200" cr_max="1000" dr_min="300" dr_max="1000" hr_min="700" hr_max="1000" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="500" sr_max="1000" ut_min="400" ut_max="1000">
+                        <resource_type swgcraft_id="beint" swgID="258" description="Berubium Intrusive Ore" cr_min="200" cr_max="316" dr_min="300" dr_max="401" hr_min="700" hr_max="743" ma_min="1" ma_max="88" oq_min="1" oq_max="1000" sr_min="500" sr_max="572" ut_min="400" ut_max="487"/>
+                        <resource_type swgcraft_id="chint" swgID="259" description="Chanlon Intrusive Ore" cr_min="262" cr_max="404" dr_min="354" dr_max="479" hr_min="723" hr_max="777" ma_min="48" ma_max="154" oq_min="1" oq_max="1000" sr_min="539" sr_max="628" ut_min="447" ut_max="553"/>
+                        <resource_type swgcraft_id="coint" swgID="698" description="Corintium Intrusive Ore" cr_min="351" cr_max="493" dr_min="432" dr_max="557" hr_min="757" hr_max="810" ma_min="114" ma_max="221" oq_min="1" oq_max="1000" sr_min="594" sr_max="683" ut_min="513" ut_max="620"/>
+                        <resource_type swgcraft_id="deint" swgID="699" description="Derillium Intrusive Ore" cr_min="440" cr_max="582" dr_min="510" dr_max="634" hr_min="790" hr_max="843" ma_min="181" ma_max="287" oq_min="1" oq_max="1000" sr_min="650" sr_max="739" ut_min="580" ut_max="687"/>
+                        <resource_type swgcraft_id="orint" swgID="702" description="Oridium Intrusive Ore" cr_min="529" cr_max="671" dr_min="588" dr_max="712" hr_min="823" hr_max="877" ma_min="247" ma_max="354" oq_min="1" oq_max="1000" sr_min="706" sr_max="794" ut_min="647" ut_max="753"/>
+                        <resource_type swgcraft_id="dyint" swgID="260" description="Dylinium Intrusive Ore" cr_min="618" cr_max="760" dr_min="666" dr_max="790" hr_min="857" hr_max="910" ma_min="314" ma_max="420" oq_min="1" oq_max="1000" sr_min="761" sr_max="850" ut_min="713" ut_max="820"/>
+                        <resource_type swgcraft_id="hoint" swgID="700" description="Hollinium Intrusive Ore" cr_min="707" cr_max="849" dr_min="743" dr_max="868" hr_min="890" hr_max="943" ma_min="380" ma_max="487" oq_min="1" oq_max="1000" sr_min="817" sr_max="906" ut_min="780" ut_max="887"/>
+                        <resource_type swgcraft_id="ioint" swgID="261" description="Ionite Intrusive Ore" cr_min="796" cr_max="938" dr_min="821" dr_max="946" hr_min="923" hr_max="977" ma_min="447" ma_max="553" oq_min="1" oq_max="1000" sr_min="872" sr_max="961" ut_min="847" ut_max="953"/>
+                        <resource_type swgcraft_id="kaint" swgID="633" description="Katrium Intrusive Ore" cr_min="884" cr_max="1000" dr_min="899" dr_max="1000" hr_min="957" hr_max="1000" ma_min="513" ma_max="600" oq_min="1" oq_max="1000" sr_min="928" sr_max="1000" ut_min="913" ut_max="1000"/>
+                        <resource_type swgcraft_id="muint" swgID="619" description="Mustafarian Intrusive Ore" cr_min="884" cr_max="1000" dr_min="899" dr_max="1000" hr_min="957" hr_max="1000" ma_min="550" ma_max="600" oq_min="500" oq_max="1000" sr_min="928" sr_max="1000" ut_min="913" ut_max="1000"/>
+                    </resource_type>
+                </resource_type>
+                <resource_type swgcraft_id="sed" swgID="76" description="Sedimentary Ore" cr_min="1" cr_max="1000" dr_min="1" dr_max="700" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="700" ut_min="1" ut_max="1000">
+                    <resource_type swgcraft_id="lsed" swgID="823" description="Low Grade Ore (Sedimentary)" recycled="yes" cr_min="200" cr_max="200" dr_min="200" dr_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                    <resource_type swgcraft_id="usd" swgID="713" description="Unknown Sedimentary Ore" cr_min="300" cr_max="1000" dr_min="1" dr_max="700" hr_min="300" hr_max="1000" ma_min="300" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="700" ut_min="1" ut_max="1000"/>
+                    <resource_type swgcraft_id="crb" swgID="158" description="Carbonate Ore" cr_min="300" cr_max="1000" dr_min="1" dr_max="700" hr_min="400" hr_max="1000" ma_min="300" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="700" ut_min="200" ut_max="1000">
+                        <resource_type swgcraft_id="alcrb" swgID="262" description="Alantium Carbonate Ore" cr_min="300" cr_max="414" dr_min="1" dr_max="115" hr_min="400" hr_max="498" ma_min="300" ma_max="414" oq_min="1" oq_max="1000" sr_min="1" sr_max="115" ut_min="200" ut_max="330"/>
+                        <resource_type swgcraft_id="bacrb" swgID="263" description="Barthierium Carbonate Ore" cr_min="361" cr_max="501" dr_min="62" dr_max="202" hr_min="453" hr_max="573" ma_min="361" ma_max="501" oq_min="1" oq_max="1000" sr_min="62" sr_max="202" ut_min="270" ut_max="430"/>
+                        <resource_type swgcraft_id="chcrb" swgID="264" description="Chromite Carbonate Ore" cr_min="449" cr_max="589" dr_min="150" dr_max="289" hr_min="528" hr_max="648" ma_min="449" ma_max="589" oq_min="1" oq_max="1000" sr_min="150" sr_max="289" ut_min="370" ut_max="530"/>
+                        <resource_type swgcraft_id="frcrb" swgID="703" description="Frasium Carbonate Ore" cr_min="536" cr_max="676" dr_min="237" dr_max="377" hr_min="603" hr_max="723" ma_min="536" ma_max="676" oq_min="1" oq_max="1000" sr_min="237" sr_max="377" ut_min="470" ut_max="630"/>
+                        <resource_type swgcraft_id="locrb" swgID="704" description="Lommite Carbonate Ore" cr_min="624" cr_max="764" dr_min="324" dr_max="464" hr_min="678" hr_max="798" ma_min="624" ma_max="764" oq_min="1" oq_max="1000" sr_min="324" sr_max="464" ut_min="570" ut_max="730"/>
+                        <resource_type swgcraft_id="oscrb" swgID="265" description="Ostrine Carbonate Ore" cr_min="711" cr_max="851" dr_min="412" dr_max="551" hr_min="753" hr_max="873" ma_min="711" ma_max="851" oq_min="1" oq_max="1000" sr_min="412" sr_max="551" ut_min="670" ut_max="830"/>
+                        <resource_type swgcraft_id="vacrb" swgID="705" description="Varium Carbonate Ore" cr_min="799" cr_max="939" dr_min="499" dr_max="639" hr_min="828" hr_max="948" ma_min="799" ma_max="939" oq_min="1" oq_max="1000" sr_min="499" sr_max="639" ut_min="770" ut_max="930"/>
+                        <resource_type swgcraft_id="zicrb" swgID="706" description="Zinsiam Carbonate Ore" cr_min="886" cr_max="1000" dr_min="586" dr_max="700" hr_min="903" hr_max="1000" ma_min="886" ma_max="1000" oq_min="1" oq_max="1000" sr_min="586" sr_max="700" ut_min="870" ut_max="1000"/>
+                    </resource_type>
+                    <resource_type swgcraft_id="sil" swgID="159" description="Siliclastic Ore" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                        <resource_type swgcraft_id="lsil" swgID="822" description="Low Grade Ore (Siliclastic)" recycled="yes" cr_min="200" cr_max="200" dr_min="200" dr_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                        <resource_type swgcraft_id="arsil" swgID="642" description="Ardanium Siliclastic Ore" cr_min="300" cr_max="452" dr_min="1" dr_max="152" hr_min="300" hr_max="452" ma_min="300" ma_max="452" oq_min="1" oq_max="1000" sr_min="1" sr_max="131" ut_min="1" ut_max="152"/>
+                        <resource_type swgcraft_id="cosil" swgID="643" description="Cortosis Siliclastic Ore" cr_min="382" cr_max="568" dr_min="83" dr_max="269" hr_min="382" hr_max="568" ma_min="382" ma_max="568" oq_min="1" oq_max="1000" sr_min="71" sr_max="231" ut_min="83" ut_max="269"/>
+                        <resource_type swgcraft_id="crsil" swgID="266" description="Crism Siliclastic Ore" cr_min="498" cr_max="685" dr_min="199" dr_max="385" hr_min="498" hr_max="685" ma_min="498" ma_max="685" oq_min="1" oq_max="1000" sr_min="171" sr_max="330" ut_min="199" ut_max="385"/>
+                        <resource_type swgcraft_id="masil" swgID="644" description="Malab Siliclastic Ore" cr_min="615" cr_max="802" dr_min="316" dr_max="502" hr_min="615" hr_max="802" ma_min="615" ma_max="802" oq_min="1" oq_max="1000" sr_min="271" sr_max="430" ut_min="316" ut_max="502"/>
+                        <resource_type swgcraft_id="rosil" swgID="268" description="Robindun Siliclastic Ore" cr_min="732" cr_max="918" dr_min="432" dr_max="618" hr_min="732" hr_max="918" ma_min="732" ma_max="918" oq_min="1" oq_max="1000" sr_min="370" sr_max="530" ut_min="432" ut_max="618"/>
+                        <resource_type swgcraft_id="fesil" swgID="267" description="Fermionic Siliclastic Ore" JTL="yes" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" hr_min="1" hr_max="1000" ma_min="1" ma_max="1000" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                        <resource_type swgcraft_id="tesil" swgID="645" description="Tertian Siliclastic Ore" cr_min="848" cr_max="1000" dr_min="549" dr_max="700" hr_min="848" hr_max="1000" ma_min="848" ma_max="1000" oq_min="1" oq_max="1000" sr_min="470" sr_max="600" ut_min="549" ut_max="700"/>
+                    </resource_type>
+                </resource_type>
+            </resource_type>
+            <resource_type swgcraft_id="gem" swgID="20" description="Gemstone" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" er_min="1" er_max="1000" hr_min="200" hr_max="1000" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                <resource_type swgcraft_id="lgem" swgID="820" description="Low Quality Gemstone" recycled="yes" cr_min="200" cr_max="200" dr_min="200" dr_max="200" er_min="200" er_max="200" hr_min="200" hr_max="200" ma_min="200" ma_max="200" oq_min="200" oq_max="200" sr_min="200" sr_max="200" ut_min="200" ut_max="200"/>
+                <resource_type swgcraft_id="ugt" swgID="74" description="Unknown Gem Type" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" er_min="1" er_max="1000" hr_min="600" hr_max="1000" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000"/>
+                <resource_type swgcraft_id="amo" swgID="72" description="Amorphous Gemstone" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" er_min="1" er_max="800" hr_min="600" hr_max="1000" ma_min="1" ma_max="600" oq_min="1" oq_max="1000" sr_min="1" sr_max="1000" ut_min="1" ut_max="1000">
+                    <resource_type swgcraft_id="boamo" swgID="648" description="Bospridium Amorphous Gemstone" cr_min="1" cr_max="131" dr_min="1" dr_max="131" er_min="1" er_max="105" hr_min="600" hr_max="652" ma_min="1" ma_max="79" oq_min="1" oq_max="1000" sr_min="1" sr_max="131" ut_min="1" ut_max="131"/>
+                    <resource_type swgcraft_id="bramo" swgID="142" description="Baradium Amorphous Gemstone" cr_min="71" cr_max="231" dr_min="71" dr_max="231" er_min="57" er_max="185" hr_min="628" hr_max="692" ma_min="43" ma_max="139" oq_min="1" oq_max="1000" sr_min="71" sr_max="231" ut_min="71" ut_max="231"/>
+                    <resource_type swgcraft_id="reamo" swgID="649" description="Regvis Amorphous Gemstone" cr_min="171" cr_max="331" dr_min="171" dr_max="331" er_min="137" er_max="265" hr_min="668" hr_max="732" ma_min="103" ma_max="199" oq_min="1" oq_max="1000" sr_min="171" sr_max="331" ut_min="171" ut_max="331"/>
+                    <resource_type swgcraft_id="plamo" swgID="143" description="Plexite Amorphous Gemstone" cr_min="271" cr_max="431" dr_min="271" dr_max="431" er_min="217" er_max="345" hr_min="708" hr_max="772" ma_min="163" ma_max="259" oq_min="1" oq_max="1000" sr_min="271" sr_max="431" ut_min="271" ut_max="431"/>
+                    <resource_type swgcraft_id="ruamo" swgID="144" description="Rudic Amorphous Gemstone" cr_min="371" cr_max="530" dr_min="371" dr_max="530" er_min="297" er_max="424" hr_min="748" hr_max="812" ma_min="223" ma_max="318" oq_min="1" oq_max="1000" sr_min="371" sr_max="530" ut_min="371" ut_max="530"/>
+                    <resource_type swgcraft_id="ryamo" swgID="145" description="Ryll Amorphous Gemstone" cr_min="471" cr_max="630" dr_min="471" dr_max="630" er_min="377" er_max="504" hr_min="788" hr_max="852" ma_min="283" ma_max="378" oq_min="1" oq_max="1000" sr_min="471" sr_max="630" ut_min="471" ut_max="630"/>
+                    <resource_type swgcraft_id="seamo" swgID="146" description="Sedrellium Amorphous Gemstone" cr_min="570" cr_max="730" dr_min="570" dr_max="730" er_min="456" er_max="584" hr_min="828" hr_max="892" ma_min="342" ma_max="438" oq_min="1" oq_max="1000" sr_min="570" sr_max="730" ut_min="570" ut_max="730"/>
+                    <resource_type swgcraft_id="stamo" swgID="650" description="Stygium Amorphous Gemstone" cr_min="670" cr_max="830" dr_min="670" dr_max="830" er_min="536" er_max="664" hr_min="868" hr_max="932" ma_min="402" ma_max="498" oq_min="1" oq_max="1000" sr_min="670" sr_max="830" ut_min="670" ut_max="830"/>
+                    <resource_type swgcraft_id="veamo" swgID="147" description="Vendusii Crystal Amorphous Gemstone" cr_min="770" cr_max="930" dr_min="770" dr_max="930" er_min="616" er_max="744" hr_min="908" hr_max="972" ma_min="462" ma_max="558" oq_min="1" oq_max="1000" sr_min="770" sr_max="930" ut_min="770" ut_max="930"/>
+                    <resource_type swgcraft_id="baamo" swgID="141" description="Bal'ta'ran Crystal Amorphous Gemstone" cr_min="870" cr_max="1000" dr_min="870" dr_max="1000" er_min="696" er_max="800" hr_min="948" hr_max="1000" ma_min="522" ma_max="600" oq_min="1" oq_max="1000" sr_min="870" sr_max="1000" ut_min="870" ut_max="1000"/>
+                    <resource_type swgcraft_id="m1amo" swgID="625" description="Mustafarian Type 1 Crystal Amorphous Gem" cr_min="870" cr_max="1000" dr_min="870" dr_max="1000" er_min="750" er_max="800" hr_min="948" hr_max="1000" ma_min="550" ma_max="600" oq_min="1" oq_max="1000" sr_min="870" sr_max="1000" ut_min="870" ut_max="1000"/>
+                    <resource_type swgcraft_id="m2amo" swgID="626" description="Mustafarian Type 2 Crystal Amorphous Gem" cr_min="870" cr_max="1000" dr_min="870" dr_max="1000" er_min="750" er_max="800" hr_min="948" hr_max="1000" ma_min="550" ma_max="600" oq_min="1" oq_max="1000" sr_min="870" sr_max="1000" ut_min="870" ut_max="1000"/>
+                </resource_type>
+                <resource_type swgcraft_id="cry" swgID="73" description="Crystalline Gemstone" cr_min="1" cr_max="1000" dr_min="1" dr_max="1000" er_min="500" er_max="1000" hr_min="700" hr_max="1000" ma_min="1" ma_max="400" oq_min="1" oq_max="1000" sr_min="300" sr_max="1000" ut_min="300" ut_max="1000">
+                    <resource_type swgcraft_id="bycry" swgID="148" description="Byrothsis Crystalline Gemstone" cr_min="1" cr_max="163" dr_min="1" dr_max="163" er_min="500" er_max="581" hr_min="700" hr_max="749" ma_min="1" ma_max="66" oq_min="1" oq_max="1000" sr_min="300" sr_max="414" ut_min="300" ut_max="414"/>
+                    <resource_type swgcraft_id="gacry" swgID="149" description="Gallinorian Rainbow Gem Crystalline Gemstone" cr_min="88" cr_max="288" dr_min="88" dr_max="288" er_min="544" er_max="644" hr_min="726" hr_max="786" ma_min="36" ma_max="116" oq_min="1" oq_max="1000" sr_min="361" sr_max="501" ut_min="361" ut_max="501"/>
+                    <resource_type swgcraft_id="gdcry" swgID="150" description="Green Diamond Crystalline Gemstone" cr_min="213" cr_max="413" dr_min="213" dr_max="413" er_min="606" er_max="706" hr_min="764" hr_max="824" ma_min="86" ma_max="166" oq_min="1" oq_max="1000" sr_min="449" sr_max="589" ut_min="449" ut_max="589"/>
+                    <resource_type swgcraft_id="kecry" swgID="151" description="Kerol Fire-Gem Crystalline Gemstone" cr_min="338" cr_max="538" dr_min="338" dr_max="538" er_min="669" er_max="769" hr_min="801" hr_max="861" ma_min="136" ma_max="215" oq_min="1" oq_max="1000" sr_min="536" sr_max="676" ut_min="536" ut_max="676"/>
+                    <resource_type swgcraft_id="sjcry" swgID="153" description="Seafah Jewel Crystalline Gemstone" cr_min="463" cr_max="663" dr_min="463" dr_max="663" er_min="731" er_max="831" hr_min="839" hr_max="899" ma_min="186" ma_max="265" oq_min="1" oq_max="1000" sr_min="624" sr_max="764" ut_min="624" ut_max="764"/>
+                    <resource_type swgcraft_id="socry" swgID="711" description="Sormahil Fire Gem Crystalline Gemstone" cr_min="588" cr_max="788" dr_min="588" dr_max="788" er_min="794" er_max="894" hr_min="876" hr_max="936" ma_min="235" ma_max="315" oq_min="1" oq_max="1000" sr_min="711" sr_max="851" ut_min="711" ut_max="851"/>
+                    <resource_type swgcraft_id="lacry" swgID="152" description="Laboi Mineral Crystal Crystalline Gemstone" cr_min="713" cr_max="913" dr_min="713" dr_max="913" er_min="856" er_max="956" hr_min="914" hr_max="974" ma_min="285" ma_max="365" oq_min="1" oq_max="1000" sr_min="799" sr_max="939" ut_min="799" ut_max="939"/>
+                    <resource_type swgcraft_id="vecry" swgID="154" description="Vertex Crystalline Gemstone" cr_min="838" cr_max="1000" dr_min="838" dr_max="1000" er_min="919" er_max="1000" hr_min="951" hr_max="1000" ma_min="335" ma_max="400" oq_min="1" oq_max="1000" sr_min="886" sr_max="1000" ut_min="886" ut_max="1000"/>
+                    <resource_type swgcraft_id="m1cry" swgID="627" description="Mustafarian Type 1 Crystalline Gem" cr_min="838" cr_max="1000" dr_min="838" dr_max="1000" er_min="919" er_max="1000" hr_min="951" hr_max="1000" ma_min="350" ma_max="400" oq_min="500" oq_max="1000" sr_min="886" sr_max="1000" ut_min="886" ut_max="1000"/>
+                    <resource_type swgcraft_id="m2cry" swgID="628" description="Mustafarian Type 2 Crystalline Gem" cr_min="838" cr_max="1000" dr_min="838" dr_max="1000" er_min="919" er_max="1000" hr_min="951" hr_max="1000" ma_min="350" ma_max="400" oq_min="500" oq_max="1000" sr_min="886" sr_max="1000" ut_min="886" ut_max="1000"/>
+                </resource_type>
+            </resource_type>
+        </resource_type>
+        <resource_type swgcraft_id="gas" swgID="7" description="Gas" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000">
+            <resource_type swgcraft_id="rtv" swgID="19" description="Reactive Gas" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000">
+                <resource_type swgcraft_id="uktv" swgID="712" description="Unknown Reactive Gas" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000"/>
+                <resource_type swgcraft_id="ktv" swgID="70" description="Known Reactive Gas" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000">
+                    <resource_type swgcraft_id="elktv" swgID="134" description="Eleton Reactive Gas" dr_min="1" dr_max="400" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="irktv" swgID="135" description="Irolunn Reactive Gas" dr_min="100" dr_max="600" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="mektv" swgID="136" description="Methane Reactive Gas" dr_min="200" dr_max="700" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="orktv" swgID="137" description="Orveth Reactive Gas" dr_min="300" dr_max="800" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="siktv" swgID="71" description="Sig Reactive Gas" dr_min="300" dr_max="900" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="skktv" swgID="138" description="Skevon Reactive Gas" dr_min="400" dr_max="900" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="uoktv" swgID="140" description="Unstable Organometallic Reactive Gas" JTL="yes" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="toktv" swgID="139" description="Tolium Reactive Gas" dr_min="500" dr_max="1000" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="muktv" swgID="623" description="Mustafarian Reactive Gas" dr_min="800" dr_max="1000" oq_min="500" oq_max="1000"/>
+                </resource_type>
+            </resource_type>
+            <resource_type swgcraft_id="irt" swgID="18" description="Inert Gas" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000">
+                <resource_type swgcraft_id="ukrt" swgID="69" description="Unknown Inert Gas" dr_min="1" dr_max="1000" oq_min="1" oq_max="1000"/>
+                <resource_type swgcraft_id="krt" swgID="68" description="Known Inert Gas" dr_min="1" dr_max="800" oq_min="1" oq_max="1000">
+                    <resource_type swgcraft_id="h3krt" swgID="126" description="Hydron-3 Inert Gas" dr_min="1" dr_max="81" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="makrt" swgID="129" description="Malium Inert Gas" dr_min="44" dr_max="142" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="bikrt" swgID="646" description="Bilal gas Inert Gas" dr_min="105" dr_max="204" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="cokrt" swgID="123" description="Corthel Inert Gas" dr_min="167" dr_max="265" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="cukrt" swgID="601" description="Culsion Inert Gas" dr_min="228" dr_max="327" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="dikrt" swgID="124" description="Dioxis Inert Gas" dr_min="290" dr_max="388" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="hukrt" swgID="125" description="Hurlothrombic Inert Gas" dr_min="351" dr_max="450" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="kakrt" swgID="128" description="Kaylon Inert Gas" dr_min="413" dr_max="511" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="kokrt" swgID="647" description="Korfaise Inert Gas" dr_min="474" dr_max="573" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="mekrt" swgID="130" description="Methanagen Inert Gas" dr_min="536" dr_max="634" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="mikrt" swgID="131" description="Mirth Inert Gas" dr_min="597" dr_max="696" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="obkrt" swgID="132" description="Obah Inert Gas" dr_min="659" dr_max="757" oq_min="1" oq_max="1000"/>
+                    <resource_type swgcraft_id="rekrt" swgID="133" description="Rethin Inert Gas" dr_min="720" dr_max="800" oq_min="1" oq_max="1000"/>
+                </resource_type>
+            </resource_type>
+        </resource_type>
+    </resource_type>
+    <resource_type swgcraft_id="ast" swgID="4" description="Space Resource" oq_min="500" oq_max="1000">
+        <resource_type swgcraft_id="achm" swgID="600" description="Asteroidal Chemical" oq_min="500" oq_max="1000">
+            <resource_type swgcraft_id="acid" swgID="764" description="Acidic Asteroid" oq_min="1000" oq_max="1000"/>
+            <resource_type swgcraft_id="acyn" swgID="768" description="Cyanomethanic Asteroid" oq_min="1000" oq_max="1000"/>
+            <resource_type swgcraft_id="apet" swgID="765" description="Petrochemical Asteroid" oq_min="500" oq_max="500"/>
+            <resource_type swgcraft_id="asul" swgID="772" description="Sulfuric Asteroid" oq_min="1000" oq_max="1000"/>
+        </resource_type>
+        <resource_type swgcraft_id="agas" swgID="758" description="Asteroidal Gas" oq_min="500" oq_max="1000">
+            <resource_type swgcraft_id="amet" swgID="767" description="Methane Asteroid" oq_min="500" oq_max="500"/>
+            <resource_type swgcraft_id="aorm" swgID="771" description="Organometallic Asteroid" oq_min="1000" oq_max="1000"/>
+        </resource_type>
+        <resource_type swgcraft_id="agem" swgID="759" description="Asteroidal Gemstone" oq_min="500" oq_max="1000">
+            <resource_type swgcraft_id="acry" swgID="769" description="Crystal Asteroid" oq_min="1000" oq_max="1000"/>
+            <resource_type swgcraft_id="admn" swgID="770" description="Diamond Asteroid" oq_min="500" oq_max="500"/>
+        </resource_type>
+        <resource_type swgcraft_id="amin" swgID="760" description="Asteroidal Mineral" oq_min="500" oq_max="1000">
+            <resource_type swgcraft_id="acar" swgID="761" description="Carbonaceous Asteroid" oq_min="1000" oq_max="1000"/>
+            <resource_type swgcraft_id="aicy" swgID="773" description="Icy Asteroid" oq_min="1000" oq_max="1000"/>
+            <resource_type swgcraft_id="airn" swgID="763" description="Iron Asteroid" oq_min="500" oq_max="500"/>
+            <resource_type swgcraft_id="aobi" swgID="766" description="Obsidian Asteroid" oq_min="1000" oq_max="1000"/>
+            <resource_type swgcraft_id="asil" swgID="762" description="Silicaceous Asteroid" oq_min="1000" oq_max="1000"/>
+        </resource_type>
+    </resource_type>
+</resource_tree_data>
+<!-- DISCLAIMER and COMMENTS:
+    Currently lower boundaries seem to have no impact on experimenting.
+
+    The attribute harvested="yes|no" exist with all creature resources, indicating wether the
+    resources are possible to harvest from corpses or not. Please PM me if anything is in error.
+
+    There are some anomalities between for example some resource names in the VRRC and the IDSDroid
+    report. If resource type naming anomalities are found, personally I consider this priority order
+    valuable:
+    1) IS Droid names (automation reasons)
+    2) Schematics naming (readability reasons)
+    3) VRRC naming (final resort (?))
+
+    * VRRC = Veteran Reward Resource Crate (can be used to browse all resources ever spawned at the
+    galaxy, including the current resources.
+
+  Zimoon @ Gorath
+
+  Updates:
+    Marked Mustafarian Carnivore Meat as harvestable (from worms from foraging) (Apr 29, 2009)
+    Set Nabooian Domesticated Milk harvested="no" since no creature spawns for it (Jan 29, 2009)
+    Corrected Yavin Reptilian Meat, it can be harvested naturally (Jan 27, 2009)
+    Corrected Nabooian Herbivore Meat, it can be harvested naturally (Jan 19, 2009)
+    Corrected harvested sttribute for Egg, Fish, Crustancean, and Mollusk Meat at Mustafar and Kashyyyk (Nov/Dec 2008)
+    Removed the optional attribute spawnable, a resource class is spawnable if it has no decentants (Nov 08, 2008)
+    Added the optional attribute  to resources that can spawn in the worlds (Oct 19, 2008)
+    Added the optional attribute JTL="yes" to JTL resources (Sep 27, 2008)
+    Corrected Nabooinan Domesticated Milk to state it can be harvested (Aug 3, 2008)
+    Corrected Kashyyykian Wild Milk to state it can be harvested (Aug 2, 2008)
+    Added Kashyyykian Wind and Solar Energy (Jan 28, 2007)
+    Major overhauls of several kinds and added Geothermal Energy (July 8, 2007)
+    Minor edits of names (July 14, 2007)
+    Minor edits of names (Nov 29, 2007)
+    Fixed Lubricating Oil and some lower caps Dec 2, 2007)
+    Reordered according to the VRRC (thanks to Rommel, March 10, 2008)
+    Corrected Bilal gas Inert Gas according to ISDroid reports (April 6, 2008)
+    Added keyword "recycled" to recycled resource classes (May 30, 2008)
+    Adjusted the resource caps to match Resto 3.0 (Jul 5, 2025)
+-->
