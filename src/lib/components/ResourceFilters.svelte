@@ -14,6 +14,7 @@
 		searchTerm = $bindable(''),
 		className = $bindable(''),
 		spawnStatus = $bindable('all'),
+		showInInventoryOnly = $bindable(false),
 		onApply,
 		onClear,
 		showSpawnStatus = true,
@@ -23,6 +24,7 @@
 		searchTerm?: string;
 		className?: string;
 		spawnStatus?: string;
+		showInInventoryOnly?: boolean;
 		onApply: () => void;
 		onClear: () => void;
 		showSpawnStatus?: boolean;
@@ -194,4 +196,15 @@
 			</select>
 		</div>
 	{/if}
+
+	<div>
+		<label class="mb-2 flex items-center text-sm font-medium text-slate-300">
+			<input
+				type="checkbox"
+				bind:checked={showInInventoryOnly}
+				class="mr-2 rounded border-slate-600 bg-slate-800 text-blue-500 focus:ring-2 focus:ring-blue-500/20"
+			/>
+			Show only resources in inventory
+		</label>
+	</div>
 </FilterSection>

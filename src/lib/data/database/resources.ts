@@ -134,19 +134,17 @@ export function createResourceClassesTable() {
 export function createResourceInventoryTable() {
 	const db = getDatabase();
 
-	// Drop the old table if it exists (this will recreate with new schema)
-	db.exec(`DROP TABLE IF EXISTS resource_inventory`);
-
+	// Create the table if it doesn't exist (but don't drop existing data!)
 	db.exec(`
-    CREATE TABLE resource_inventory (
-      resource_id INTEGER PRIMARY KEY,
-      amount TEXT NOT NULL CHECK (amount IN ('none', 'very_low', 'low', 'medium', 'high')),
-      notes TEXT,
-      last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (resource_id) REFERENCES resources (id)
-    )
-  `);
+		CREATE TABLE IF NOT EXISTS resource_inventory (
+			resource_id INTEGER PRIMARY KEY,
+			amount TEXT NOT NULL CHECK (amount IN ('none', 'very_low', 'low', 'medium', 'high')),
+			notes TEXT,
+			last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY (resource_id) REFERENCES resources (id)
+		)
+	`);
 
 	// Create indexes for better query performance
 	db.exec(`CREATE INDEX IF NOT EXISTS idx_resource_inventory_amount ON resource_inventory(amount)`);

@@ -78,6 +78,7 @@ export type GetResourcesResponse = {
 		classId?: string;
 		searchTerm?: string;
 		spawnStatus?: string;
+		inInventoryOnly?: boolean;
 	};
 };
 export type GetResourceResponse = Resource;

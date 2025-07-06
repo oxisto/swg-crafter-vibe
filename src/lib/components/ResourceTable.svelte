@@ -7,6 +7,7 @@
 <script lang="ts">
 	import type { Resource } from '$lib/types';
 	import { getPlanetInfo } from '$lib/types';
+	import { RESOURCE_INVENTORY_AMOUNTS } from '$lib/types/resource-inventory';
 	import DataTable from '$lib/components/DataTable.svelte';
 
 	let {
@@ -137,6 +138,13 @@
 	// Get inventory display text
 	function getInventoryDisplayText(resource: Resource): string {
 		if (!resource.inventory) return 'None';
+
+		const amountConfig = RESOURCE_INVENTORY_AMOUNTS[resource.inventory.amount];
+		if (amountConfig) {
+			return `${amountConfig.label} (${amountConfig.description})`;
+		}
+
+		// Fallback to original format if config not found
 		return resource.inventory.amount.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 	}
 

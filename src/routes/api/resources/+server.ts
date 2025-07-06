@@ -86,6 +86,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		const classId = url.searchParams.get('class') || undefined;
 		const searchTerm = url.searchParams.get('search') || undefined;
 		const spawnStatus = url.searchParams.get('status') || undefined;
+		const inInventoryOnly = url.searchParams.get('in_inventory') === '1';
 		const allowedClassesParam = url.searchParams.get('allowedClasses') || undefined;
 		const allowedClasses = allowedClassesParam ? allowedClassesParam.split(',') : undefined;
 
@@ -130,6 +131,18 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 			);
 		}
 
+		// Apply inventory filter if requested
+		if (inInventoryOnly) {
+			const inventory = getAllResourceInventory();
+			const inventoryResourceIds = new Set(
+				inventory
+					.filter((item: ResourceInventoryItem) => item.amount !== 'none')
+					.map((item: ResourceInventoryItem) => item.resourceId)
+			);
+			
+			resources = resources.filter((resource) => inventoryResourceIds.has(resource.id));
+		}
+
 		// Get total count before pagination
 		const totalResources = resources.length;
 
@@ -154,7 +167,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 			page,
 			limit,
 			totalPages: Math.ceil(totalResources / limit),
-			filters: { classId, searchTerm, spawnStatus }
+			filters: { classId, searchTerm, spawnStatus, inInventoryOnly }
 		};
 
 		return logAndSuccess(
@@ -166,7 +179,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 				page,
 				limit,
 				totalPages: response.totalPages,
-				filtersApplied: !!(classId || searchTerm || spawnStatus)
+				filtersApplied: !!(classId || searchTerm || spawnStatus || inInventoryOnly)
 			},
 			resourcesLogger
 		);

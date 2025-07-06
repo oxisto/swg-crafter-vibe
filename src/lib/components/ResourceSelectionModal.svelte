@@ -36,6 +36,7 @@
 	let searchTerm = $state('');
 	let resourceClass = $state('');
 	let spawnStatus = $state('all');
+	let showInInventoryOnly = $state(false);
 
 	// Data state
 	let resources = $state<Resource[]>([]);
@@ -60,6 +61,7 @@
 				resourceClass = '';
 			}
 			spawnStatus = 'all';
+			showInInventoryOnly = false;
 			currentPage = 1;
 
 			if (onClose) {
@@ -87,6 +89,10 @@
 
 		if (spawnStatus && spawnStatus !== 'all') {
 			url.searchParams.set('status', spawnStatus);
+		}
+
+		if (showInInventoryOnly) {
+			url.searchParams.set('in_inventory', '1');
 		}
 
 		url.searchParams.set('page', currentPage.toString());
@@ -141,6 +147,7 @@
 		searchTerm = '';
 		resourceClass = '';
 		spawnStatus = 'all';
+		showInInventoryOnly = false;
 		applyFilters();
 	}
 
@@ -193,6 +200,7 @@
 			bind:searchTerm
 			bind:className={resourceClass}
 			bind:spawnStatus
+			bind:showInInventoryOnly
 			onApply={applyFilters}
 			onClear={clearFilters}
 			{showSpawnStatus}
@@ -228,7 +236,7 @@
 					stats: true,
 					planets: false,
 					status: true,
-					inventory: false,
+					inventory: true,
 					action: true
 				}}
 			/>

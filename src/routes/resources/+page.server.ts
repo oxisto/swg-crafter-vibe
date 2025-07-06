@@ -27,6 +27,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		const className = url.searchParams.get('class') || '';
 		const searchTerm = url.searchParams.get('search') || '';
 		const spawnStatus = url.searchParams.get('status') || 'all';
+		const inInventoryOnly = url.searchParams.get('in_inventory') === '1';
 		const page = parseInt(url.searchParams.get('page') || '1');
 		const limit = parseInt(url.searchParams.get('limit') || '50');
 
@@ -35,6 +36,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		if (className) apiParams.set('class', className);
 		if (searchTerm) apiParams.set('search', searchTerm);
 		if (spawnStatus !== 'all') apiParams.set('status', spawnStatus);
+		if (inInventoryOnly) apiParams.set('in_inventory', '1');
 		apiParams.set('page', page.toString());
 		apiParams.set('limit', limit.toString());
 
@@ -58,7 +60,8 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 			filters: {
 				className,
 				searchTerm,
-				spawnStatus
+				spawnStatus,
+				inInventoryOnly
 			}
 		};
 	} catch (error) {
@@ -74,7 +77,8 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 			filters: {
 				className: '',
 				searchTerm: '',
-				spawnStatus: 'all'
+				spawnStatus: 'all',
+				inInventoryOnly: false
 			}
 		};
 	}
