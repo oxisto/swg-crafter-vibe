@@ -39,8 +39,10 @@
 
 	// Modal states
 	let showCreateLoadoutModal = $state(false);
+	let showRenameLoadoutModal = $state(false);
 	let showResourceAssignModal = $state(false);
 	let newLoadoutName = $state('');
+	let renameLoadoutName = $state('');
 	let selectedResourceSlot = $state<string | null>(null);
 
 	// Experimentation calculator states
@@ -250,6 +252,50 @@
 			}
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to delete loadout';
+		} finally {
+			loading = false;
+		}
+	}
+
+	/**
+	 * Rename a loadout
+	 */
+	async function renameLoadout() {
+		if (!currentLoadout || !renameLoadoutName.trim()) return;
+
+		loading = true;
+		error = null;
+
+		try {
+			const response = await fetch(`/api/schematics/${schematic.id}/loadouts`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					loadoutName: currentLoadout,
+					action: 'rename',
+					newLoadoutName: renameLoadoutName.trim()
+				})
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.message || 'Failed to rename loadout');
+			}
+
+			// Update current loadout selection to the new name
+			const oldLoadoutName = currentLoadout;
+			currentLoadout = renameLoadoutName.trim();
+
+			// Reload loadouts to reflect the change
+			await loadLoadouts();
+
+			// Clear the rename form and close modal
+			renameLoadoutName = '';
+			showRenameLoadoutModal = false;
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Failed to rename loadout';
 		} finally {
 			loading = false;
 		}
@@ -702,6 +748,17 @@
 
 			{#if currentLoadout}
 				<Button
+					variant="secondary"
+					size="sm"
+					onclick={() => {
+						renameLoadoutName = currentLoadout || '';
+						showRenameLoadoutModal = true;
+					}}
+					disabled={loading}
+				>
+					Rename Loadout
+				</Button>
+				<Button
 					variant="danger"
 					size="sm"
 					onclick={() => deleteLoadout(currentLoadout!)}
@@ -1147,6 +1204,46 @@
 				disabled={!newLoadoutName.trim() || loading}
 			>
 				Create
+			</Button>
+		</div>
+	</div>
+</Modal>
+
+<!-- Rename Loadout Modal -->
+<Modal bind:open={showRenameLoadoutModal} title="Rename Loadout">
+	<div class="space-y-4">
+		<div>
+			<label for="rename-loadout-name" class="mb-2 block text-sm font-medium text-slate-300">
+				New Loadout Name
+			</label>
+			<input
+				id="rename-loadout-name"
+				type="text"
+				bind:value={renameLoadoutName}
+				placeholder="Enter new loadout name..."
+				class="w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+				onkeydown={(e) => e.key === 'Enter' && renameLoadout()}
+			/>
+		</div>
+
+		<div class="flex justify-end space-x-2">
+			<Button
+				variant="secondary"
+				onclick={() => {
+					showRenameLoadoutModal = false;
+					renameLoadoutName = '';
+				}}
+			>
+				Cancel
+			</Button>
+			<Button
+				variant="primary"
+				onclick={renameLoadout}
+				disabled={!renameLoadoutName.trim() ||
+					loading ||
+					renameLoadoutName.trim() === currentLoadout}
+			>
+				Rename
 			</Button>
 		</div>
 	</div>

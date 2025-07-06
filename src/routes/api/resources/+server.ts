@@ -139,7 +139,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 					.filter((item: ResourceInventoryItem) => item.amount !== 'none')
 					.map((item: ResourceInventoryItem) => item.resourceId)
 			);
-			
+
 			resources = resources.filter((resource) => inventoryResourceIds.has(resource.id));
 		}
 
