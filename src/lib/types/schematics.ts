@@ -30,6 +30,10 @@ export interface ExperimentationProperty {
 	pe?: number; // Potential Energy percentage
 	hr?: number; // Heat Resistance percentage
 	ma?: number; // Malleability percentage
+	cr?: number; // Cold Resistance percentage
+	dr?: number; // Decay Resistance percentage
+	fl?: number; // Flavor percentage
+	er?: number; // Entangle Resistance percentage
 }
 
 /** Experimentation group for a schematic */

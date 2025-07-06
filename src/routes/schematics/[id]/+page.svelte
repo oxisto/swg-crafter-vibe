@@ -60,7 +60,7 @@
 	<title>SWG Shipwright - {schematic.name}</title>
 </svelte:head>
 
-<PageLayout maxWidth="4xl">
+<PageLayout maxWidth="7xl">
 	<PageHeader title={schematic.name} subtitle="Schematic Details" backLink={backUrl} {backText} />
 
 	<!-- Basic Information Card -->

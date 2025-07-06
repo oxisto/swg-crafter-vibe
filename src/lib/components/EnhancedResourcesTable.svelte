@@ -83,6 +83,8 @@
 		>;
 		grandTotal: number;
 		buffedTotal: number;
+		assemblyValue: number;
+		buffedAssemblyValue: number;
 	} | null>(null);
 
 	// Reactively calculate experimentation value when property changes
@@ -508,12 +510,20 @@
 		// Apply 4% buff for quality (representing entertainer buff + bracelet)
 		const buffedTotal = Math.min(1000, grandTotal * 1.04);
 
+		// Calculate initial assembly value without experimentation: Y = X*(0.000015*X+0.015)
+		const assemblyValue = grandTotal * (0.000015 * grandTotal + 0.015);
+
+		// Calculate buffed assembly value using the buffed total
+		const buffedAssemblyValue = buffedTotal * (0.000015 * buffedTotal + 0.015);
+
 		// Store the detailed breakdown including stat-wise contributions
 		experimentationBreakdown = {
 			resources: resourceBreakdowns,
 			statContributions: statContributionsMap,
 			grandTotal: grandTotal,
-			buffedTotal: buffedTotal
+			buffedTotal: buffedTotal,
+			assemblyValue: assemblyValue,
+			buffedAssemblyValue: buffedAssemblyValue
 		};
 
 		// SWG uses 1000 as the theoretical maximum for experimentation points
@@ -555,6 +565,21 @@
 			schematic.experimentation.length > 0 &&
 			loadoutResources.some((lr) => lr.assigned_resource_id)
 		);
+	});
+
+	/**
+	 * Check if loadout is fully assigned (all slots have resources)
+	 */
+	const isLoadoutFullyAssigned = $derived(() => {
+		if (!currentLoadout || loadoutResources.length === 0) return false;
+		return loadoutResources.every((lr) => lr.assigned_resource_id);
+	});
+
+	// Auto-show experimentation calculator when loadout is fully assigned
+	$effect(() => {
+		if (canShowExperimentationCalculator() && isLoadoutFullyAssigned()) {
+			showExperimentationCalculator = true;
+		}
 	});
 	/**
 	 * Handle resource selection from the modal
@@ -934,7 +959,9 @@
 														<span>{contrib.resourceSlotName} ({contrib.resourceName})</span>
 														<span>
 															{contrib.value}/{contrib.cap} × {contrib.quantity}/{contrib.totalQuantity}
-															× {(contrib.weight / 100).toFixed(4)} × 1000 = {contrib.contribution.toFixed(4)}
+															× {(contrib.weight / 100).toFixed(4)} × 1000 = {contrib.contribution.toFixed(
+																4
+															)}
 														</span>
 													</div>
 												{/each}
@@ -964,12 +991,46 @@
 										<div class="mt-2 flex items-center justify-between text-lg">
 											<span class="font-bold text-white">With 4% Buff =</span>
 											<div class="flex items-center space-x-2">
-												<span class="text-yellow-400">{experimentationBreakdown.grandTotal.toFixed(4)}</span>
+												<span class="text-yellow-400"
+													>{experimentationBreakdown.grandTotal.toFixed(4)}</span
+												>
 												<span class="text-slate-500">×</span>
 												<span class="text-blue-400">1.04</span>
 												<span class="text-slate-500">=</span>
 												<span class="font-bold text-orange-400"
 													>{experimentationBreakdown.buffedTotal.toFixed(4)}</span
+												>
+											</div>
+										</div>
+										<div class="mt-2 flex items-center justify-between text-lg">
+											<span class="font-bold text-white">Assembly Value =</span>
+											<div class="flex items-center space-x-2">
+												<span class="text-yellow-400"
+													>{experimentationBreakdown.grandTotal.toFixed(4)}</span
+												>
+												<span class="text-slate-500">×</span>
+												<span class="text-blue-400"
+													>(0.000015 × {experimentationBreakdown.grandTotal.toFixed(4)} + 0.015)</span
+												>
+												<span class="text-slate-500">=</span>
+												<span class="font-bold text-purple-400"
+													>{experimentationBreakdown.assemblyValue.toFixed(4)}</span
+												>
+											</div>
+										</div>
+										<div class="mt-2 flex items-center justify-between text-lg">
+											<span class="font-bold text-white">Buffed Assembly Value =</span>
+											<div class="flex items-center space-x-2">
+												<span class="text-orange-400"
+													>{experimentationBreakdown.buffedTotal.toFixed(4)}</span
+												>
+												<span class="text-slate-500">×</span>
+												<span class="text-blue-400"
+													>(0.000015 × {experimentationBreakdown.buffedTotal.toFixed(4)} + 0.015)</span
+												>
+												<span class="text-slate-500">=</span>
+												<span class="font-bold text-green-400"
+													>{experimentationBreakdown.buffedAssemblyValue.toFixed(4)}</span
 												>
 											</div>
 										</div>
@@ -994,72 +1055,47 @@
 											<span class="font-bold">With 4% Buff:</span>
 											{experimentationBreakdown.buffedTotal.toFixed(6)}
 										</div>
+										<div class="mt-2">
+											<span class="font-bold">Raw Experimentation Property Weights:</span>
+											{#if selectedExperimentationProperty}
+												{@const expGroup = schematic.experimentation?.find((group) =>
+													group.properties.some(
+														(prop) => prop.desc === selectedExperimentationProperty
+													)
+												)}
+												{#if expGroup}
+													{@const expProperty = expGroup.properties.find(
+														(prop) => prop.desc === selectedExperimentationProperty
+													)}
+													{#if expProperty}
+														<div class="mt-1 font-mono text-xs">
+															{JSON.stringify(expProperty, null, 2)}
+														</div>
+														{@const totalWeight =
+															(expProperty.cd || 0) +
+															(expProperty.oq || 0) +
+															(expProperty.ut || 0) +
+															(expProperty.sr || 0) +
+															(expProperty.pe || 0) +
+															(expProperty.hr || 0) +
+															(expProperty.ma || 0) +
+															(expProperty.cr || 0) +
+															(expProperty.dr || 0) +
+															(expProperty.fl || 0) +
+															(expProperty.er || 0)}
+														<div class="mt-1 text-yellow-400">
+															Total Weight: {totalWeight.toFixed(6)}% {Math.abs(totalWeight - 100) >
+															0.001
+																? '⚠️ (Should be 100%)'
+																: '✅'}
+														</div>
+													{/if}
+												{/if}
+											{/if}
+										</div>
 									</div>
 								</div>
 							{/if}
-
-							<!-- Resource Breakdown -->
-							<div class="rounded-lg border border-slate-600 bg-slate-700/30 p-4">
-								<h6 class="mb-3 text-sm font-medium text-slate-300">Resource Contributions</h6>
-								<div class="space-y-2">
-									{#each schematic.resources as schematicResource}
-										{@const assignedResource = assignedResources[schematicResource.name]}
-										<div class="flex items-center justify-between text-sm">
-											<span class="text-slate-300">{schematicResource.name}</span>
-											{#if assignedResource}
-												<div class="text-right">
-													<div class="text-green-400">{assignedResource.name}</div>
-													{#if assignedResource.attributes}
-														<div class="text-xs text-slate-400">
-															{#if selectedExperimentationProperty}
-																{@const expGroup = schematic.experimentation?.find((group) =>
-																	group.properties.some(
-																		(prop) => prop.desc === selectedExperimentationProperty
-																	)
-																)}
-																{#if expGroup}
-																	{@const expProperty = expGroup.properties.find(
-																		(prop) => prop.desc === selectedExperimentationProperty
-																	)}
-																	{#if expProperty}
-																		{@const relevantProps = []}
-																		{#if expProperty.cd && assignedResource.attributes.cd > 0}
-																			{relevantProps.push(`CD: ${assignedResource.attributes.cd}`)}
-																		{/if}
-																		{#if expProperty.oq && assignedResource.attributes.oq > 0}
-																			{relevantProps.push(`OQ: ${assignedResource.attributes.oq}`)}
-																		{/if}
-																		{#if expProperty.ut && assignedResource.attributes.ut > 0}
-																			{relevantProps.push(`UT: ${assignedResource.attributes.ut}`)}
-																		{/if}
-																		{#if expProperty.sr && assignedResource.attributes.sr > 0}
-																			{relevantProps.push(`SR: ${assignedResource.attributes.sr}`)}
-																		{/if}
-																		{#if expProperty.pe && assignedResource.attributes.pe > 0}
-																			{relevantProps.push(`PE: ${assignedResource.attributes.pe}`)}
-																		{/if}
-																		{#if expProperty.hr && assignedResource.attributes.hr > 0}
-																			{relevantProps.push(`HR: ${assignedResource.attributes.hr}`)}
-																		{/if}
-																		{#if expProperty.ma && assignedResource.attributes.ma > 0}
-																			{relevantProps.push(`MA: ${assignedResource.attributes.ma}`)}
-																		{/if}
-																		{relevantProps.join(' | ')}
-																	{/if}
-																{/if}
-															{/if}
-														</div>
-													{:else}
-														<div class="text-xs text-orange-400">No attributes data</div>
-													{/if}
-												</div>
-											{:else}
-												<span class="text-red-400">Not assigned</span>
-											{/if}
-										</div>
-									{/each}
-								</div>
-							</div>
 						{/if}
 					{/if}
 				</div>

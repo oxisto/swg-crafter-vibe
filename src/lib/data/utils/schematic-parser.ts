@@ -14,6 +14,27 @@ import type {
 } from '$lib/types/schematics.js';
 
 /**
+ * Converts experimentation weight values to proper fractions
+ * @param value - Raw weight value from XML (string or number)
+ * @returns Proper fractional weight as percentage
+ */
+function convertExperimentationWeight(value: any): number {
+	const intValue = parseInt(value) || 0;
+
+	// Convert common fractions to their precise decimal equivalents
+	if (intValue === 33) {
+		return 100 / 3; // 33.333333...%
+	} else if (intValue === 66) {
+		return 200 / 3; // 66.666666...%
+	} else if (intValue === 67) {
+		return 200 / 3; // Sometimes 67 is used instead of 66.67, treat as 2/3
+	}
+
+	// For other values, return as-is
+	return intValue;
+}
+
+/**
  * Parses schematic components from raw XML component data
  * @param componentData - Raw component data from XML
  * @returns Array of processed schematic components
@@ -88,14 +109,18 @@ export function parseExperimentationProperties(expData: any): ExperimentationPro
 				desc: exp._desc
 			};
 
-			// Add percentage values if they exist
-			if (exp._cd) property.cd = parseInt(exp._cd) || 0;
-			if (exp._oq) property.oq = parseInt(exp._oq) || 0;
-			if (exp._ut) property.ut = parseInt(exp._ut) || 0;
-			if (exp._sr) property.sr = parseInt(exp._sr) || 0;
-			if (exp._pe) property.pe = parseInt(exp._pe) || 0;
-			if (exp._hr) property.hr = parseInt(exp._hr) || 0;
-			if (exp._ma) property.ma = parseInt(exp._ma) || 0;
+			// Add percentage values if they exist, converting to proper fractions
+			if (exp._cd) property.cd = convertExperimentationWeight(exp._cd);
+			if (exp._oq) property.oq = convertExperimentationWeight(exp._oq);
+			if (exp._ut) property.ut = convertExperimentationWeight(exp._ut);
+			if (exp._sr) property.sr = convertExperimentationWeight(exp._sr);
+			if (exp._pe) property.pe = convertExperimentationWeight(exp._pe);
+			if (exp._hr) property.hr = convertExperimentationWeight(exp._hr);
+			if (exp._ma) property.ma = convertExperimentationWeight(exp._ma);
+			if (exp._cr) property.cr = convertExperimentationWeight(exp._cr);
+			if (exp._dr) property.dr = convertExperimentationWeight(exp._dr);
+			if (exp._fl) property.fl = convertExperimentationWeight(exp._fl);
+			if (exp._er) property.er = convertExperimentationWeight(exp._er);
 
 			properties.push(property);
 		}
