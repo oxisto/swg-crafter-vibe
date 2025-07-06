@@ -138,7 +138,7 @@ export function createResourceInventoryTable() {
 	db.exec(`
 		CREATE TABLE IF NOT EXISTS resource_inventory (
 			resource_id INTEGER PRIMARY KEY,
-			amount TEXT NOT NULL CHECK (amount IN ('none', 'very_low', 'low', 'medium', 'high')),
+			amount TEXT NOT NULL CHECK (amount IN ('none', 'very_low', 'low', 'medium', 'high', 'very_high')),
 			notes TEXT,
 			last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

@@ -159,8 +159,9 @@ export type ResourceInventoryAmount =
 	| 'none' // 0
 	| 'very_low' // < 10k
 	| 'low' // 10k - 100k
-	| 'medium' // 100k - 1m
-	| 'high'; // > 1m
+	| 'medium' // 100k - 500k
+	| 'high' // 500k - 1M
+	| 'very_high'; // > 1M
 
 /** Resource inventory entry for tracking owned resources */
 export interface ResourceInventoryItem {

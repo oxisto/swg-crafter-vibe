@@ -507,8 +507,8 @@
 			return { current: 0, max: 100, percentage: 0 };
 		}
 
-		// Apply 4% buff for quality (representing entertainer buff + bracelet)
-		const buffedTotal = Math.min(1000, grandTotal * 1.04);
+		// Apply buffs: 4% entertainer buff + 1% resource bracelet = 5% total
+		const buffedTotal = Math.min(1000, grandTotal * 1.05);
 
 		// Calculate initial assembly value without experimentation: Y = X*(0.000015*X+0.015)
 		const assemblyValue = grandTotal * (0.000015 * grandTotal + 0.015);
@@ -989,13 +989,13 @@
 											</div>
 										</div>
 										<div class="mt-2 flex items-center justify-between text-lg">
-											<span class="font-bold text-white">With 4% Buff =</span>
+											<span class="font-bold text-white">With Buffs (4% + 1%) =</span>
 											<div class="flex items-center space-x-2">
 												<span class="text-yellow-400"
 													>{experimentationBreakdown.grandTotal.toFixed(4)}</span
 												>
 												<span class="text-slate-500">×</span>
-												<span class="text-blue-400">1.04</span>
+												<span class="text-blue-400">1.05</span>
 												<span class="text-slate-500">=</span>
 												<span class="font-bold text-orange-400"
 													>{experimentationBreakdown.buffedTotal.toFixed(4)}</span
@@ -1052,7 +1052,7 @@
 											{experimentationBreakdown.grandTotal.toFixed(6)}
 										</div>
 										<div>
-											<span class="font-bold">With 4% Buff:</span>
+											<span class="font-bold">With 5% Buff (4% Entertainer + 1% Bracelet):</span>
 											{experimentationBreakdown.buffedTotal.toFixed(6)}
 										</div>
 										<div class="mt-2">

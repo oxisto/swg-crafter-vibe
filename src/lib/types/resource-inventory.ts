@@ -35,16 +35,23 @@ export const RESOURCE_INVENTORY_AMOUNTS = {
 	medium: {
 		value: 'medium' as const,
 		label: 'Medium',
-		description: '100k - 1M units',
+		description: '100k - 500k units',
 		color: 'yellow',
 		sortOrder: 3
 	},
 	high: {
 		value: 'high' as const,
 		label: 'High',
-		description: '> 1M units',
+		description: '500k - 1M units',
 		color: 'green',
 		sortOrder: 4
+	},
+	very_high: {
+		value: 'very_high' as const,
+		label: 'Very High',
+		description: '> 1M units',
+		color: 'emerald',
+		sortOrder: 5
 	}
 } as const;
 

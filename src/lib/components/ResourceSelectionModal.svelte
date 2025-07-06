@@ -36,7 +36,7 @@
 	let searchTerm = $state('');
 	let resourceClass = $state('');
 	let spawnStatus = $state('all');
-	let showInInventoryOnly = $state(false);
+	let showInInventoryOnly = $state(true);
 
 	// Data state
 	let resources = $state<Resource[]>([]);
@@ -61,7 +61,7 @@
 				resourceClass = '';
 			}
 			spawnStatus = 'all';
-			showInInventoryOnly = false;
+			showInInventoryOnly = true;
 			currentPage = 1;
 
 			if (onClose) {
@@ -147,7 +147,7 @@
 		searchTerm = '';
 		resourceClass = '';
 		spawnStatus = 'all';
-		showInInventoryOnly = false;
+		showInInventoryOnly = true;
 		applyFilters();
 	}
 
