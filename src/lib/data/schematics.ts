@@ -207,3 +207,52 @@ export function toggleSchematicFavorite(schematicId: string): boolean {
 		throw error;
 	}
 }
+
+/**
+ * Mark all schematics that have resource loadouts as favorites
+ * This is a utility function to restore favorites for schematics with loadouts
+ * @returns Number of schematics marked as favorites
+ */
+export function markSchematicsWithLoadoutsAsFavorites(): number {
+	const db = getDatabase();
+
+	try {
+		// Find all unique schematic IDs that have loadouts
+		const schematicsWithLoadouts = db
+			.prepare(
+				`
+				SELECT DISTINCT schematic_id 
+				FROM schematic_resource_loadouts
+			`
+			)
+			.all() as Array<{ schematic_id: string }>;
+
+		if (schematicsWithLoadouts.length === 0) {
+			dbLogger.info('No schematics with loadouts found');
+			return 0;
+		}
+
+		// Update all these schematics to be favorites
+		const updateStmt = db.prepare(`
+			UPDATE schematics 
+			SET is_favorite = 1 
+			WHERE id = ? AND is_favorite = 0
+		`);
+
+		let updatedCount = 0;
+		for (const { schematic_id } of schematicsWithLoadouts) {
+			const result = updateStmt.run(schematic_id);
+			if (result.changes > 0) {
+				updatedCount++;
+			}
+		}
+
+		dbLogger.info(`Marked ${updatedCount} schematics with loadouts as favorites`);
+		return updatedCount;
+	} catch (error) {
+		dbLogger.error('Error marking schematics with loadouts as favorites', {
+			error: error as Error
+		});
+		throw error;
+	}
+}

@@ -16,8 +16,10 @@
 		Resource,
 		ResourceCaps,
 		SchematicResourceLoadout,
-		SchematicLoadoutSummary
+		SchematicLoadoutSummary,
+		ResourceInventoryItem
 	} from '$lib/types';
+	import { RESOURCE_INVENTORY_AMOUNTS } from '$lib/types/resource-inventory.js';
 	import {
 		applyResourceCaps,
 		getResourceClassCode,
@@ -114,9 +116,9 @@
 	const enhancedResourceColumns = [
 		{ key: 'name', label: 'Required Resource' },
 		{ key: 'amount', label: 'Amount' },
-		{ key: 'units', label: 'Units' },
 		{ key: 'classes', label: 'Classes' },
 		{ key: 'assigned_resource', label: 'Assigned Resource' },
+		{ key: 'inventory', label: 'Inventory' },
 		{ key: 'actions', label: 'Actions' }
 	];
 
@@ -182,6 +184,16 @@
 			}
 
 			loadoutResources = await response.json();
+
+			// Load the saved experimentation property for this loadout
+			const selectedLoadout = loadouts.find((l) => l.loadout_name === currentLoadout);
+			if (selectedLoadout?.experimentation_property) {
+				selectedExperimentationProperty = selectedLoadout.experimentation_property;
+			} else if (!selectedExperimentationProperty) {
+				// Only reset to null if there's no current selection
+				// This preserves the selection when just updating resources
+				selectedExperimentationProperty = null;
+			}
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to load loadout resources';
 		} finally {
@@ -307,6 +319,101 @@
 	function openResourceAssignModal(resourceSlotName: string) {
 		selectedResourceSlot = resourceSlotName;
 		showResourceAssignModal = true;
+	}
+
+	/**
+	 * Save the experimentation property for the current loadout
+	 */
+	async function saveExperimentationProperty(property: string | null) {
+		if (!currentLoadout || !browser) return;
+
+		try {
+			const response = await fetch(`/api/schematics/${schematic.id}/loadouts`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					loadoutName: currentLoadout,
+					action: 'update_experimentation_property',
+					experimentationProperty: property
+				})
+			});
+
+			if (!response.ok) {
+				console.error('Failed to save experimentation property');
+			}
+		} catch (err) {
+			console.error('Error saving experimentation property:', err);
+		}
+	}
+
+	/**
+	 * Get inventory display information for a resource
+	 */
+	function getInventoryDisplay(inventory: ResourceInventoryItem | null | undefined) {
+		if (!inventory) {
+			return {
+				label: RESOURCE_INVENTORY_AMOUNTS.none.label,
+				color: 'text-slate-500',
+				bgColor: 'bg-slate-600',
+				description: RESOURCE_INVENTORY_AMOUNTS.none.description
+			};
+		}
+
+		const inventoryInfo = RESOURCE_INVENTORY_AMOUNTS[inventory.amount];
+		const colorMap = {
+			gray: { text: 'text-slate-400', bg: 'bg-slate-600' },
+			red: { text: 'text-red-400', bg: 'bg-red-900/30' },
+			orange: { text: 'text-orange-400', bg: 'bg-orange-900/30' },
+			yellow: { text: 'text-yellow-400', bg: 'bg-yellow-900/30' },
+			green: { text: 'text-green-400', bg: 'bg-green-900/30' },
+			blue: { text: 'text-blue-400', bg: 'bg-blue-900/30' }
+		};
+
+		const colors = colorMap[inventoryInfo.color as keyof typeof colorMap] || colorMap.gray;
+
+		return {
+			label: inventoryInfo.label,
+			color: colors.text,
+			bgColor: colors.bg,
+			description: inventoryInfo.description
+		};
+	}
+
+	/**
+	 * Get inventory status class - matching ResourceTable style
+	 */
+	function getInventoryStatusClass(resource: Resource): string {
+		if (!resource?.inventory) return 'text-slate-500';
+
+		switch (resource.inventory.amount) {
+			case 'very_low':
+				return 'text-red-400';
+			case 'low':
+				return 'text-orange-400';
+			case 'medium':
+				return 'text-yellow-400';
+			case 'high':
+				return 'text-green-400';
+			case 'very_high':
+				return 'text-blue-400';
+			default:
+				return 'text-slate-500';
+		}
+	}
+
+	/**
+	 * Get inventory display text - matching ResourceTable style
+	 */
+	function getInventoryDisplayText(resource: Resource): string {
+		if (!resource?.inventory) return 'None';
+
+		const amountConfig = RESOURCE_INVENTORY_AMOUNTS[resource.inventory.amount];
+		if (amountConfig) {
+			return `${amountConfig.label} (${amountConfig.description})`;
+		}
+
+		// Fallback to original format if config not found
+		return resource.inventory.amount.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 	}
 
 	/**
@@ -654,7 +761,8 @@
 				throw new Error(errorData.message || 'Failed to assign resource');
 			}
 
-			// Reload loadout resources and close modal
+			// Reload loadouts first to get current experimentation property, then loadout resources
+			await loadLoadouts();
 			await loadLoadoutResources();
 			selectedResourceSlot = null;
 			showResourceAssignModal = false;
@@ -674,6 +782,7 @@
 
 	$effect(() => {
 		if (browser && currentLoadout) {
+			isInitialLoad = true; // Reset flag when switching loadouts
 			loadLoadoutResources();
 		}
 	});
@@ -706,6 +815,21 @@
 				});
 		} else {
 			experimentationResult = null;
+		}
+	});
+
+	// Save experimentation property when it changes (but not on initial load)
+	let isInitialLoad = $state(true);
+	$effect(() => {
+		if (browser && currentLoadout && !isInitialLoad) {
+			saveExperimentationProperty(selectedExperimentationProperty);
+		}
+	});
+
+	// Track when initial load is complete
+	$effect(() => {
+		if (browser && currentLoadout && loadoutResources.length > 0) {
+			isInitialLoad = false;
 		}
 	});
 </script>
@@ -804,8 +928,6 @@
 					<span class="font-medium text-slate-200">{item.name}</span>
 				{:else if column.key === 'amount'}
 					<span class="text-slate-300">{item.amount}</span>
-				{:else if column.key === 'units'}
-					<span class="text-slate-400">{item.units}</span>
 				{:else if column.key === 'classes'}
 					{#if item.classes && item.classes.length > 0}
 						<div class="flex flex-wrap gap-1">
@@ -823,14 +945,27 @@
 				{:else if column.key === 'assigned_resource'}
 					{#if currentLoadout}
 						{#if item.assignment?.assigned_resource_name}
-							<span class="font-medium text-green-400"
-								>{item.assignment.assigned_resource_name}</span
-							>
+							<span class="font-medium text-green-400">
+								{item.assignment.assigned_resource_name}
+							</span>
 						{:else}
 							<span class="text-slate-500 italic">Not assigned</span>
 						{/if}
 					{:else}
 						<span class="text-sm text-slate-600">Select a loadout</span>
+					{/if}
+				{:else if column.key === 'inventory'}
+					{#if currentLoadout && item.assignment?.assigned_resource_name}
+						{@const assignedResource = assignedResources[item.name]}
+						{#if assignedResource}
+							<span class="text-sm {getInventoryStatusClass(assignedResource)}">
+								{getInventoryDisplayText(assignedResource)}
+							</span>
+						{:else}
+							<span class="text-sm text-slate-500">-</span>
+						{/if}
+					{:else}
+						<span class="text-sm text-slate-500">-</span>
 					{/if}
 				{:else if column.key === 'actions'}
 					{#if currentLoadout}

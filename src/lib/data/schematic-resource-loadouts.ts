@@ -3,6 +3,8 @@
  */
 
 import { getDatabase } from '$lib/data/database/connection.js';
+import { dbLogger } from '$lib/data/database/connection.js';
+import type { Database } from 'better-sqlite3';
 import {
 	getSchematicLoadouts as dbGetSchematicLoadouts,
 	getSchematicLoadoutResources as dbGetSchematicLoadoutResources,
@@ -84,6 +86,62 @@ export function renameSchematicLoadout(
 ): void {
 	const db = getDatabase();
 	return dbRenameSchematicLoadout(db, schematicId, oldLoadoutName, newLoadoutName);
+}
+
+/**
+ * Update the experimentation property for a specific loadout
+ */
+export function updateSchematicLoadoutExperimentationProperty(
+	schematicId: string,
+	loadoutName: string,
+	experimentationProperty: string | null
+): void {
+	const db = getDatabase();
+	return dbUpdateSchematicLoadoutExperimentationProperty(
+		db,
+		schematicId,
+		loadoutName,
+		experimentationProperty
+	);
+}
+
+/**
+ * Database function to update the experimentation property for a specific loadout
+ */
+function dbUpdateSchematicLoadoutExperimentationProperty(
+	db: Database,
+	schematicId: string,
+	loadoutName: string,
+	experimentationProperty: string | null
+): void {
+	try {
+		const stmt = db.prepare(`
+			UPDATE schematic_resource_loadouts 
+			SET experimentation_property = ?, updated_at = datetime('now')
+			WHERE schematic_id = ? AND loadout_name = ?
+		`);
+
+		const result = stmt.run(experimentationProperty, schematicId, loadoutName);
+
+		if (result.changes === 0) {
+			throw new Error('No loadout found to update experimentation property');
+		}
+
+		dbLogger.info('Updated schematic loadout experimentation property', {
+			schematicId,
+			loadoutName,
+			experimentationProperty,
+			updatedRows: result.changes
+		});
+	} catch (error) {
+		dbLogger.error('Failed to update schematic loadout experimentation property', {
+			error: error as Error,
+			schematicId,
+			loadoutName,
+			experimentationProperty
+		});
+		throw error;
+	}
 }
 
 // Re-export types for convenience

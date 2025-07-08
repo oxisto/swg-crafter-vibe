@@ -19,6 +19,7 @@ export interface SchematicLoadoutSummary {
 	loadout_name: string;
 	total_slots: number;
 	assigned_slots: number;
+	experimentation_property: string | null;
 	created_at: string;
 	updated_at: string;
 }

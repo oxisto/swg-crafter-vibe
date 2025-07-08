@@ -8,7 +8,8 @@ import {
 	createSchematicLoadout,
 	assignResourceToLoadout,
 	deleteSchematicLoadout,
-	renameSchematicLoadout
+	renameSchematicLoadout,
+	updateSchematicLoadoutExperimentationProperty
 } from '$lib/data';
 import { getSchematicById } from '$lib/data/schematics.js';
 import { logger } from '$lib/logger.js';
@@ -258,9 +259,25 @@ export const PUT: RequestHandler = async ({ params, request }): Promise<Response
 				break;
 			}
 
+			case 'update_experimentation_property': {
+				const { experimentationProperty } = actionData;
+
+				updateSchematicLoadoutExperimentationProperty(
+					schematicId,
+					loadoutName,
+					experimentationProperty || null
+				);
+
+				response = {
+					success: true,
+					message: `Experimentation property updated for loadout "${loadoutName}"`
+				};
+				break;
+			}
+
 			default:
 				return logAndError(
-					'Invalid action. Supported actions: assign, rename',
+					'Invalid action. Supported actions: assign, rename, update_experimentation_property',
 					{ schematicId, loadoutName, action },
 					loadoutsLogger,
 					HttpStatus.BAD_REQUEST

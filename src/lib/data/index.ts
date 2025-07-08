@@ -49,6 +49,7 @@ export {
 	getSchematicsByCategory,
 	getSchematicById,
 	toggleSchematicFavorite,
+	markSchematicsWithLoadoutsAsFavorites,
 	downloadAndCacheSchematics
 } from './schematics.js';
 
@@ -112,6 +113,7 @@ export {
 	assignResourceToLoadout,
 	deleteSchematicLoadout,
 	renameSchematicLoadout,
+	updateSchematicLoadoutExperimentationProperty,
 	type SchematicResourceLoadout,
 	type SchematicLoadoutSummary
 } from './schematic-resource-loadouts.js';

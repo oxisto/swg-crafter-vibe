@@ -30,6 +30,20 @@ export function createSchematicResourceLoadoutsTable(db: Database): void {
 			)
 		`);
 
+		// Add experimentation_property column if it doesn't exist
+		try {
+			db.exec(`
+				ALTER TABLE schematic_resource_loadouts 
+				ADD COLUMN experimentation_property TEXT
+			`);
+			dbLogger.info('Added experimentation_property column to schematic_resource_loadouts table');
+		} catch (error) {
+			// Column might already exist, which is fine
+			if (!String(error).includes('duplicate column name')) {
+				dbLogger.warn('Could not add experimentation_property column', { error: error as Error });
+			}
+		}
+
 		// Index for faster lookups
 		db.exec(`
 			CREATE INDEX IF NOT EXISTS idx_schematic_resource_loadouts_schematic 
@@ -54,6 +68,7 @@ export function getSchematicLoadouts(db: Database, schematicId: string): Schemat
 				loadout_name,
 				COUNT(*) as total_slots,
 				COUNT(assigned_resource_id) as assigned_slots,
+				MIN(experimentation_property) as experimentation_property,
 				MIN(created_at) as created_at,
 				MAX(updated_at) as updated_at
 			FROM schematic_resource_loadouts 
@@ -243,6 +258,45 @@ export function renameSchematicLoadout(
 			schematicId,
 			oldLoadoutName,
 			newLoadoutName
+		});
+		throw error;
+	}
+}
+
+/**
+ * Update the experimentation property for a specific loadout
+ */
+export function updateSchematicLoadoutExperimentationProperty(
+	db: Database,
+	schematicId: string,
+	loadoutName: string,
+	experimentationProperty: string | null
+): void {
+	try {
+		const stmt = db.prepare(`
+			UPDATE schematic_resource_loadouts 
+			SET experimentation_property = ?, updated_at = datetime('now')
+			WHERE schematic_id = ? AND loadout_name = ?
+		`);
+
+		const result = stmt.run(experimentationProperty, schematicId, loadoutName);
+
+		if (result.changes === 0) {
+			throw new Error('No loadout found to update experimentation property');
+		}
+
+		dbLogger.info('Updated schematic loadout experimentation property', {
+			schematicId,
+			loadoutName,
+			experimentationProperty,
+			updatedRows: result.changes
+		});
+	} catch (error) {
+		dbLogger.error('Failed to update schematic loadout experimentation property', {
+			error: error as Error,
+			schematicId,
+			loadoutName,
+			experimentationProperty
 		});
 		throw error;
 	}

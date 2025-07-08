@@ -48,6 +48,41 @@
 		}
 	});
 
+	// Favorites restoration state
+	let restoringFavorites = $state(false);
+	let favoritesMessage = $state<string | null>(null);
+
+	async function restoreFavorites() {
+		restoringFavorites = true;
+		favoritesMessage = null;
+
+		try {
+			const response = await fetch('/api/schematics/restore-favorites', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			if (result.success) {
+				favoritesMessage = `Successfully marked ${result.updatedCount} schematics with loadouts as favorites.`;
+			} else {
+				favoritesMessage = 'Failed to restore favorites. Please try again.';
+			}
+		} catch (error) {
+			console.error('Error restoring favorites:', error);
+			favoritesMessage = 'An error occurred while restoring favorites. Please try again.';
+		} finally {
+			restoringFavorites = false;
+		}
+	}
+
 	let showExportModal = $state(false);
 	let showImportModal = $state(false);
 	let showClearModal = $state(false);
@@ -276,7 +311,7 @@
 
 		<!-- Data Management Section -->
 		<Section title="Data Management" icon="💾">
-			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 				<Button
 					onclick={exportInventory}
 					variant="primary"
@@ -298,6 +333,21 @@
 				</Button>
 
 				<Button
+					onclick={restoreFavorites}
+					variant="secondary"
+					className="flex flex-col items-center gap-2 p-6 h-auto"
+					disabled={restoringFavorites}
+				>
+					<span class="text-2xl">⭐</span>
+					<span class="font-medium">
+						{restoringFavorites ? 'Restoring...' : 'Restore Favorites'}
+					</span>
+					<span class="text-center text-sm opacity-75">
+						Mark all schematics with loadouts as favorites
+					</span>
+				</Button>
+
+				<Button
 					onclick={clearAllInventory}
 					variant="danger"
 					className="flex flex-col items-center gap-2 p-6 h-auto"
@@ -309,6 +359,12 @@
 					</span>
 				</Button>
 			</div>
+
+			{#if favoritesMessage}
+				<div class="mt-4 rounded-lg border border-green-500/20 bg-green-500/10 p-3">
+					<p class="text-sm text-green-400">{favoritesMessage}</p>
+				</div>
+			{/if}
 		</Section>
 
 		<!-- Application Info Section -->
