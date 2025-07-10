@@ -39,9 +39,10 @@ export const settings = writable<Settings>({
  *
  * @param {string} category - The part category
  * @param {string} markLevel - The mark level
+ * @param {string} vendor - The vendor location
  * @returns {Promise<void>} Promise that resolves when operation completes
  */
-export async function incrementStock(category: string, markLevel: string) {
+export async function incrementStock(category: string, markLevel: string, vendor: string) {
 	try {
 		const response = await fetch('/api/inventory', {
 			method: 'POST',
@@ -51,7 +52,8 @@ export async function incrementStock(category: string, markLevel: string) {
 			body: JSON.stringify({
 				category,
 				markLevel,
-				action: 'increment'
+				action: 'increment',
+				vendor
 			})
 		});
 
@@ -64,7 +66,12 @@ export async function incrementStock(category: string, markLevel: string) {
 			});
 		}
 	} catch (error) {
-		storeLogger.error('Error incrementing stock', { error: error as Error, category, markLevel });
+		storeLogger.error('Error incrementing stock', {
+			error: error as Error,
+			category,
+			markLevel,
+			vendor
+		});
 	}
 }
 
@@ -74,9 +81,10 @@ export async function incrementStock(category: string, markLevel: string) {
  *
  * @param {string} category - The part category
  * @param {string} markLevel - The mark level
+ * @param {string} vendor - The vendor location
  * @returns {Promise<void>} Promise that resolves when operation completes
  */
-export async function decrementStock(category: string, markLevel: string) {
+export async function decrementStock(category: string, markLevel: string, vendor: string) {
 	try {
 		const response = await fetch('/api/inventory', {
 			method: 'POST',
@@ -86,7 +94,8 @@ export async function decrementStock(category: string, markLevel: string) {
 			body: JSON.stringify({
 				category,
 				markLevel,
-				action: 'decrement'
+				action: 'decrement',
+				vendor
 			})
 		});
 
@@ -99,7 +108,12 @@ export async function decrementStock(category: string, markLevel: string) {
 			});
 		}
 	} catch (error) {
-		storeLogger.error('Error decrementing stock', { error: error as Error, category, markLevel });
+		storeLogger.error('Error decrementing stock', {
+			error: error as Error,
+			category,
+			markLevel,
+			vendor
+		});
 	}
 }
 
@@ -110,9 +124,15 @@ export async function decrementStock(category: string, markLevel: string) {
  * @param {string} category - The part category
  * @param {string} markLevel - The mark level
  * @param {number} quantity - The new quantity to set
+ * @param {string} vendor - The vendor location
  * @returns {Promise<void>} Promise that resolves when operation completes
  */
-export async function setStock(category: string, markLevel: string, quantity: number) {
+export async function setStock(
+	category: string,
+	markLevel: string,
+	quantity: number,
+	vendor: string
+) {
 	try {
 		const response = await fetch('/api/inventory', {
 			method: 'POST',
@@ -123,7 +143,8 @@ export async function setStock(category: string, markLevel: string, quantity: nu
 				category,
 				markLevel,
 				action: 'set',
-				quantity
+				quantity,
+				vendor
 			})
 		});
 
@@ -140,7 +161,8 @@ export async function setStock(category: string, markLevel: string, quantity: nu
 			error: error as Error,
 			category,
 			markLevel,
-			quantity
+			quantity,
+			vendor
 		});
 	}
 }

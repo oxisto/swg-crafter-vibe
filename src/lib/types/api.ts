@@ -62,6 +62,9 @@ export type UpdateInventoryResponse = {
 export type GetSettingsResponse = Settings;
 export type UpdateSettingsResponse = Settings;
 
+// Vendors API responses
+export type ListVendorsResponse = string[];
+
 // Chassis API responses
 export type ListChassisResponse = Chassis[];
 export type GetChassisResponse = Chassis;

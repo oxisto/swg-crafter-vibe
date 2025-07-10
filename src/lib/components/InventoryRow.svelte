@@ -10,9 +10,10 @@
 		schematicNames: Record<string, string>;
 		schematicIds: Record<string, string>;
 		recommendedStockLevel: number;
+		vendor: string;
 	}
 
-	let { category, inventory, schematicNames, schematicIds, recommendedStockLevel }: Props =
+	let { category, inventory, schematicNames, schematicIds, recommendedStockLevel, vendor }: Props =
 		$props();
 </script>
 
@@ -34,6 +35,7 @@
 			{schematicName}
 			{schematicId}
 			{recommendedStockLevel}
+			{vendor}
 		/>
 	{/each}
 </div>

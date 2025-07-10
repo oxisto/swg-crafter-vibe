@@ -70,28 +70,53 @@ export function getAllInventory(): Inventory {
  * @param category - The part category (e.g., "Armor", "Engine")
  * @param markLevel - The mark level (e.g., "I", "II", "III", "IV", "V")
  * @param quantity - The new quantity value
+ * @param vendorLocation - The vendor location (optional)
  */
-export function updateInventoryItem(category: string, markLevel: string, quantity: number): void {
+export function updateInventoryItem(
+	category: string,
+	markLevel: string,
+	quantity: number,
+	vendorLocation?: string
+): void {
 	const db = getDatabase();
-	const stmt = db.prepare(`
+	let query = `
     UPDATE inventory 
     SET quantity = ?, updated_at = CURRENT_TIMESTAMP 
-    WHERE category = ? AND mark_level = ?
-  `);
+    WHERE category = ? AND mark_level = ?`;
+	const params: any[] = [quantity, category, markLevel];
 
-	stmt.run(quantity, category, markLevel);
+	if (vendorLocation) {
+		query += ' AND vendor_location = ?';
+		params.push(vendorLocation);
+	}
+
+	const stmt = db.prepare(query);
+	stmt.run(...params);
 }
 
 /**
  * Retrieves the quantity of a specific inventory item.
  * @param category - The part category
  * @param markLevel - The mark level
+ * @param vendorLocation - The vendor location (optional)
  * @returns The quantity of the item, or 0 if not found
  */
-export function getInventoryItem(category: string, markLevel: string): number {
+export function getInventoryItem(
+	category: string,
+	markLevel: string,
+	vendorLocation?: string
+): number {
 	const db = getDatabase();
-	const stmt = db.prepare('SELECT quantity FROM inventory WHERE category = ? AND mark_level = ?');
-	const result = stmt.get(category, markLevel) as { quantity: number } | undefined;
+	let query = 'SELECT quantity FROM inventory WHERE category = ? AND mark_level = ?';
+	const params: any[] = [category, markLevel];
+
+	if (vendorLocation) {
+		query += ' AND vendor_location = ?';
+		params.push(vendorLocation);
+	}
+
+	const stmt = db.prepare(query);
+	const result = stmt.get(...params) as { quantity: number } | undefined;
 
 	return result?.quantity ?? 0;
 }
@@ -100,22 +125,28 @@ export function getInventoryItem(category: string, markLevel: string): number {
  * Retrieves a specific inventory item with its update timestamp.
  * @param category - The part category
  * @param markLevel - The mark level
+ * @param vendorLocation - The vendor location (optional)
  * @returns The inventory item with quantity and update timestamp, or null if not found
  */
 export function getInventoryItemWithTimestamp(
 	category: string,
-	markLevel: string
+	markLevel: string,
+	vendorLocation?: string
 ): {
 	quantity: number;
 	updatedAt: string;
 } | null {
 	const db = getDatabase();
-	const stmt = db.prepare(
-		'SELECT quantity, updated_at FROM inventory WHERE category = ? AND mark_level = ?'
-	);
-	const result = stmt.get(category, markLevel) as
-		| { quantity: number; updated_at: string }
-		| undefined;
+	let query = 'SELECT quantity, updated_at FROM inventory WHERE category = ? AND mark_level = ?';
+	const params: any[] = [category, markLevel];
+
+	if (vendorLocation) {
+		query += ' AND vendor_location = ?';
+		params.push(vendorLocation);
+	}
+
+	const stmt = db.prepare(query);
+	const result = stmt.get(...params) as { quantity: number; updated_at: string } | undefined;
 
 	if (!result) return null;
 
@@ -239,9 +270,21 @@ function enrichInventoryItem(item: {
 /**
  * Retrieves all inventory items with optional schematic enrichment
  */
-export function getAllInventoryItems(includeSchematic: boolean = false): InventoryItemResponse[] {
+export function getAllInventoryItems(
+	includeSchematic: boolean = false,
+	vendorLocation?: string
+): InventoryItemResponse[] {
 	const db = getDatabase();
-	const rows = db.prepare('SELECT category, mark_level, quantity FROM inventory').all() as Array<{
+	let query = 'SELECT category, mark_level, quantity FROM inventory';
+	const params: any[] = [];
+
+	if (vendorLocation) {
+		query += ' WHERE vendor_location = ?';
+		params.push(vendorLocation);
+	}
+
+	const stmt = db.prepare(query);
+	const rows = stmt.all(...params) as Array<{
 		category: string;
 		mark_level: string;
 		quantity: number;
@@ -268,14 +311,22 @@ export function getAllInventoryItems(includeSchematic: boolean = false): Invento
  * Retrieves all inventory items with timestamps and optional schematic enrichment
  */
 export function getAllInventoryItemsWithTimestamps(
-	includeSchematic: boolean = false
+	includeSchematic: boolean = false,
+	vendorLocation?: string
 ): InventoryItemWithTimestampResponse[] {
 	const db = getDatabase();
-	const rows = db
-		.prepare(
-			'SELECT category, mark_level, quantity, updated_at FROM inventory ORDER BY updated_at DESC'
-		)
-		.all() as Array<{
+	let query = 'SELECT category, mark_level, quantity, updated_at FROM inventory';
+	const params: any[] = [];
+
+	if (vendorLocation) {
+		query += ' WHERE vendor_location = ?';
+		params.push(vendorLocation);
+	}
+
+	query += ' ORDER BY updated_at DESC';
+
+	const stmt = db.prepare(query);
+	const rows = stmt.all(...params) as Array<{
 		category: string;
 		mark_level: string;
 		quantity: number;
@@ -372,9 +423,10 @@ export function getInventoryItemWithSchematic(
 export function getInventoryItemWithTimestampAndSchematic(
 	category: PartCategory,
 	markLevel: MarkLevel,
-	includeSchematic: boolean = false
+	includeSchematic: boolean = false,
+	vendorLocation?: string
 ): InventoryItemWithTimestampResponse | null {
-	const item = getInventoryItemWithTimestamp(category, markLevel);
+	const item = getInventoryItemWithTimestamp(category, markLevel, vendorLocation);
 
 	if (!item) return null;
 

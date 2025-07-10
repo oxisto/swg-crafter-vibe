@@ -20,7 +20,6 @@
 	let searchTerm = $state(data.filters?.searchTerm || '');
 	let className = $state(data.filters?.className || '');
 	let spawnStatus = $state(data.filters?.spawnStatus || 'all');
-	let showInInventoryOnly = $state(data.filters?.inInventoryOnly || false);
 
 	// Inventory management modal state
 	let showInventoryModal = $state(false);
@@ -36,8 +35,7 @@
 		const filters = {
 			searchTerm: searchTerm,
 			className: className,
-			spawnStatus: spawnStatus,
-			showInInventoryOnly: showInInventoryOnly
+			spawnStatus: spawnStatus
 		};
 
 		if (filters.searchTerm) {
@@ -58,12 +56,6 @@
 			url.searchParams.delete('status');
 		}
 
-		if (filters.showInInventoryOnly) {
-			url.searchParams.set('in_inventory', '1');
-		} else {
-			url.searchParams.delete('in_inventory');
-		}
-
 		url.searchParams.delete('page'); // Reset to first page
 		goto(url.toString());
 	}
@@ -73,7 +65,6 @@
 		searchTerm = '';
 		className = '';
 		spawnStatus = 'all';
-		showInInventoryOnly = false;
 		applyFilters();
 	}
 
@@ -209,7 +200,6 @@
 		bind:searchTerm
 		bind:className
 		bind:spawnStatus
-		bind:showInInventoryOnly
 		onApply={applyFilters}
 		onClear={clearFilters}
 	/>
@@ -224,8 +214,7 @@
 		emptyMessage="No resources found"
 		emptySubMessage={data.filters.searchTerm ||
 		data.filters.className ||
-		(data.filters.spawnStatus && data.filters.spawnStatus !== 'all') ||
-		data.filters.inInventoryOnly
+		(data.filters.spawnStatus && data.filters.spawnStatus !== 'all')
 			? 'Try adjusting your filters to see more resources.'
 			: 'No resource data available.'}
 		showColumns={{

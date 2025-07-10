@@ -54,6 +54,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 	const includeAll = url.searchParams.get('all') === 'true';
 	const recent = url.searchParams.get('recent') === 'true';
 	const limit = parseInt(url.searchParams.get('limit') || '10', 10);
+	const vendor = url.searchParams.get('vendor');
 
 	try {
 		// If requesting recently updated items
@@ -70,21 +71,24 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		// If requesting all inventory data
 		if (includeAll) {
 			if (includeTimestamp) {
-				const inventoryWithTimestamps = getAllInventoryItemsWithTimestamps(includeSchematic);
+				const inventoryWithTimestamps = getAllInventoryItemsWithTimestamps(
+					includeSchematic,
+					vendor || undefined
+				);
 				return logAndSuccess(
 					inventoryWithTimestamps satisfies GetInventoryWithTimestampsResponse,
 					'Successfully fetched inventory with timestamps',
-					{ count: inventoryWithTimestamps.length, includeSchematic },
+					{ count: inventoryWithTimestamps.length, includeSchematic, vendor },
 					inventoryLogger
 				);
 			}
 
 			if (includeSchematic) {
-				const inventoryItems = getAllInventoryItems(includeSchematic);
+				const inventoryItems = getAllInventoryItems(includeSchematic, vendor || undefined);
 				return logAndSuccess(
 					inventoryItems satisfies GetInventoryResponse,
 					'Successfully fetched inventory with schematics',
-					{ count: inventoryItems.length },
+					{ count: inventoryItems.length, vendor },
 					inventoryLogger
 				);
 			}
@@ -177,19 +181,19 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
  */
 export const POST: RequestHandler = async ({ request }): Promise<Response> => {
 	try {
-		const { category, markLevel, action, quantity } = await request.json();
+		const { category, markLevel, action, quantity, vendor } = await request.json();
 
 		if (!category || !markLevel || !action) {
 			return logAndError(
 				'Missing required fields',
-				{ category, markLevel, action },
+				{ category, markLevel, action, vendor },
 				inventoryLogger,
 				HttpStatus.BAD_REQUEST
 			);
 		}
 
 		let newQuantity: number;
-		const currentQuantity = getInventoryItem(category, markLevel);
+		const currentQuantity = getInventoryItem(category, markLevel, vendor);
 
 		switch (action) {
 			case 'increment':
@@ -202,7 +206,7 @@ export const POST: RequestHandler = async ({ request }): Promise<Response> => {
 				if (typeof quantity !== 'number' || quantity < 0) {
 					return logAndError(
 						'Invalid quantity',
-						{ category, markLevel, quantity },
+						{ category, markLevel, quantity, vendor },
 						inventoryLogger,
 						HttpStatus.BAD_REQUEST
 					);
@@ -212,16 +216,21 @@ export const POST: RequestHandler = async ({ request }): Promise<Response> => {
 			default:
 				return logAndError(
 					'Invalid action',
-					{ category, markLevel, action },
+					{ category, markLevel, action, vendor },
 					inventoryLogger,
 					HttpStatus.BAD_REQUEST
 				);
 		}
 
-		updateInventoryItem(category, markLevel, newQuantity);
+		updateInventoryItem(category, markLevel, newQuantity, vendor);
 
 		// Get the updated item with timestamp for response
-		const updatedItem = getInventoryItemWithTimestampAndSchematic(category, markLevel, false);
+		const updatedItem = getInventoryItemWithTimestampAndSchematic(
+			category,
+			markLevel,
+			false,
+			vendor
+		);
 
 		const response: UpdateInventoryResponse = {
 			item: {
@@ -235,7 +244,7 @@ export const POST: RequestHandler = async ({ request }): Promise<Response> => {
 		return logAndSuccess(
 			response,
 			'Successfully updated inventory item',
-			{ category, markLevel, action, newQuantity, previousQuantity: currentQuantity },
+			{ category, markLevel, action, newQuantity, previousQuantity: currentQuantity, vendor },
 			inventoryLogger
 		);
 	} catch (err) {

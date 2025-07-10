@@ -30,14 +30,23 @@
 		quantity: number;
 		/** Recommended stock level for color coding */
 		recommendedStockLevel: number;
+		/** The vendor location */
+		vendor: string;
 		/** Optional schematic name to display instead of generic category-mark format */
 		schematicName?: string;
 		/** Optional schematic ID for creating links to detail pages */
 		schematicId?: string;
 	}
 
-	let { category, markLevel, quantity, recommendedStockLevel, schematicName, schematicId }: Props =
-		$props();
+	let {
+		category,
+		markLevel,
+		quantity,
+		recommendedStockLevel,
+		vendor,
+		schematicName,
+		schematicId
+	}: Props = $props();
 
 	/** State for edit mode toggle */
 	let editMode = $state(false);
@@ -73,7 +82,7 @@
 	 * Calls the store function to update both local state and database.
 	 */
 	function handleIncrement() {
-		incrementStock(category, markLevel);
+		incrementStock(category, markLevel, vendor);
 	}
 
 	/**
@@ -81,7 +90,7 @@
 	 * Prevents going below zero through store function validation.
 	 */
 	function handleDecrement() {
-		decrementStock(category, markLevel);
+		decrementStock(category, markLevel, vendor);
 	}
 
 	/**
@@ -100,7 +109,7 @@
 	function handleSave() {
 		const newQuantity = parseInt(editValue.toString(), 10);
 		if (!isNaN(newQuantity) && newQuantity >= 0) {
-			setStock(category, markLevel, newQuantity);
+			setStock(category, markLevel, newQuantity, vendor);
 		}
 		editMode = false;
 	}

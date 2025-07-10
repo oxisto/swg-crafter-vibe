@@ -17,14 +17,14 @@
 			<ul class="space-y-2">
 				<li>
 					<a
-						href="/inventory"
+						href="/vendors"
 						class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors {$page.url
-							.pathname === '/inventory'
+							.pathname === '/vendors'
 							? 'bg-blue-600 text-white'
 							: 'text-slate-300 hover:bg-slate-700 hover:text-white'}"
 					>
-						<span class="text-lg">📦</span>
-						<span class="font-medium">Inventory</span>
+						<span class="text-lg">🏪</span>
+						<span class="font-medium">Vendors</span>
 					</a>
 				</li>
 				<li>
