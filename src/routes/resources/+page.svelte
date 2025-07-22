@@ -8,7 +8,7 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Input from '$lib/components/Input.svelte';
-	import Modal from '$lib/components/Modal.svelte';
+import InventoryModal from '$lib/components/InventoryModal.svelte';
 	import Loading from '$lib/components/Loading.svelte';
 	import ResourceFilters from '$lib/components/ResourceFilters.svelte';
 	import ResourceTable from '$lib/components/ResourceTable.svelte';
@@ -20,6 +20,7 @@
 	let searchTerm = $state(data.filters?.searchTerm || '');
 	let className = $state(data.filters?.className || '');
 	let spawnStatus = $state(data.filters?.spawnStatus || 'all');
+	let showInInventoryOnly = $state(false);
 
 	// Inventory management modal state
 	let showInventoryModal = $state(false);
@@ -28,6 +29,13 @@
 	let inventoryNotes = $state('');
 	let isUpdating = $state(false);
 
+	// Helper to support InventoryModal's onSave signature
+	function saveInventoryWithParams(amount: ResourceInventoryAmount, notes: string) {
+		selectedAmount = amount;
+		inventoryNotes = notes;
+		saveInventory();
+	}
+
 	// Handle filter changes
 	function applyFilters() {
 		const url = new URL($page.url);
@@ -35,7 +43,8 @@
 		const filters = {
 			searchTerm: searchTerm,
 			className: className,
-			spawnStatus: spawnStatus
+			spawnStatus: spawnStatus,
+			showInInventoryOnly: showInInventoryOnly
 		};
 
 		if (filters.searchTerm) {
@@ -56,6 +65,12 @@
 			url.searchParams.delete('status');
 		}
 
+		if (filters.showInInventoryOnly) {
+			url.searchParams.set('inventory', 'true');
+		} else {
+			url.searchParams.delete('inventory');
+		}
+
 		url.searchParams.delete('page'); // Reset to first page
 		goto(url.toString());
 	}
@@ -65,6 +80,7 @@
 		searchTerm = '';
 		className = '';
 		spawnStatus = 'all';
+		showInInventoryOnly = false;
 		applyFilters();
 	}
 
@@ -200,6 +216,7 @@
 		bind:searchTerm
 		bind:className
 		bind:spawnStatus
+		bind:showInInventoryOnly
 		onApply={applyFilters}
 		onClear={clearFilters}
 	/>
@@ -228,82 +245,15 @@
 	/>
 </PageLayout>
 
-<!-- Inventory Management Modal -->
-<Modal bind:open={showInventoryModal} title="Manage Inventory">
-	{#if selectedResource}
-		<div class="space-y-6">
-			<div>
-				<h2 class="text-xl font-bold text-white">
-					Manage Inventory: {selectedResource.name}
-				</h2>
-				<p class="text-sm text-slate-400">
-					{selectedResource.className} • {selectedResource.type}
-				</p>
-				{#if selectedResource.attributes}
-					<div class="mt-2 grid grid-cols-5 gap-2 text-xs text-slate-500">
-						{#each ['oq', 'cr', 'cd', 'dr', 'fl', 'hr', 'ma', 'pe', 'sr', 'ut'] as stat}
-							{@const value = getStatValue(selectedResource, stat)}
-							{#if value !== '-'}
-								<div class="text-center">
-									<div class="font-mono text-xs text-blue-300 uppercase">{stat}</div>
-									<div class="font-mono font-semibold {getStatColorClass(selectedResource, stat)}">
-										{value}
-									</div>
-								</div>
-							{/if}
-						{/each}
-					</div>
-				{/if}
-			</div>
+<!-- Inventory Management Modal (reusable component) -->
+<InventoryModal
+  open={showInventoryModal}
+  resource={selectedResource}
+  amount={selectedAmount}
+  notes={inventoryNotes}
+  isUpdating={isUpdating}
+  onSave={(amount, notes) => saveInventoryWithParams(amount, notes)}
+  onRemove={removeInventory}
+  onCancel={closeInventoryModal}
+/>
 
-			<div>
-				<label for="amount" class="mb-2 block text-sm font-medium text-slate-300"> Amount </label>
-				<select
-					id="amount"
-					bind:value={selectedAmount}
-					class="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
-				>
-					{#each Object.values(RESOURCE_INVENTORY_AMOUNTS) as amountDef}
-						<option value={amountDef.value}>
-							{amountDef.label} ({amountDef.description})
-						</option>
-					{/each}
-				</select>
-			</div>
-
-			<div>
-				<Input
-					id="notes"
-					label="Notes (optional)"
-					bind:value={inventoryNotes}
-					placeholder="Add notes about this resource..."
-				/>
-			</div>
-
-			<div class="flex gap-3">
-				<Button onclick={saveInventory} disabled={isUpdating} variant="primary" class="flex-1">
-					{#if isUpdating}
-						<Loading size="sm" />
-						Saving...
-					{:else}
-						Save Inventory
-					{/if}
-				</Button>
-
-				{#if selectedResource.inventory}
-					<Button onclick={removeInventory} disabled={isUpdating} variant="danger">
-						{#if isUpdating}
-							<Loading size="sm" />
-						{:else}
-							Remove
-						{/if}
-					</Button>
-				{/if}
-
-				<Button onclick={closeInventoryModal} disabled={isUpdating} variant="secondary">
-					Cancel
-				</Button>
-			</div>
-		</div>
-	{/if}
-</Modal>

@@ -10,6 +10,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import SimpleTable from '$lib/components/SimpleTable.svelte';
 	import ResourceSelectionModal from '$lib/components/ResourceSelectionModal.svelte';
+	import InventoryModal from '$lib/components/InventoryModal.svelte';
 	import type {
 		Schematic,
 		SchematicResource,
@@ -17,7 +18,8 @@
 		ResourceCaps,
 		SchematicResourceLoadout,
 		SchematicLoadoutSummary,
-		ResourceInventoryItem
+		ResourceInventoryItem,
+		ResourceInventoryAmount
 	} from '$lib/types';
 	import { RESOURCE_INVENTORY_AMOUNTS } from '$lib/types/resource-inventory.js';
 	import {
@@ -818,6 +820,118 @@
 		}
 	});
 
+	// ...existing code...
+
+	let showInventoryModal = $state(false);
+	let selectedResource: Resource | null = $state(null);
+	let selectedAmount: ResourceInventoryAmount = $state('very_low');
+	let inventoryNotes = $state('');
+	let isUpdating = $state(false);
+
+	function openInventoryModal(resource: Resource | null) {
+		selectedResource = resource;
+		showInventoryModal = true;
+		selectedAmount = resource?.inventory?.amount || 'very_low';
+		inventoryNotes = resource?.inventory?.notes || '';
+		isUpdating = false;
+	}
+	function closeInventoryModal() {
+		showInventoryModal = false;
+		selectedResource = null;
+		selectedAmount = 'very_low';
+		inventoryNotes = '';
+		isUpdating = false;
+	}
+
+	async function saveInventoryWithParams(amount: ResourceInventoryAmount, notes: string) {
+		if (!selectedResource) return;
+		isUpdating = true;
+		selectedAmount = amount;
+		inventoryNotes = notes;
+		try {
+			const response = await fetch(`/api/resources/${selectedResource.id}/inventory`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ amount, notes: notes.trim() || null })
+			});
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.message || 'Failed to update inventory');
+			}
+			await loadAssignedResourcesData();
+			closeInventoryModal();
+		} catch (err) {
+			console.error('Failed to update inventory:', err);
+		} finally {
+			isUpdating = false;
+		}
+	}
+
+	async function removeInventory() {
+		if (!selectedResource) return;
+		isUpdating = true;
+		try {
+			const response = await fetch(`/api/resources/${selectedResource.id}/inventory`, {
+				method: 'DELETE'
+			});
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.message || 'Failed to remove inventory');
+			}
+			await loadAssignedResourcesData();
+			closeInventoryModal();
+		} catch (err) {
+			console.error('Failed to remove inventory:', err);
+		} finally {
+			isUpdating = false;
+		}
+	}
+
+	// Load data when component mounts or currentLoadout changes
+	$effect(() => {
+		if (browser) {
+			loadLoadouts();
+		}
+	});
+
+	$effect(() => {
+		if (browser && currentLoadout) {
+			isInitialLoad = true; // Reset flag when switching loadouts
+			loadLoadoutResources();
+		}
+	});
+
+	// Load assigned resource data when loadout resources change
+	$effect(() => {
+		if (browser && loadoutResources.length > 0) {
+			loadAssignedResourcesData();
+		}
+	});
+
+	$effect(() => {
+		if (browser && currentLoadout) {
+			loadAssignedResourcesData();
+		}
+	});
+
+	$effect(() => {
+		if (browser && selectedExperimentationProperty) {
+			calculatingExperimentation = true;
+			calculateExperimentationValue(selectedExperimentationProperty)
+				.then((result) => {
+					experimentationResult = result;
+					calculatingExperimentation = false;
+				})
+				.catch((error) => {
+					console.error('Error calculating experimentation value:', error);
+					experimentationResult = { current: 0, max: 100, percentage: 0 };
+					calculatingExperimentation = false;
+				});
+		} else {
+			experimentationResult = null;
+		}
+	});
+
 	// Save experimentation property when it changes (but not on initial load)
 	let isInitialLoad = $state(true);
 	$effect(() => {
@@ -957,13 +1071,18 @@
 				{:else if column.key === 'inventory'}
 					{#if currentLoadout && item.assignment?.assigned_resource_name}
 						{@const assignedResource = assignedResources[item.name]}
-						{#if assignedResource}
-							<span class="text-sm {getInventoryStatusClass(assignedResource)}">
-								{getInventoryDisplayText(assignedResource)}
-							</span>
-						{:else}
-							<span class="text-sm text-slate-500">-</span>
-						{/if}
+						<div class="flex items-center space-x-2">
+							<button
+								class="cursor-pointer text-sm {assignedResource
+									? getInventoryStatusClass(assignedResource)
+									: 'text-slate-500'} hover:underline"
+								onclick={() => openInventoryModal(assignedResource)}
+								disabled={loading || !assignedResource}
+								style="background: none; border: none; padding: 0;"
+							>
+								{assignedResource ? getInventoryDisplayText(assignedResource) : 'None'}
+							</button>
+						</div>
 					{:else}
 						<span class="text-sm text-slate-500">-</span>
 					{/if}
@@ -1391,4 +1510,16 @@
 	onSelect={handleResourceSelect}
 	constrainToClass={selectedResourceSlot ? getResourceClassForSlot(selectedResourceSlot) : ''}
 	showSpawnStatus={true}
+/>
+
+<!-- Inventory Management Modal (reusable component) -->
+<InventoryModal
+	open={showInventoryModal}
+	resource={selectedResource}
+	amount={selectedAmount}
+	notes={inventoryNotes}
+	{isUpdating}
+	onSave={(amount, notes) => saveInventoryWithParams(amount, notes)}
+	onRemove={removeInventory}
+	onCancel={closeInventoryModal}
 />

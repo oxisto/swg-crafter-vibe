@@ -86,7 +86,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
 		const classId = url.searchParams.get('class') || undefined;
 		const searchTerm = url.searchParams.get('search') || undefined;
 		const spawnStatus = url.searchParams.get('status') || undefined;
-		const inInventoryOnly = url.searchParams.get('in_inventory') === '1';
+		const inInventoryOnly = url.searchParams.get('inventory') === 'true';
 		const allowedClassesParam = url.searchParams.get('allowedClasses') || undefined;
 		const allowedClasses = allowedClassesParam ? allowedClassesParam.split(',') : undefined;
 
