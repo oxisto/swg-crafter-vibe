@@ -6,6 +6,7 @@
 	],
 	"settings": {
 		"sarif-viewer.connectToGithubCodeScanning": "off",
-		"cSpell.words": ["loadouts"]
+		"cSpell.words": ["loadouts"],
+		"debug.javascript.autoAttachFilter": "smart"
 	}
 }

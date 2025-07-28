@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Modal from "$lib/components/Modal.svelte";
-	import Button from "$lib/components/Button.svelte";
-	import Input from "$lib/components/Input.svelte";
-	import Loading from "$lib/components/Loading.svelte";
-	import { RESOURCE_INVENTORY_AMOUNTS } from "$lib/types/resource-inventory.js";
-	import type { Resource, ResourceInventoryAmount } from "$lib/types";
+	import Modal from '$lib/components/Modal.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Input from '$lib/components/Input.svelte';
+	import Loading from '$lib/components/Loading.svelte';
+	import { RESOURCE_INVENTORY_AMOUNTS } from '$lib/types/resource-inventory.js';
+	import type { Resource, ResourceInventoryAmount } from '$lib/types';
 
 	// Props
 	export let open: boolean;
@@ -17,30 +17,30 @@
 	export let onRemove: () => void;
 	export let onCancel: () => void;
 
-// Local state for binding
-let selectedAmount: ResourceInventoryAmount = amount;
-let inventoryNotes: string = notes;
+	// Local state for binding
+	let selectedAmount: ResourceInventoryAmount = amount;
+	let inventoryNotes: string = notes;
 
-$: {
-  // Always reset local state when resource, amount, or notes change
-  selectedAmount = amount;
-  inventoryNotes = notes;
-}
+	$: {
+		// Always reset local state when resource, amount, or notes change
+		selectedAmount = amount;
+		inventoryNotes = notes;
+	}
 
 	function getStatValue(resource: Resource, stat: string): string {
-		if (!resource?.attributes) return "-";
+		if (!resource?.attributes) return '-';
 		const value = resource.attributes[stat as keyof typeof resource.attributes];
-		return value ? value.toString() : "-";
+		return value ? value.toString() : '-';
 	}
 	function getStatColorClass(resource: Resource, stat: string): string {
-		if (!resource?.attributes) return "text-slate-400";
+		if (!resource?.attributes) return 'text-slate-400';
 		const value = resource.attributes[stat as keyof typeof resource.attributes];
-		if (!value) return "text-slate-400";
-		if (value < 500) return "text-slate-400";
-		if (value >= 900) return "text-green-500 font-semibold";
-		if (value >= 750) return "text-emerald-500";
-		if (value >= 600) return "text-yellow-500";
-		return "text-yellow-400";
+		if (!value) return 'text-slate-400';
+		if (value < 500) return 'text-slate-400';
+		if (value >= 900) return 'text-green-500 font-semibold';
+		if (value >= 750) return 'text-emerald-500';
+		if (value >= 600) return 'text-yellow-500';
+		return 'text-yellow-400';
 	}
 </script>
 
@@ -57,7 +57,9 @@ $: {
 							{#if value !== '-'}
 								<div class="text-center">
 									<div class="font-mono text-xs text-blue-300 uppercase">{stat}</div>
-									<div class="font-mono font-semibold {getStatColorClass(resource, stat)}">{value}</div>
+									<div class="font-mono font-semibold {getStatColorClass(resource, stat)}">
+										{value}
+									</div>
 								</div>
 							{/if}
 						{/each}
@@ -88,7 +90,12 @@ $: {
 			</div>
 
 			<div class="flex gap-3">
-				<Button onclick={() => onSave(selectedAmount, inventoryNotes)} disabled={isUpdating} variant="primary" class="flex-1">
+				<Button
+					onclick={() => onSave(selectedAmount, inventoryNotes)}
+					disabled={isUpdating}
+					variant="primary"
+					class="flex-1"
+				>
 					{#if isUpdating}
 						<Loading size="sm" /> Saving...
 					{:else}

@@ -8,7 +8,7 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Input from '$lib/components/Input.svelte';
-import InventoryModal from '$lib/components/InventoryModal.svelte';
+	import InventoryModal from '$lib/components/InventoryModal.svelte';
 	import Loading from '$lib/components/Loading.svelte';
 	import ResourceFilters from '$lib/components/ResourceFilters.svelte';
 	import ResourceTable from '$lib/components/ResourceTable.svelte';
@@ -247,13 +247,12 @@ import InventoryModal from '$lib/components/InventoryModal.svelte';
 
 <!-- Inventory Management Modal (reusable component) -->
 <InventoryModal
-  open={showInventoryModal}
-  resource={selectedResource}
-  amount={selectedAmount}
-  notes={inventoryNotes}
-  isUpdating={isUpdating}
-  onSave={(amount, notes) => saveInventoryWithParams(amount, notes)}
-  onRemove={removeInventory}
-  onCancel={closeInventoryModal}
+	open={showInventoryModal}
+	resource={selectedResource}
+	amount={selectedAmount}
+	notes={inventoryNotes}
+	{isUpdating}
+	onSave={(amount, notes) => saveInventoryWithParams(amount, notes)}
+	onRemove={removeInventory}
+	onCancel={closeInventoryModal}
 />
-
